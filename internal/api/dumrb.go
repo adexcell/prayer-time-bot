@@ -146,16 +146,18 @@ type DUMRBResponse struct {
 }
 
 type Client struct {
-	httpClient *http.Client
+	httpClient   *http.Client
+	voshodClient *VoshodClient
 }
 
 func NewClient() *Client {
 	return &Client{
-		httpClient: &http.Client{Timeout: 10 * time.Second},
+		httpClient:   &http.Client{Timeout: 10 * time.Second},
+		voshodClient: NewVoshodClient(),
 	}
 }
 
-// FetchPrayerTimes делает запрос к официальному API ДУМ РБ
+// FetchPrayerTimes делает запрос к официальному API ДУМ РБ для времен намаза и к voshod-solnca.ru для времени восхода
 func (c *Client) FetchPrayerTimes(city string, date time.Time) (*DUMRBItem, error) {
 	year := date.Year()
 	month := int(date.Month())
@@ -194,23 +196,34 @@ func (c *Client) FetchPrayerTimes(city string, date time.Time) (*DUMRBItem, erro
 	}
 
 	todayTiming := apiResp.PrayerTimes[day-1]
+
+	// Получаем время восхода солнца с сайта voshod-solnca.ru
+	if c.voshodClient != nil {
+		sunrise, err := c.voshodClient.GetSunriseTime(city, date)
+		if err == nil && sunrise != "" {
+			todayTiming.Sunrise = sunrise
+		}
+	}
+
 	return &todayTiming, nil
 }
 
-// FormatMessage форматирует точные данные от ДУМ РБ
+// FormatMessage форматирует данные о расписании намаза (ДУМ РБ) и восходе (voshod-solnca.ru)
 func FormatMessage(item *DUMRBItem, city string, date time.Time) string {
 	dateStr := date.Format("02.01.2006")
 
 	return fmt.Sprintf(
-		"🕌 *Официальное расписание ДУМ РБ*\n"+
+		"🕌 *Расписание намаза*\n"+
 			"📅 *Дата:* %s\n"+
-			"📍 *Город:* %s\n\n"+
+			"📍 *Город/Район:* %s\n\n"+
 			"🌅 *Фаджр (Конец Сухура):* %s\n"+
-			"☀️ *Восход (Шурук):* %s\n"+
+			"☀️ *Восход (voshod-solnca.ru):* %s\n"+
 			"☀️ *Зухр:* %s\n"+
 			"🌤 *Аср:* %s\n"+
 			"🌆 *Магриб:* %s\n"+
-			"🌙 *Иша:* %s",
+			"🌙 *Иша:* %s\n\n"+
+			"ℹ️ _Времена намазов: ДУМ РБ_\n"+
+			"ℹ️ _Восход солнца: voshod-solnca.ru_",
 		dateStr,
 		city,
 		item.Fajr,
