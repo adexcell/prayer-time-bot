@@ -104,7 +104,7 @@ type VoshodClient struct {
 
 func NewVoshodClient() *VoshodClient {
 	return &VoshodClient{
-		httpClient: &http.Client{Timeout: 7 * time.Second},
+		httpClient: &http.Client{Timeout: 3 * time.Second},
 		cache:      make(map[string]string),
 	}
 }
@@ -124,8 +124,8 @@ func (v *VoshodClient) GetSunriseTime(cityName string, date time.Time) (string, 
 	slug := getSlug(cleanCity)
 	sunrise, err := v.fetchSunriseFromWeb(slug, date)
 	if err != nil || sunrise == "" {
-		log.Printf("Предупреждение: не удалось получить восход с сайта для %s (slug: %s): %v. Используется астрономический расчет.", cleanCity, slug, err)
 		sunrise = calculateAstronomicalSunrise(cleanCity, date)
+		log.Printf("Инфо: время восхода для %s получено через астрономический расчет NOAA: %s", cleanCity, sunrise)
 	}
 
 	if sunrise != "" {
@@ -145,7 +145,9 @@ func (v *VoshodClient) fetchSunriseFromWeb(slug string, date time.Time) (string,
 	if err != nil {
 		return "", err
 	}
-	req.Header.Set("User-Agent", "Mozilla/5.0 (compatible; NamazTimeBot/1.0; +https://github.com/adexcell/prayer-time-bot)")
+	req.Header.Set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36")
+	req.Header.Set("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8")
+	req.Header.Set("Accept-Language", "ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7")
 
 	resp, err := v.httpClient.Do(req)
 	if err != nil {

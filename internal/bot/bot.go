@@ -13,13 +13,14 @@ import (
 )
 
 type Bot struct {
-	api         *tgbotapi.BotAPI
-	client      *api.Client
-	storage     *storage.Storage
-	defaultCity string
+	api            *tgbotapi.BotAPI
+	client         *api.Client
+	storage        *storage.Storage
+	defaultCity    string
+	configAdminIDs []int64
 }
 
-func New(token, defaultCity string, client *api.Client, store *storage.Storage) (*Bot, error) {
+func New(token, defaultCity string, configAdminIDs []int64, client *api.Client, store *storage.Storage) (*Bot, error) {
 	botAPI, err := tgbotapi.NewBotAPI(token)
 	if err != nil {
 		return nil, err
@@ -28,10 +29,11 @@ func New(token, defaultCity string, client *api.Client, store *storage.Storage) 
 	log.Printf("Авторизован аккаунт бота: %s", botAPI.Self.UserName)
 
 	return &Bot{
-		api:         botAPI,
-		client:      client,
-		storage:     store,
-		defaultCity: defaultCity,
+		api:            botAPI,
+		client:         client,
+		storage:        store,
+		defaultCity:    defaultCity,
+		configAdminIDs: configAdminIDs,
 	}, nil
 }
 
@@ -53,25 +55,84 @@ func (b *Bot) Start() {
 		}
 
 		chatID := update.Message.Chat.ID
-		text := update.Message.Text
+		fromID := update.Message.From.ID
+		text := strings.TrimSpace(update.Message.Text)
 
-		switch text {
-		case "/start":
+		// 1. Проверка добавления бота в группу/канал
+		if len(update.Message.NewChatMembers) > 0 {
+			for _, newMember := range update.Message.NewChatMembers {
+				if newMember.ID == b.api.Self.ID {
+					b.handleGroupWelcome(chatID)
+					break
+				}
+			}
+			continue
+		}
+
+		if text == "" {
+			continue
+		}
+
+		// 2. Нормализация команд (удаление @BotUsername)
+		cmd := text
+		botUsernameSuffix := "@" + strings.ToLower(b.api.Self.UserName)
+		parts := strings.Fields(text)
+		if len(parts) > 0 {
+			rawCmd := parts[0]
+			if strings.Contains(rawCmd, "@") {
+				lowerRaw := strings.ToLower(rawCmd)
+				if strings.HasSuffix(lowerRaw, botUsernameSuffix) {
+					rawCmd = rawCmd[:len(rawCmd)-len(botUsernameSuffix)]
+				}
+			}
+			cmd = rawCmd
+		}
+
+		switch {
+		case cmd == "/start":
 			b.handleStart(chatID)
-		case "/today", "🕌 Расписание на сегодня":
+		case cmd == "/today" || text == "🕌 Расписание на сегодня":
 			b.handleToday(chatID)
-		case "/city", "🏙 Выбрать город":
+		case cmd == "/city" || text == "🏙 Выбрать город":
 			b.handleChooseLocation(chatID, true, 1, 0)
-		case "/settings", "⚙️ Настройки":
+		case cmd == "/settings" || text == "⚙️ Настройки":
 			b.handleSettings(chatID, 0)
-		case "/subscribe", "🔔 Подписаться на рассылку":
+		case cmd == "/subscribe" || text == "🔔 Подписаться на рассылку":
 			b.handleSubscribe(chatID)
-		case "/unsubscribe", "🔕 Отписаться":
+		case cmd == "/unsubscribe" || text == "🔕 Отписаться":
 			b.handleUnsubscribe(chatID)
+		case cmd == "/admin":
+			b.handleAdmin(chatID, fromID, 0)
+		case strings.HasPrefix(text, "/addadmin"):
+			b.handleAddAdminCommand(chatID, fromID, text)
+		case strings.HasPrefix(text, "/deladmin"):
+			b.handleDelAdminCommand(chatID, fromID, text)
 		default:
-			b.sendMessage(chatID, "Используйте меню или команды:\n/today — Расписание на сегодня\n/city — Выбрать город или район РБ\n/settings — Настройки уведомлений\n/subscribe — Подписаться на рассылку\n/unsubscribe — Отписаться")
+			// Для личных чатов выводим подсказку
+			if chatID > 0 {
+				b.sendMessage(chatID, "Используйте меню или команды:\n/today — Расписание на сегодня\n/city — Выбрать город или район РБ\n/settings — Настройки уведомлений\n/subscribe — Подписаться на рассылку\n/unsubscribe — Отписаться\n/admin — Панель администратора")
+			}
 		}
 	}
+}
+
+// handleGroupWelcome отправляет приветственное сообщение при добавлении бота в группу
+func (b *Bot) handleGroupWelcome(chatID int64) {
+	city, _ := b.storage.GetUserCity(chatID, b.defaultCity)
+	welcomeText := fmt.Sprintf(
+		"👋 *Ассаляму алейкум!*\n\n"+
+			"Спасибо за добавление бота в группу!\n"+
+			"Бот может ежедневно присылать расписание намаза (ДУМ РБ) и точное время восхода солнца (voshod-solnca.ru) для городов и районов Башкортостана.\n\n"+
+			"📍 Текущий населенный пункт: *%s*\n\n"+
+			"📌 *Команды для группы:*\n"+
+			"• /today — Показать расписание на сегодня\n"+
+			"• /city — Выбрать город или район Башкортостана\n"+
+			"• /settings — Настроить время ежедневной утренней рассылки\n"+
+			"• /subscribe — Включить ежедневную рассылку в эту группу\n"+
+			"• /unsubscribe — Отключить рассылку",
+		city,
+	)
+	b.sendMessage(chatID, welcomeText)
 }
 
 const locationPageSize = 12
@@ -287,6 +348,10 @@ func (b *Bot) handleSettings(chatID int64, messageID int) {
 }
 
 func (b *Bot) handleCallback(cb *tgbotapi.CallbackQuery) {
+	if b.handleAdminCallbacks(cb) {
+		return
+	}
+
 	chatID := cb.Message.Chat.ID
 	messageID := cb.Message.MessageID
 	data := cb.Data

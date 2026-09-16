@@ -26,11 +26,13 @@ func main() {
 	}
 	defer store.Close()
 
-	// 3. Инициализация клиента ДУМ РБ
+	// 3. Инициализация клиента ДУМ РБ и привязка хранилища для учета корректировок
 	apiClient := api.NewClient()
+	apiClient.SetStorage(store)
 
 	// 4. Инициализация бота
-	telegramBot, err := bot.New(cfg.TelegramToken, cfg.City, apiClient, store)
+	adminIDs := cfg.GetAdminIDList()
+	telegramBot, err := bot.New(cfg.TelegramToken, cfg.City, adminIDs, apiClient, store)
 	if err != nil {
 		log.Fatalf("Ошибка создания бота: %v", err)
 	}

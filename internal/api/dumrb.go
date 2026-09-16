@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
+	"sync"
 	"time"
 )
 
@@ -148,13 +149,22 @@ type DUMRBResponse struct {
 type Client struct {
 	httpClient   *http.Client
 	voshodClient *VoshodClient
+	storage      AdjustmentStorage
+	monthCache   map[string][]DUMRBItem
+	cacheMutex   sync.RWMutex
 }
 
 func NewClient() *Client {
 	return &Client{
 		httpClient:   &http.Client{Timeout: 10 * time.Second},
 		voshodClient: NewVoshodClient(),
+		monthCache:   make(map[string][]DUMRBItem),
 	}
+}
+
+// SetStorage устанавливает хранилище для чтения активных корректировок
+func (c *Client) SetStorage(store AdjustmentStorage) {
+	c.storage = store
 }
 
 // FetchPrayerTimes делает запрос к официальному API ДУМ РБ для времен намаза и к voshod-solnca.ru для времени восхода
@@ -163,45 +173,80 @@ func (c *Client) FetchPrayerTimes(city string, date time.Time) (*DUMRBItem, erro
 	month := int(date.Month())
 	day := date.Day()
 
-	var reqURL string
-	if id, ok := CityIDMap[city]; ok && id > 0 {
-		reqURL = fmt.Sprintf("https://api.dumrb.com/Prayer/GetByCity?cityId=%d&year=%d&month=%d", id, year, month)
+	cleanCity := cleanCityName(city)
+	cacheKey := fmt.Sprintf("%s_%d_%d", cleanCity, year, month)
+
+	c.cacheMutex.RLock()
+	cachedMonth, inCache := c.monthCache[cacheKey]
+	c.cacheMutex.RUnlock()
+
+	var monthItems []DUMRBItem
+
+	if inCache {
+		monthItems = cachedMonth
 	} else {
-		reqURL = fmt.Sprintf("https://api.dumrb.com/Prayer/GetByCity?cityName=%s&year=%d&month=%d", url.QueryEscape(city), year, month)
-	}
+		var reqURL string
+		if id, ok := CityIDMap[city]; ok && id > 0 {
+			reqURL = fmt.Sprintf("https://api.dumrb.com/Prayer/GetByCity?cityId=%d&year=%d&month=%d", id, year, month)
+		} else {
+			reqURL = fmt.Sprintf("https://api.dumrb.com/Prayer/GetByCity?cityName=%s&year=%d&month=%d", url.QueryEscape(city), year, month)
+		}
 
-	resp, err := c.httpClient.Get(reqURL)
+		req, err := http.NewRequest("GET", reqURL, nil)
+		if err != nil {
+			return nil, err
+		}
+		req.Header.Set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36")
+		req.Header.Set("Accept", "application/json, text/plain, */*")
 
-	if err != nil {
-		return nil, fmt.Errorf("ошибка HTTP-запроса к dumrb: %w", err)
-	}
-	defer resp.Body.Close()
+		resp, err := c.httpClient.Do(req)
+		if err != nil {
+			return nil, fmt.Errorf("ошибка HTTP-запроса к dumrb: %w", err)
+		}
+		defer resp.Body.Close()
 
-	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("неуспешный статус ответа dumrb: %d", resp.StatusCode)
-	}
+		if resp.StatusCode != http.StatusOK {
+			return nil, fmt.Errorf("неуспешный статус ответа dumrb: %d", resp.StatusCode)
+		}
 
-	var apiResp DUMRBResponse
-	if err := json.NewDecoder(resp.Body).Decode(&apiResp); err != nil {
-		return nil, fmt.Errorf("ошибка декодирования JSON: %w", err)
-	}
+		var apiResp DUMRBResponse
+		if err := json.NewDecoder(resp.Body).Decode(&apiResp); err != nil {
+			return nil, fmt.Errorf("ошибка декодирования JSON: %w", err)
+		}
 
-	if apiResp.Error != "" {
-		return nil, fmt.Errorf("ошибка API ДУМ РБ: %s", apiResp.Error)
+		if apiResp.Error != "" {
+			return nil, fmt.Errorf("ошибка API ДУМ РБ: %s", apiResp.Error)
+		}
+
+		monthItems = apiResp.PrayerTimes
+		if len(monthItems) > 0 {
+			c.cacheMutex.Lock()
+			c.monthCache[cacheKey] = monthItems
+			c.cacheMutex.Unlock()
+		}
 	}
 
 	// Массив prayerTimes индексируется с 0, где 0 — это 1-е число месяца
-	if day < 1 || day > len(apiResp.PrayerTimes) {
+	if day < 1 || day > len(monthItems) {
 		return nil, fmt.Errorf("день %d вне диапазона дней месяца", day)
 	}
 
-	todayTiming := apiResp.PrayerTimes[day-1]
+	todayTiming := monthItems[day-1]
 
-	// Получаем время восхода солнца с сайта voshod-solnca.ru
+	// 1. Получаем время восхода солнца с сайта voshod-solnca.ru
 	if c.voshodClient != nil {
 		sunrise, err := c.voshodClient.GetSunriseTime(city, date)
 		if err == nil && sunrise != "" {
 			todayTiming.Sunrise = sunrise
+		}
+	}
+
+	// 2. Применяем активные корректировки из БД (если настроены)
+	if c.storage != nil {
+		cleanCity := cleanCityName(city)
+		adjustments, err := c.storage.GetActiveAdjustments(cleanCity, date)
+		if err == nil && len(adjustments) > 0 {
+			ApplyPrayerAdjustments(&todayTiming, adjustments)
 		}
 	}
 
@@ -217,13 +262,12 @@ func FormatMessage(item *DUMRBItem, city string, date time.Time) string {
 			"📅 *Дата:* %s\n"+
 			"📍 *Город/Район:* %s\n\n"+
 			"🌅 *Фаджр (Конец Сухура):* %s\n"+
-			"☀️ *Восход (voshod-solnca.ru):* %s\n"+
+			"☀️ *Восход:* %s\n"+
 			"☀️ *Зухр:* %s\n"+
 			"🌤 *Аср:* %s\n"+
 			"🌆 *Магриб:* %s\n"+
 			"🌙 *Иша:* %s\n\n"+
-			"ℹ️ _Времена намазов: ДУМ РБ_\n"+
-			"ℹ️ _Восход солнца: voshod-solnca.ru_",
+			"ℹ️ _Времена намазов: ДУМ РБ_",
 		dateStr,
 		city,
 		item.Fajr,
