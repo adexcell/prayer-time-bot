@@ -61,6 +61,15 @@ func TestStorage_CityAndSettings(t *testing.T) {
 	if u.Notify15Min != false {
 		t.Errorf("Expected Notify15Min false after toggle, got %v", u.Notify15Min)
 	}
+
+	// 5. Update evening time to 19:00
+	if err := store.UpdateEveningTime(chatID, "19:00"); err != nil {
+		t.Fatalf("UpdateEveningTime failed: %v", err)
+	}
+	u, _ = store.GetUser(chatID)
+	if u.EveningScheduleTime != "19:00" {
+		t.Errorf("Expected EveningScheduleTime '19:00', got '%s'", u.EveningScheduleTime)
+	}
 }
 
 func TestStorage_Admins(t *testing.T) {

@@ -261,7 +261,7 @@ func FormatMessage(item *DUMRBItem, city string, date time.Time) string {
 		"🕌 *Расписание намаза*\n"+
 			"📅 *Дата:* %s\n"+
 			"📍 *Город/Район:* %s\n\n"+
-			"🌅 *Фаджр (Конец Сухура):* %s\n"+
+			"🌅 *Фаджр:* %s\n"+
 			"☀️ *Восход:* %s\n"+
 			"☀️ *Зухр:* %s\n"+
 			"🌤 *Аср:* %s\n"+
@@ -278,3 +278,38 @@ func FormatMessage(item *DUMRBItem, city string, date time.Time) string {
 		item.Isha,
 	)
 }
+
+// FormatEveningMessage форматирует Вечерняя рассылка: оставшиеся намазы на сегодня (Магриб, Иша) и полное расписание на завтра
+func FormatEveningMessage(todayItem *DUMRBItem, tomorrowItem *DUMRBItem, city string, today time.Time) string {
+	tomorrow := today.AddDate(0, 0, 1)
+	todayStr := today.Format("02.01.2006")
+	tomorrowStr := tomorrow.Format("02.01.2006")
+
+	return fmt.Sprintf(
+		"🌙 *Вечерняя рассылка расписания намаза*\n"+
+			"📍 *Город/Район:* %s\n\n"+
+			"📌 *Оставшиеся намазы на сегодня (%s):*\n"+
+			"🌆 *Магриб:* %s\n"+
+			"🌙 *Иша:* %s\n\n"+
+			"📅 *Расписание на завтра (%s):*\n"+
+			"🌅 *Фаджр:* %s\n"+
+			"☀️ *Восход:* %s\n"+
+			"☀️ *Зухр:* %s\n"+
+			"🌤 *Аср:* %s\n"+
+			"🌆 *Магриб:* %s\n"+
+			"🌙 *Иша:* %s\n\n"+
+			"ℹ️ _Времена намазов: ДУМ РБ_",
+		city,
+		todayStr,
+		todayItem.Maghrib,
+		todayItem.Isha,
+		tomorrowStr,
+		tomorrowItem.Fajr,
+		tomorrowItem.Sunrise,
+		tomorrowItem.Dhuhr,
+		tomorrowItem.Asr,
+		tomorrowItem.Maghrib,
+		tomorrowItem.Isha,
+	)
+}
+

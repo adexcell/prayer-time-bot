@@ -9,12 +9,13 @@ import (
 )
 
 type User struct {
-	ChatID            int64
-	City              string
-	SubscribedAt      time.Time
-	DailyScheduleTime string
-	Notify15Min       bool
-	NotifyAtTime      bool
+	ChatID              int64
+	City                string
+	SubscribedAt        time.Time
+	DailyScheduleTime   string
+	EveningScheduleTime string
+	Notify15Min         bool
+	NotifyAtTime        bool
 }
 
 type BotAdmin struct {
@@ -62,6 +63,7 @@ func (s *Storage) init() error {
 			city TEXT NOT NULL,
 			subscribed_at DATETIME DEFAULT CURRENT_TIMESTAMP,
 			daily_schedule_time TEXT DEFAULT '06:00',
+			evening_schedule_time TEXT DEFAULT '',
 			notify_15_min BOOLEAN DEFAULT TRUE,
 			notify_at_time BOOLEAN DEFAULT TRUE
 		);`,
@@ -88,6 +90,7 @@ func (s *Storage) init() error {
 	}
 
 	_ = s.addColumnIfNotExist("daily_schedule_time", "TEXT DEFAULT '06:00'")
+	_ = s.addColumnIfNotExist("evening_schedule_time", "TEXT DEFAULT ''")
 	_ = s.addColumnIfNotExist("notify_15min", "BOOLEAN DEFAULT 1")
 	_ = s.addColumnIfNotExist("notify_at_time", "BOOLEAN DEFAULT 1")
 	return nil
@@ -102,11 +105,11 @@ func (s *Storage) addColumnIfNotExist(column, colType string) error {
 // --- Управление пользователями и чатами ---
 
 func (s *Storage) GetUser(chatID int64) (*User, error) {
-	query := `SELECT chat_id, city, subscribed_at, daily_schedule_time, notify_15min, notify_at_time FROM users WHERE chat_id = ?;`
+	query := `SELECT chat_id, city, subscribed_at, daily_schedule_time, COALESCE(evening_schedule_time, ''), notify_15min, notify_at_time FROM users WHERE chat_id = ?;`
 	row := s.db.QueryRow(query, chatID)
 
 	var u User
-	err := row.Scan(&u.ChatID, &u.City, &u.SubscribedAt, &u.DailyScheduleTime, &u.Notify15Min, &u.NotifyAtTime)
+	err := row.Scan(&u.ChatID, &u.City, &u.SubscribedAt, &u.DailyScheduleTime, &u.EveningScheduleTime, &u.Notify15Min, &u.NotifyAtTime)
 	if err == sql.ErrNoRows {
 		return nil, nil
 	}
@@ -118,8 +121,8 @@ func (s *Storage) GetUser(chatID int64) (*User, error) {
 
 func (s *Storage) SetUserCity(chatID int64, city string) error {
 	query := `
-	INSERT INTO users (chat_id, city, subscribed_at, daily_schedule_time, notify_15min, notify_at_time)
-	VALUES (?, ?, ?, '06:00', 1, 1)
+	INSERT INTO users (chat_id, city, subscribed_at, daily_schedule_time, evening_schedule_time, notify_15min, notify_at_time)
+	VALUES (?, ?, ?, '06:00', '', 1, 1)
 	ON CONFLICT(chat_id) DO UPDATE SET city = excluded.city;
 	`
 	_, err := s.db.Exec(query, chatID, city, time.Now())
@@ -141,18 +144,28 @@ func (s *Storage) GetUserCity(chatID int64, defaultCity string) (string, error) 
 
 func (s *Storage) UpdateDailyTime(chatID int64, dailyTime string) error {
 	query := `
-	INSERT INTO users (chat_id, city, subscribed_at, daily_schedule_time, notify_15min, notify_at_time)
-	VALUES (?, 'Уфа', ?, ?, 1, 1)
+	INSERT INTO users (chat_id, city, subscribed_at, daily_schedule_time, evening_schedule_time, notify_15min, notify_at_time)
+	VALUES (?, 'Уфа', ?, ?, '', 1, 1)
 	ON CONFLICT(chat_id) DO UPDATE SET daily_schedule_time = excluded.daily_schedule_time;
 	`
 	_, err := s.db.Exec(query, chatID, time.Now(), dailyTime)
 	return err
 }
 
+func (s *Storage) UpdateEveningTime(chatID int64, eveningTime string) error {
+	query := `
+	INSERT INTO users (chat_id, city, subscribed_at, daily_schedule_time, evening_schedule_time, notify_15min, notify_at_time)
+	VALUES (?, 'Уфа', ?, '06:00', ?, 1, 1)
+	ON CONFLICT(chat_id) DO UPDATE SET evening_schedule_time = excluded.evening_schedule_time;
+	`
+	_, err := s.db.Exec(query, chatID, time.Now(), eveningTime)
+	return err
+}
+
 func (s *Storage) ToggleNotify15min(chatID int64) error {
 	query := `
-	INSERT INTO users (chat_id, city, subscribed_at, daily_schedule_time, notify_15min, notify_at_time)
-	VALUES (?, 'Уфа', ?, '06:00', 0, 1)
+	INSERT INTO users (chat_id, city, subscribed_at, daily_schedule_time, evening_schedule_time, notify_15min, notify_at_time)
+	VALUES (?, 'Уфа', ?, '06:00', '', 0, 1)
 	ON CONFLICT(chat_id) DO UPDATE SET notify_15min = CASE WHEN notify_15min = 1 THEN 0 ELSE 1 END;
 	`
 	_, err := s.db.Exec(query, chatID, time.Now())
@@ -161,8 +174,8 @@ func (s *Storage) ToggleNotify15min(chatID int64) error {
 
 func (s *Storage) ToggleNotifyAtTime(chatID int64) error {
 	query := `
-	INSERT INTO users (chat_id, city, subscribed_at, daily_schedule_time, notify_15min, notify_at_time)
-	VALUES (?, 'Уфа', ?, '06:00', 1, 0)
+	INSERT INTO users (chat_id, city, subscribed_at, daily_schedule_time, evening_schedule_time, notify_15min, notify_at_time)
+	VALUES (?, 'Уфа', ?, '06:00', '', 1, 0)
 	ON CONFLICT(chat_id) DO UPDATE SET notify_at_time = CASE WHEN notify_at_time = 1 THEN 0 ELSE 1 END;
 	`
 	_, err := s.db.Exec(query, chatID, time.Now())
@@ -171,8 +184,8 @@ func (s *Storage) ToggleNotifyAtTime(chatID int64) error {
 
 func (s *Storage) Subscribe(chatID int64, city string) error {
 	query := `
-	INSERT INTO users (chat_id, city, subscribed_at)
-	VALUES (?, ?, ?)
+	INSERT INTO users (chat_id, city, subscribed_at, daily_schedule_time, evening_schedule_time)
+	VALUES (?, ?, ?, '06:00', '')
 	ON CONFLICT(chat_id) DO UPDATE SET city = excluded.city;
 	`
 	_, err := s.db.Exec(query, chatID, city, time.Now())
@@ -192,7 +205,7 @@ func (s *Storage) Unsubscribe(chatID int64) error {
 }
 
 func (s *Storage) GetSubscribers() ([]User, error) {
-	query := `SELECT chat_id, city, subscribed_at, daily_schedule_time, notify_15min, notify_at_time FROM users;`
+	query := `SELECT chat_id, city, subscribed_at, daily_schedule_time, COALESCE(evening_schedule_time, ''), notify_15min, notify_at_time FROM users;`
 	rows, err := s.db.Query(query)
 	if err != nil {
 		return nil, fmt.Errorf("ошибка получения подписчиков: %w", err)
@@ -201,7 +214,7 @@ func (s *Storage) GetSubscribers() ([]User, error) {
 	var users []User
 	for rows.Next() {
 		var u User
-		if err := rows.Scan(&u.ChatID, &u.City, &u.SubscribedAt, &u.DailyScheduleTime, &u.Notify15Min, &u.NotifyAtTime); err != nil {
+		if err := rows.Scan(&u.ChatID, &u.City, &u.SubscribedAt, &u.DailyScheduleTime, &u.EveningScheduleTime, &u.Notify15Min, &u.NotifyAtTime); err != nil {
 			return nil, err
 		}
 		users = append(users, u)

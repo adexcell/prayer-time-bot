@@ -66,6 +66,7 @@ func (s *Scheduler) checkAndSendReminders() {
 	}
 
 	cityCache := make(map[string]*api.DUMRBItem)
+	tomorrowCache := make(map[string]*api.DUMRBItem)
 
 	for _, user := range subscribers {
 		userCity := user.City
@@ -94,7 +95,7 @@ func (s *Scheduler) checkAndSendReminders() {
 
 		msgDaily := api.FormatMessage(timing, userCity, now)
 
-		// 1. Рассылка дневного расписания в выбранное пользователем время
+		// 1. Рассылка утреннего расписания в выбранное пользователем время
 		dailyTime := user.DailyScheduleTime
 		if dailyTime == "" {
 			dailyTime = "06:00"
@@ -103,7 +104,26 @@ func (s *Scheduler) checkAndSendReminders() {
 			s.bot.SendToChat(user.ChatID, msgDaily)
 		}
 
-		// 2. Напоминания о намазах
+		// 2. Рассылка Вечерняя рассылка (оставшиеся намазы сегодня + расписание на завтра)
+		if user.EveningScheduleTime != "" && user.EveningScheduleTime == currentTimeStr {
+			tomorrowTiming, tExists := tomorrowCache[userCity]
+			if !tExists {
+				tomorrowDate := now.AddDate(0, 0, 1)
+				tt, err := s.client.FetchPrayerTimes(userCity, tomorrowDate)
+				if err != nil {
+					log.Printf("Ошибка получения завтрашнего расписания для %s: %v", userCity, err)
+				} else {
+					tomorrowCache[userCity] = tt
+					tomorrowTiming = tt
+				}
+			}
+			if tomorrowTiming != nil {
+				msgEvening := api.FormatEveningMessage(timing, tomorrowTiming, userCity, now)
+				s.bot.SendToChat(user.ChatID, msgEvening)
+			}
+		}
+
+		// 3. Напоминания о намазах
 		for name, timeStr := range prayers {
 			// В момент наступления
 			if user.NotifyAtTime && timeStr == currentTimeStr {

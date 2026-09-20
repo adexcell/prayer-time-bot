@@ -50,15 +50,43 @@ func (b *Bot) Start() {
 			continue
 		}
 
+		if update.MyChatMember != nil {
+			b.handleMyChatMember(update.MyChatMember)
+			continue
+		}
+
+		if update.ChannelPost != nil {
+			continue
+		}
+
 		if update.Message == nil {
 			continue
 		}
 
 		chatID := update.Message.Chat.ID
-		fromID := update.Message.From.ID
+		fromID := int64(0)
+		if update.Message.From != nil {
+			fromID = update.Message.From.ID
+		}
 		text := strings.TrimSpace(update.Message.Text)
 
-		// 1. Проверка добавления бота в группу/канал
+		// 1. Проверка пересланного сообщения из канала (для мгновенной настройки канала в ЛС)
+		if chatID > 0 && update.Message.ForwardFromChat != nil && update.Message.ForwardFromChat.IsChannel() {
+			fwdChat := update.Message.ForwardFromChat
+			if fromID != 0 && b.isGroupAdmin(fwdChat.ID, fromID) {
+				title := fwdChat.Title
+				if title == "" {
+					title = fmt.Sprintf("Канал %d", fwdChat.ID)
+				}
+				b.handleGroupSettings(chatID, fwdChat.ID, title, 0)
+				continue
+			} else {
+				b.sendMessage(chatID, "⛔️ Вы не являетесь администратором пересланного канала или бот не назначен администратором в нём.")
+				continue
+			}
+		}
+
+		// 2. Проверка добавления бота в группу/канал
 		if len(update.Message.NewChatMembers) > 0 {
 			for _, newMember := range update.Message.NewChatMembers {
 				if newMember.ID == b.api.Self.ID {
@@ -73,7 +101,7 @@ func (b *Bot) Start() {
 			continue
 		}
 
-		// 2. Нормализация команд (удаление @BotUsername)
+		// 3. Нормализация команд (удаление @BotUsername)
 		cmd := text
 		botUsernameSuffix := "@" + strings.ToLower(b.api.Self.UserName)
 		parts := strings.Fields(text)
@@ -90,16 +118,34 @@ func (b *Bot) Start() {
 
 		switch {
 		case cmd == "/start":
-			b.handleStart(chatID)
+			b.handleStart(chatID, fromID, parts)
 		case cmd == "/today" || text == "🕌 Расписание на сегодня":
 			b.handleToday(chatID)
 		case cmd == "/city" || text == "🏙 Выбрать город":
-			b.handleChooseLocation(chatID, true, 1, 0)
+			if chatID < 0 {
+				b.handleGroupSettingsRedirect(chatID, update.Message.MessageID)
+			} else {
+				b.handleChooseLocation(chatID, true, 1, 0)
+			}
 		case cmd == "/settings" || text == "⚙️ Настройки":
-			b.handleSettings(chatID, 0)
+			if chatID < 0 {
+				b.handleGroupSettingsRedirect(chatID, update.Message.MessageID)
+			} else {
+				b.handleSettings(chatID, 0)
+			}
+		case cmd == "/channel":
+			b.handleChannelCommand(chatID, fromID, parts)
 		case cmd == "/subscribe" || text == "🔔 Подписаться на рассылку":
+			if chatID < 0 && !b.isGroupAdmin(chatID, fromID) {
+				b.sendMessage(chatID, "⛔️ Включать рассылку для группы могут только администраторы.")
+				continue
+			}
 			b.handleSubscribe(chatID)
 		case cmd == "/unsubscribe" || text == "🔕 Отписаться":
+			if chatID < 0 && !b.isGroupAdmin(chatID, fromID) {
+				b.sendMessage(chatID, "⛔️ Отключать рассылку для группы могут только администраторы.")
+				continue
+			}
 			b.handleUnsubscribe(chatID)
 		case cmd == "/admin":
 			b.handleAdmin(chatID, fromID, 0)
@@ -110,7 +156,7 @@ func (b *Bot) Start() {
 		default:
 			// Для личных чатов выводим подсказку
 			if chatID > 0 {
-				b.sendMessage(chatID, "Используйте меню или команды:\n/today — Расписание на сегодня\n/city — Выбрать город или район РБ\n/settings — Настройки уведомлений\n/subscribe — Подписаться на рассылку\n/unsubscribe — Отписаться\n/admin — Панель администратора")
+				b.sendMessage(chatID, "Используйте меню или команды:\n/today — Расписание на сегодня\n/city — Выбрать город или район РБ\n/settings — Настройки уведомлений\n/channel — Подключить Telegram-канал\n/subscribe — Подписаться на рассылку\n/unsubscribe — Отписаться\n/admin — Панель администратора")
 			}
 		}
 	}
@@ -126,8 +172,7 @@ func (b *Bot) handleGroupWelcome(chatID int64) {
 			"📍 Текущий населенный пункт: *%s*\n\n"+
 			"📌 *Команды для группы:*\n"+
 			"• /today — Показать расписание на сегодня\n"+
-			"• /city — Выбрать город или район Башкортостана\n"+
-			"• /settings — Настроить время ежедневной утренней рассылки\n"+
+			"• /settings — Настроить город и время рассылки для группы (в ЛС)\n"+
 			"• /subscribe — Включить ежедневную рассылку в эту группу\n"+
 			"• /unsubscribe — Отключить рассылку",
 		city,
@@ -275,6 +320,7 @@ func (b *Bot) handleSettings(chatID int64, messageID int) {
 	u, _ := b.storage.GetUser(chatID)
 
 	selectedTime := "06:00"
+	eveningTime := ""
 	notify15min := true
 	notifyAtTime := true
 
@@ -282,8 +328,14 @@ func (b *Bot) handleSettings(chatID int64, messageID int) {
 		if u.DailyScheduleTime != "" {
 			selectedTime = u.DailyScheduleTime
 		}
+		eveningTime = u.EveningScheduleTime
 		notify15min = u.Notify15Min
 		notifyAtTime = u.NotifyAtTime
+	}
+
+	eveningDisplay := "Отключена"
+	if eveningTime != "" {
+		eveningDisplay = eveningTime
 	}
 
 	currentCity, _ := b.storage.GetUserCity(chatID, b.defaultCity)
@@ -291,14 +343,16 @@ func (b *Bot) handleSettings(chatID int64, messageID int) {
 	text := fmt.Sprintf(
 		"⚙️ *Настройки рассылки и напоминаний*\n\n"+
 			"📍 *Текущий город/район:* %s\n"+
-			"⏰ *Время утренней рассылки:* %s\n\n"+
-			"Выберите время рассылки или включите/выключите нужные напоминания:",
-		currentCity, selectedTime,
+			"🌅 *Утренняя рассылка (на день):* %s\n"+
+			"🌙 *Вечерняя рассылка (на вечер и завтра):* %s\n\n"+
+			"Нажмите на нужную кнопку для изменения параметров:",
+		escapeMarkdown(currentCity), selectedTime, eveningDisplay,
 	)
 
+	// 1. Утреннее время
 	times := []string{"05:00", "06:00", "07:00", "08:00", "09:00", "10:00"}
-	var timeRow1 []tgbotapi.InlineKeyboardButton
-	var timeRow2 []tgbotapi.InlineKeyboardButton
+	var morningRow1 []tgbotapi.InlineKeyboardButton
+	var morningRow2 []tgbotapi.InlineKeyboardButton
 
 	for i, t := range times {
 		label := t
@@ -307,29 +361,57 @@ func (b *Bot) handleSettings(chatID int64, messageID int) {
 		}
 		btn := tgbotapi.NewInlineKeyboardButtonData(label, "set_time:"+t)
 		if i < 3 {
-			timeRow1 = append(timeRow1, btn)
+			morningRow1 = append(morningRow1, btn)
 		} else {
-			timeRow2 = append(timeRow2, btn)
+			morningRow2 = append(morningRow2, btn)
 		}
 	}
 
-	label15 := "⏳ За 15 мин: [ ]"
-	if notify15min {
-		label15 = "⏳ За 15 мин: [✓]"
+	// 2. Вечернее время
+	etimes := []struct {
+		val   string
+		label string
+	}{
+		{"off", "🌙 Откл"},
+		{"17:00", "17:00"},
+		{"18:00", "18:00"},
+		{"19:00", "19:00"},
+		{"20:00", "20:00"},
+		{"21:00", "21:00"},
+	}
+	var eveningRow1 []tgbotapi.InlineKeyboardButton
+	var eveningRow2 []tgbotapi.InlineKeyboardButton
+
+	for i, et := range etimes {
+		display := et.label
+		if (et.val == "off" && eveningTime == "") || (et.val == eveningTime) {
+			display = "✓ " + et.label
+		}
+		btn := tgbotapi.NewInlineKeyboardButtonData(display, "set_etime:"+et.val)
+		if i < 3 {
+			eveningRow1 = append(eveningRow1, btn)
+		} else {
+			eveningRow2 = append(eveningRow2, btn)
+		}
 	}
 
-	labelAtTime := "🔔 В момент намаза: [ ]"
+	label15 := "⏳ 15 мин: [ ]"
+	if notify15min {
+		label15 = "⏳ 15 мин: [✓]"
+	}
+
+	labelAtTime := "🔔 В намаз: [ ]"
 	if notifyAtTime {
-		labelAtTime = "🔔 В момент намаза: [✓]"
+		labelAtTime = "🔔 В намаз: [✓]"
 	}
 
 	keyboard := tgbotapi.NewInlineKeyboardMarkup(
-		timeRow1,
-		timeRow2,
+		morningRow1,
+		morningRow2,
+		eveningRow1,
+		eveningRow2,
 		tgbotapi.NewInlineKeyboardRow(
 			tgbotapi.NewInlineKeyboardButtonData(label15, "toggle_15min"),
-		),
-		tgbotapi.NewInlineKeyboardRow(
 			tgbotapi.NewInlineKeyboardButtonData(labelAtTime, "toggle_attime"),
 		),
 	)
@@ -338,7 +420,9 @@ func (b *Bot) handleSettings(chatID int64, messageID int) {
 		editMsg := tgbotapi.NewEditMessageText(chatID, messageID, text)
 		editMsg.ParseMode = "Markdown"
 		editMsg.ReplyMarkup = &keyboard
-		b.api.Send(editMsg)
+		if _, err := b.api.Send(editMsg); err != nil && !strings.Contains(err.Error(), "message is not modified") {
+			log.Printf("Ошибка редактирования handleSettings: %v", err)
+		}
 	} else {
 		msg := tgbotapi.NewMessage(chatID, text)
 		msg.ParseMode = "Markdown"
@@ -348,13 +432,34 @@ func (b *Bot) handleSettings(chatID int64, messageID int) {
 }
 
 func (b *Bot) handleCallback(cb *tgbotapi.CallbackQuery) {
+	if cb == nil {
+		return
+	}
 	if b.handleAdminCallbacks(cb) {
+		return
+	}
+	if b.handleGroupCallbacks(cb) {
+		return
+	}
+
+	fromID := int64(0)
+	if cb.From != nil {
+		fromID = cb.From.ID
+	}
+
+	if cb.Message == nil {
 		return
 	}
 
 	chatID := cb.Message.Chat.ID
 	messageID := cb.Message.MessageID
 	data := cb.Data
+
+	// Защита: если callback вызван внутри группы, проверять права админа группы
+	if chatID < 0 && !b.isGroupAdmin(chatID, fromID) {
+		b.api.Send(tgbotapi.NewCallbackWithAlert(cb.ID, "⛔️ Настройки группы могут изменять только администраторы!"))
+		return
+	}
 
 	if data == "noop" {
 		b.answerCallback(cb.ID, "")
@@ -403,7 +508,20 @@ func (b *Bot) handleCallback(cb *tgbotapi.CallbackQuery) {
 	if strings.HasPrefix(data, "set_time:") {
 		timeStr := strings.TrimPrefix(data, "set_time:")
 		_ = b.storage.UpdateDailyTime(chatID, timeStr)
-		b.answerCallback(cb.ID, "Время утренней рассылки: "+timeStr)
+		b.answerCallback(cb.ID, "Утренняя рассылка: "+timeStr)
+		b.handleSettings(chatID, messageID)
+		return
+	}
+
+	if strings.HasPrefix(data, "set_etime:") {
+		timeStr := strings.TrimPrefix(data, "set_etime:")
+		if timeStr == "off" {
+			_ = b.storage.UpdateEveningTime(chatID, "")
+			b.answerCallback(cb.ID, "Вечерняя рассылка отключена")
+		} else {
+			_ = b.storage.UpdateEveningTime(chatID, timeStr)
+			b.answerCallback(cb.ID, "Вечерняя рассылка: "+timeStr)
+		}
 		b.handleSettings(chatID, messageID)
 		return
 	}
@@ -425,7 +543,31 @@ func (b *Bot) answerCallback(callbackID, text string) {
 	b.api.Request(callback)
 }
 
-func (b *Bot) handleStart(chatID int64) {
+func (b *Bot) handleStart(chatID int64, fromID int64, parts []string) {
+	// Проверка deep link аргумента (например: /start grp_-100123456789)
+	if len(parts) > 1 {
+		arg := parts[1]
+		var targetGroupID int64
+		if strings.HasPrefix(arg, "grp_") {
+			_, _ = fmt.Sscanf(strings.TrimPrefix(arg, "grp_"), "%d", &targetGroupID)
+		} else if strings.HasPrefix(arg, "group_") {
+			_, _ = fmt.Sscanf(strings.TrimPrefix(arg, "group_"), "%d", &targetGroupID)
+		}
+
+		if targetGroupID != 0 {
+			if targetGroupID > 0 {
+				targetGroupID = -targetGroupID
+			}
+			if !b.isGroupAdmin(targetGroupID, fromID) {
+				b.sendMessage(chatID, "⛔️ *Доступ ограничен*\n\nВы не являетесь администратором данной группы или бот не добавлен в неё.")
+				return
+			}
+			groupTitle := b.getGroupTitle(targetGroupID)
+			b.handleGroupSettings(chatID, targetGroupID, groupTitle, 0)
+			return
+		}
+	}
+
 	city, _ := b.storage.GetUserCity(chatID, b.defaultCity)
 	msgText := fmt.Sprintf(
 		"Ассаляму алейкум! 🖐\n\n"+

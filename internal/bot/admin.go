@@ -616,10 +616,16 @@ func (b *Bot) sendOrEditMessage(chatID int64, messageID int, text string, keyboa
 
 // handleAdminCallbacks обрабатывает все callback запросы панели администратора
 func (b *Bot) handleAdminCallbacks(cb *tgbotapi.CallbackQuery) bool {
+	if cb == nil || cb.Message == nil {
+		return false
+	}
 	data := cb.Data
 	chatID := cb.Message.Chat.ID
 	messageID := cb.Message.MessageID
-	fromID := cb.From.ID
+	fromID := int64(0)
+	if cb.From != nil {
+		fromID = cb.From.ID
+	}
 
 	if !strings.HasPrefix(data, "adm_") {
 		return false
