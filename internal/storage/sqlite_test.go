@@ -230,11 +230,14 @@ func TestStorage_PrayerAdjustments(t *testing.T) {
 	now := time.Now()
 	validUntil := now.Add(7 * 24 * time.Hour)
 
-	// 1. Save adjustment: Ufa, Isha +5
-	if err := store.SaveAdjustment("Уфа", "Иша", 5, validUntil); err != nil {
+	// 1. Save adjustment: Ufa, Isha +5 (offset) and Dhuhr 13:30 (fixed)
+	if err := store.SaveAdjustment("Уфа", "Иша", 5, "", validUntil); err != nil {
 		t.Fatalf("SaveAdjustment failed: %v", err)
 	}
-	if err := store.SaveAdjustment("Уфа", "Фаджр", -2, validUntil); err != nil {
+	if err := store.SaveAdjustment("Уфа", "Фаджр", -2, "", validUntil); err != nil {
+		t.Fatalf("SaveAdjustment failed: %v", err)
+	}
+	if err := store.SaveAdjustment("Уфа", "Зухр", 0, "13:30", validUntil); err != nil {
 		t.Fatalf("SaveAdjustment failed: %v", err)
 	}
 
@@ -243,7 +246,7 @@ func TestStorage_PrayerAdjustments(t *testing.T) {
 	if err != nil {
 		t.Fatalf("GetActiveAdjustments failed: %v", err)
 	}
-	if adj["Иша"] != 5 || adj["Фаджр"] != -2 {
+	if adj["Иша"].OffsetMinutes != 5 || adj["Фаджр"].OffsetMinutes != -2 || adj["Зухр"].FixedTime != "13:30" {
 		t.Errorf("Unexpected adjustments for Ufa: %+v", adj)
 	}
 
@@ -255,7 +258,7 @@ func TestStorage_PrayerAdjustments(t *testing.T) {
 
 	// 4. GetAllActiveAdjustments
 	all, err := store.GetAllActiveAdjustments()
-	if err != nil || len(all) != 2 {
+	if err != nil || len(all) != 3 {
 		t.Fatalf("GetAllActiveAdjustments returned wrong count: %d", len(all))
 	}
 
@@ -264,8 +267,8 @@ func TestStorage_PrayerAdjustments(t *testing.T) {
 		t.Fatalf("DeleteAdjustment failed: %v", err)
 	}
 	allAfter, _ := store.GetAllActiveAdjustments()
-	if len(allAfter) != 1 {
-		t.Errorf("Expected 1 adjustment left after deletion, got %d", len(allAfter))
+	if len(allAfter) != 2 {
+		t.Errorf("Expected 2 adjustments left after deletion, got %d", len(allAfter))
 	}
 }
 

@@ -10,6 +10,8 @@ import (
 	"time"
 
 	_ "modernc.org/sqlite"
+
+	"namaz-time-bot/internal/api"
 )
 
 func normalizeScheduleTime(t string) string {
@@ -159,6 +161,7 @@ type PrayerAdjustment struct {
 	City          string
 	Prayer        string // "Фаджр", "Восход", "Зухр", "Аср", "Магриб", "Иша" или "all"
 	OffsetMinutes int
+	FixedTime     string // например "13:30"
 	ValidUntil    time.Time
 	CreatedAt     time.Time
 }
@@ -216,7 +219,8 @@ func (s *Storage) init() error {
 			prayer TEXT NOT NULL,
 			offset_minutes INTEGER NOT NULL,
 			valid_until DATETIME NOT NULL,
-			created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+			created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+			fixed_time TEXT DEFAULT ''
 		);`,
 	}
 
@@ -238,11 +242,18 @@ func (s *Storage) init() error {
 	_ = s.addColumnIfNotExist("custom_header", "TEXT DEFAULT ''")
 	_ = s.addColumnIfNotExist("prayer_names_preset", "TEXT DEFAULT 'ru'")
 	_ = s.addColumnIfNotExist("custom_prayer_names", "TEXT DEFAULT ''")
+	_ = s.addTableColumnIfNotExist("prayer_adjustments", "fixed_time", "TEXT DEFAULT ''")
 	return nil
 }
 
 func (s *Storage) addColumnIfNotExist(column, colType string) error {
 	query := fmt.Sprintf("ALTER TABLE users ADD COLUMN %s %s;", column, colType)
+	_, err := s.db.Exec(query)
+	return err // Игнорируем ошибку, если колонка уже существует
+}
+
+func (s *Storage) addTableColumnIfNotExist(table, column, colType string) error {
+	query := fmt.Sprintf("ALTER TABLE %s ADD COLUMN %s %s;", table, column, colType)
 	_, err := s.db.Exec(query)
 	return err // Игнорируем ошибку, если колонка уже существует
 }
@@ -647,21 +658,21 @@ func (s *Storage) GetAdmins() ([]BotAdmin, error) {
 
 // --- Корректировки времени намаза ---
 
-func (s *Storage) SaveAdjustment(city, prayer string, offsetMinutes int, validUntil time.Time) error {
+func (s *Storage) SaveAdjustment(city, prayer string, offsetMinutes int, fixedTime string, validUntil time.Time) error {
 	// Сначала удаляем предыдущие правила для того же города и молитвы
 	_, _ = s.db.Exec(`DELETE FROM prayer_adjustments WHERE city = ? AND prayer = ?;`, city, prayer)
 
 	query := `
-	INSERT INTO prayer_adjustments (city, prayer, offset_minutes, valid_until, created_at)
-	VALUES (?, ?, ?, ?, ?);
+	INSERT INTO prayer_adjustments (city, prayer, offset_minutes, fixed_time, valid_until, created_at)
+	VALUES (?, ?, ?, ?, ?, ?);
 	`
-	_, err := s.db.Exec(query, city, prayer, offsetMinutes, validUntil, time.Now())
+	_, err := s.db.Exec(query, city, prayer, offsetMinutes, fixedTime, validUntil, time.Now())
 	return err
 }
 
-func (s *Storage) GetActiveAdjustments(city string, date time.Time) (map[string]int, error) {
+func (s *Storage) GetActiveAdjustments(city string, date time.Time) (map[string]api.PrayerRule, error) {
 	query := `
-	SELECT prayer, offset_minutes FROM prayer_adjustments 
+	SELECT prayer, offset_minutes, COALESCE(fixed_time, '') FROM prayer_adjustments 
 	WHERE city = ? AND valid_until >= ?;
 	`
 	// Сравниваем с началом текущего дня даты
@@ -672,21 +683,25 @@ func (s *Storage) GetActiveAdjustments(city string, date time.Time) (map[string]
 	}
 	defer rows.Close()
 
-	adjustments := make(map[string]int)
+	adjustments := make(map[string]api.PrayerRule)
 	for rows.Next() {
 		var prayer string
 		var offset int
-		if err := rows.Scan(&prayer, &offset); err != nil {
+		var fixed string
+		if err := rows.Scan(&prayer, &offset, &fixed); err != nil {
 			return nil, err
 		}
-		adjustments[prayer] = offset
+		adjustments[prayer] = api.PrayerRule{
+			OffsetMinutes: offset,
+			FixedTime:     fixed,
+		}
 	}
 	return adjustments, rows.Err()
 }
 
 func (s *Storage) GetAllActiveAdjustments() ([]PrayerAdjustment, error) {
 	query := `
-	SELECT id, city, prayer, offset_minutes, valid_until, created_at 
+	SELECT id, city, prayer, offset_minutes, COALESCE(fixed_time, ''), valid_until, created_at 
 	FROM prayer_adjustments 
 	WHERE valid_until >= ?
 	ORDER BY city ASC, id ASC;
@@ -703,7 +718,7 @@ func (s *Storage) GetAllActiveAdjustments() ([]PrayerAdjustment, error) {
 	var list []PrayerAdjustment
 	for rows.Next() {
 		var a PrayerAdjustment
-		if err := rows.Scan(&a.ID, &a.City, &a.Prayer, &a.OffsetMinutes, &a.ValidUntil, &a.CreatedAt); err != nil {
+		if err := rows.Scan(&a.ID, &a.City, &a.Prayer, &a.OffsetMinutes, &a.FixedTime, &a.ValidUntil, &a.CreatedAt); err != nil {
 			return nil, err
 		}
 		list = append(list, a)

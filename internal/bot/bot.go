@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"net/url"
+	"strconv"
 	"strings"
 	"sync"
 	"time"
@@ -22,12 +23,14 @@ const (
 	pendingActionFooter        pendingActionType = "footer"
 	pendingActionPrayer        pendingActionType = "prayer"
 	pendingActionBroadcastTime pendingActionType = "broadcast_time"
+	pendingActionFixedTime     pendingActionType = "fixed_time"
 )
 
 type userState struct {
 	action        pendingActionType
 	targetGroupID int64
 	prayerKey     string
+	cityID        int
 }
 
 type Bot struct {
@@ -182,6 +185,9 @@ func (b *Bot) Start() {
 						} else {
 							b.handleSettings(chatID, 0)
 						}
+					} else if state.action == pendingActionFixedTime {
+						b.sendMessage(chatID, "❌ Ввод фиксированного времени отменен.")
+						b.handleAdminSelectOffsetStep(chatID, state.cityID, state.prayerKey, 0)
 					}
 				} else {
 					if state.action == pendingActionHeader {
@@ -210,6 +216,27 @@ func (b *Bot) Start() {
 						} else {
 							b.handleSettings(chatID, 0)
 						}
+					} else if state.action == pendingActionFixedTime {
+						timeStr := strings.TrimSpace(text)
+						parts := strings.Split(timeStr, ":")
+						var hour, min int
+						valid := false
+						if len(parts) == 2 {
+							if h, errH := strconv.Atoi(parts[0]); errH == nil && h >= 0 && h <= 23 {
+								if m, errM := strconv.Atoi(parts[1]); errM == nil && m >= 0 && m <= 59 {
+									hour = h
+									min = m
+									valid = true
+								}
+							}
+						}
+						if !valid {
+							b.setUserState(fromID, state)
+							b.sendMessage(chatID, "❌ Некорректный формат времени. Введите время в формате `ЧЧ:ММ` (например: `13:30` или `06:00`):")
+							continue
+						}
+						fixedTime := fmt.Sprintf("%02d:%02d", hour, min)
+						b.handleAdminSelectDurationStepForFixed(chatID, state.cityID, state.prayerKey, fixedTime, 0)
 					}
 				}
 				continue
@@ -720,8 +747,8 @@ func CreateShareInlineKeyboard(text string) tgbotapi.InlineKeyboardMarkup {
 
 	return tgbotapi.NewInlineKeyboardMarkup(
 		tgbotapi.NewInlineKeyboardRow(
-			tgbotapi.NewInlineKeyboardButtonURL("🟢 WhatsApp", waURL),
-			tgbotapi.NewInlineKeyboardButtonURL("🔵 MAX", maxURL),
+			tgbotapi.NewInlineKeyboardButtonURL("WhatsApp ↗", waURL),
+			tgbotapi.NewInlineKeyboardButtonURL("MAX ↗", maxURL),
 		),
 	)
 }

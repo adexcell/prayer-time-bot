@@ -190,7 +190,7 @@ func (b *Bot) handleAdminSelectPrayerStep(chatID int64, cityID int, messageID in
 	b.sendOrEditMessage(chatID, messageID, text, &keyboard)
 }
 
-// handleAdminSelectOffsetStep выбор смещения времени в минутах
+// handleAdminSelectOffsetStep выбор смещения времени в минутах либо ввод фиксированного времени
 func (b *Bot) handleAdminSelectOffsetStep(chatID int64, cityID int, prayer string, messageID int) {
 	cityInfo, ok := api.GetCityByID(cityID)
 	cityName := "Уфа"
@@ -199,10 +199,10 @@ func (b *Bot) handleAdminSelectOffsetStep(chatID int64, cityID int, prayer strin
 	}
 
 	text := fmt.Sprintf(
-		"➕ *Шаг 3 из 4: Выберите смещение времени*\n\n"+
+		"➕ *Шаг 3 из 4: Задайте время молитвы*\n\n"+
 			"📍 Населенный пункт: *%s*\n"+
 			"🕌 Молитва: *%s*\n\n"+
-			"Выберите, на сколько минут добавить (+) или убавить (-) время:",
+			"Выберите смещение в минутах (+/-), либо *зафиксируйте точное время* (например, `13:30`):",
 		cityName, prayer,
 	)
 
@@ -210,6 +210,11 @@ func (b *Bot) handleAdminSelectOffsetStep(chatID int64, cityID int, prayer strin
 	offsetsPlus := []int{1, 2, 3, 5, 10, 15, 30}
 
 	var rows [][]tgbotapi.InlineKeyboardButton
+
+	// Кнопка для фиксации точного времени
+	rows = append(rows, []tgbotapi.InlineKeyboardButton{
+		tgbotapi.NewInlineKeyboardButtonData("⏱ Зафиксировать точное время (HH:MM)", fmt.Sprintf("adm_enter_fixed:%d:%s", cityID, prayer)),
+	})
 
 	// Кнопки убавления
 	var rowMinus []tgbotapi.InlineKeyboardButton
@@ -305,7 +310,60 @@ func (b *Bot) handleAdminSelectDurationStep(chatID int64, cityID int, prayer str
 	b.sendOrEditMessage(chatID, messageID, text, &keyboard)
 }
 
-// handleAdminSaveRule сохраняет корректировку в БД
+// handleAdminSelectDurationStepForFixed выбор периода действия для фиксированного времени
+func (b *Bot) handleAdminSelectDurationStepForFixed(chatID int64, cityID int, prayer string, fixedTime string, messageID int) {
+	cityInfo, ok := api.GetCityByID(cityID)
+	cityName := "Уфа"
+	if ok {
+		cityName = cityInfo.DisplayName
+	}
+
+	text := fmt.Sprintf(
+		"➕ *Шаг 4 из 4: Срок действия правила*\n\n"+
+			"📍 Населенный пункт: *%s*\n"+
+			"🕌 Молитва: *%s*\n"+
+			"⏱ Фиксированное время: *%s*\n\n"+
+			"Выберите, до какого периода сохранять это правило:",
+		cityName, prayer, fixedTime,
+	)
+
+	periods := []struct {
+		Label string
+		Key   string
+	}{
+		{"🗓 7 дней", "7d"},
+		{"🗓 14 дней", "14d"},
+		{"🗓 До конца месяца", "endmonth"},
+		{"🗓 1 месяц", "1m"},
+		{"🗓 3 месяца", "3m"},
+		{"🗓 1 год", "1y"},
+		{"♾ Бессрочно (10 лет)", "forever"},
+	}
+
+	var rows [][]tgbotapi.InlineKeyboardButton
+	var row []tgbotapi.InlineKeyboardButton
+
+	for _, p := range periods {
+		btn := tgbotapi.NewInlineKeyboardButtonData(p.Label, fmt.Sprintf("adm_save_fix:%d|%s|%s|%s", cityID, prayer, fixedTime, p.Key))
+		row = append(row, btn)
+		if len(row) == 2 {
+			rows = append(rows, row)
+			row = []tgbotapi.InlineKeyboardButton{}
+		}
+	}
+	if len(row) > 0 {
+		rows = append(rows, row)
+	}
+
+	rows = append(rows, []tgbotapi.InlineKeyboardButton{
+		tgbotapi.NewInlineKeyboardButtonData("🔙 Назад к выбору времени", fmt.Sprintf("adm_prayer:%d:%s", cityID, prayer)),
+	})
+
+	keyboard := tgbotapi.NewInlineKeyboardMarkup(rows...)
+	b.sendOrEditMessage(chatID, messageID, text, &keyboard)
+}
+
+// handleAdminSaveRule сохраняет корректировку со смещением в БД
 func (b *Bot) handleAdminSaveRule(chatID int64, cityID int, prayer string, offsetMinutes int, periodKey string, messageID int) {
 	cityInfo, ok := api.GetCityByID(cityID)
 	cityName := "Уфа"
@@ -342,7 +400,7 @@ func (b *Bot) handleAdminSaveRule(chatID int64, cityID int, prayer string, offse
 	// Устанавливаем конец дня
 	validUntil = time.Date(validUntil.Year(), validUntil.Month(), validUntil.Day(), 23, 59, 59, 0, validUntil.Location())
 
-	err := b.storage.SaveAdjustment(cleanCity, prayer, offsetMinutes, validUntil)
+	err := b.storage.SaveAdjustment(cleanCity, prayer, offsetMinutes, "", validUntil)
 	if err != nil {
 		log.Printf("Ошибка сохранения корректировки: %v", err)
 		b.sendOrEditMessage(chatID, messageID, "❌ Произошла ошибка при сохранении корректировки.", nil)
@@ -362,6 +420,71 @@ func (b *Bot) handleAdminSaveRule(chatID int64, cityID int, prayer string, offse
 			"📅 *Действует до:* %s\n\n"+
 			"Все запросы расписания и рассылки для данного города будут автоматически учитывать это правило.",
 		cityName, prayer, sign, offsetMinutes, validUntil.Format("02.01.2006"),
+	)
+
+	keyboard := tgbotapi.NewInlineKeyboardMarkup(
+		tgbotapi.NewInlineKeyboardRow(
+			tgbotapi.NewInlineKeyboardButtonData("➕ Добавить еще правило", "adm_add_rule:city:1"),
+			tgbotapi.NewInlineKeyboardButtonData("📋 Список правил", "adm_rules"),
+		),
+		tgbotapi.NewInlineKeyboardRow(
+			tgbotapi.NewInlineKeyboardButtonData("🔙 В главное меню админки", "adm_main"),
+		),
+	)
+
+	b.sendOrEditMessage(chatID, messageID, text, &keyboard)
+}
+
+// handleAdminSaveRuleFixed сохраняет правило с фиксированным временем в БД
+func (b *Bot) handleAdminSaveRuleFixed(chatID int64, cityID int, prayer string, fixedTime string, periodKey string, messageID int) {
+	cityInfo, ok := api.GetCityByID(cityID)
+	cityName := "Уфа"
+	cleanCity := "Уфа"
+	if ok {
+		cityName = cityInfo.DisplayName
+		cleanCity = cityInfo.CleanName
+	}
+
+	now := time.Now()
+	var validUntil time.Time
+
+	switch periodKey {
+	case "7d":
+		validUntil = now.AddDate(0, 0, 7)
+	case "14d":
+		validUntil = now.AddDate(0, 0, 14)
+	case "endmonth":
+		firstOfNextMonth := time.Date(now.Year(), now.Month()+1, 1, 0, 0, 0, 0, now.Location())
+		validUntil = firstOfNextMonth.Add(-1 * time.Second)
+	case "1m":
+		validUntil = now.AddDate(0, 1, 0)
+	case "3m":
+		validUntil = now.AddDate(0, 3, 0)
+	case "1y":
+		validUntil = now.AddDate(1, 0, 0)
+	case "forever":
+		validUntil = now.AddDate(10, 0, 0)
+	default:
+		validUntil = now.AddDate(0, 1, 0)
+	}
+
+	validUntil = time.Date(validUntil.Year(), validUntil.Month(), validUntil.Day(), 23, 59, 59, 0, validUntil.Location())
+
+	err := b.storage.SaveAdjustment(cleanCity, prayer, 0, fixedTime, validUntil)
+	if err != nil {
+		log.Printf("Ошибка сохранения фиксированного времени: %v", err)
+		b.sendOrEditMessage(chatID, messageID, "❌ Произошла ошибка при сохранении правила.", nil)
+		return
+	}
+
+	text := fmt.Sprintf(
+		"✅ *Фиксированное время успешно сохранено!*\n\n"+
+			"📍 *Населенный пункт:* %s\n"+
+			"🕌 *Молитва:* %s\n"+
+			"⏱ *Фиксированное время:* %s\n"+
+			"📅 *Действует до:* %s\n\n"+
+			"Все запросы расписания и рассылки для данного города будут автоматически отображать указанное время.",
+		cityName, prayer, fixedTime, validUntil.Format("02.01.2006"),
 	)
 
 	keyboard := tgbotapi.NewInlineKeyboardMarkup(
@@ -406,14 +529,21 @@ func (b *Bot) handleAdminRulesList(chatID int64, messageID int) {
 	var rows [][]tgbotapi.InlineKeyboardButton
 
 	for i, r := range rules {
-		sign := "+"
-		if r.OffsetMinutes < 0 {
-			sign = ""
+		if r.FixedTime != "" {
+			sb.WriteString(fmt.Sprintf(
+				"*%d.* 📍 *%s* | 🕌 %s: *⏱ %s (Фиксированное)*\n   📅 Действует до: _%s_\n\n",
+				i+1, r.City, r.Prayer, r.FixedTime, r.ValidUntil.Format("02.01.2006"),
+			))
+		} else {
+			sign := "+"
+			if r.OffsetMinutes < 0 {
+				sign = ""
+			}
+			sb.WriteString(fmt.Sprintf(
+				"*%d.* 📍 *%s* | 🕌 %s: *%s%d мин*\n   📅 Действует до: _%s_\n\n",
+				i+1, r.City, r.Prayer, sign, r.OffsetMinutes, r.ValidUntil.Format("02.01.2006"),
+			))
 		}
-		sb.WriteString(fmt.Sprintf(
-			"*%d.* 📍 *%s* | 🕌 %s: *%s%d мин*\n   📅 Действует до: _%s_\n\n",
-			i+1, r.City, r.Prayer, sign, r.OffsetMinutes, r.ValidUntil.Format("02.01.2006"),
-		))
 
 		delBtn := tgbotapi.NewInlineKeyboardButtonData(
 			fmt.Sprintf("❌ Удалить #%d (%s, %s)", i+1, r.City, r.Prayer),
@@ -701,6 +831,43 @@ func (b *Bot) handleAdminCallbacks(cb *tgbotapi.CallbackQuery) bool {
 			cityID, _ := strconv.Atoi(parts[0])
 			prayer := parts[1]
 			b.handleAdminSelectOffsetStep(chatID, cityID, prayer, messageID)
+		}
+		b.answerCallback(cb.ID, "")
+
+	case strings.HasPrefix(data, "adm_enter_fixed:"):
+		parts := strings.Split(strings.TrimPrefix(data, "adm_enter_fixed:"), ":")
+		if len(parts) >= 2 {
+			cityID, _ := strconv.Atoi(parts[0])
+			prayer := parts[1]
+			b.setUserState(fromID, userState{
+				action:    pendingActionFixedTime,
+				cityID:    cityID,
+				prayerKey: prayer,
+			})
+			cityInfo, _ := api.GetCityByID(cityID)
+			cityName := "Уфа"
+			if cityInfo.DisplayName != "" {
+				cityName = cityInfo.DisplayName
+			}
+			prompt := fmt.Sprintf(
+				"⏱ *Введите фиксированное время для «%s» (%s)*\n\n"+
+					"Введите точное время в формате `ЧЧ:ММ` (например: `13:30` или `06:00`).\n\n"+
+					"В расписании эта молитва будет всегда отображаться с этим временем.\n\n"+
+					"Отправьте время ответным сообщением либо `-` для отмены.",
+				escapeMarkdown(prayer), escapeMarkdown(cityName),
+			)
+			b.sendMessage(chatID, prompt)
+		}
+		b.answerCallback(cb.ID, "")
+
+	case strings.HasPrefix(data, "adm_save_fix:"):
+		parts := strings.Split(strings.TrimPrefix(data, "adm_save_fix:"), "|")
+		if len(parts) >= 4 {
+			cityID, _ := strconv.Atoi(parts[0])
+			prayer := parts[1]
+			fixedTime := parts[2]
+			periodKey := parts[3]
+			b.handleAdminSaveRuleFixed(chatID, cityID, prayer, fixedTime, periodKey, messageID)
 		}
 		b.answerCallback(cb.ID, "")
 

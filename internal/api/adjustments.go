@@ -6,8 +6,13 @@ import (
 	"time"
 )
 
+type PrayerRule struct {
+	OffsetMinutes int
+	FixedTime     string // например "13:30"
+}
+
 type AdjustmentStorage interface {
-	GetActiveAdjustments(city string, date time.Time) (map[string]int, error)
+	GetActiveAdjustments(city string, date time.Time) (map[string]PrayerRule, error)
 }
 
 // ApplyOffset добавляет или вычитает минуты из строки времени "HH:MM"
@@ -39,23 +44,38 @@ func ApplyOffset(timeStr string, offsetMinutes int) string {
 	return fmt.Sprintf("%02d:%02d", newHour, newMin)
 }
 
-// ApplyPrayerAdjustments применяет карту смещений к объекту расписания
-func ApplyPrayerAdjustments(item *DUMRBItem, adjustments map[string]int) {
+// ApplyPrayerAdjustments применяет карту правил (смещений или фиксированного времени) к объекту расписания
+func ApplyPrayerAdjustments(item *DUMRBItem, adjustments map[string]PrayerRule) {
 	if len(adjustments) == 0 {
 		return
 	}
 
 	apply := func(prayerNames []string, currentVal string) string {
 		for _, name := range prayerNames {
-			if offset, ok := adjustments[name]; ok && offset != 0 {
-				return ApplyOffset(currentVal, offset)
+			if rule, ok := adjustments[name]; ok {
+				if rule.FixedTime != "" {
+					return rule.FixedTime
+				}
+				if rule.OffsetMinutes != 0 {
+					return ApplyOffset(currentVal, rule.OffsetMinutes)
+				}
 			}
 		}
-		if allOffset, ok := adjustments["Все молитвы"]; ok && allOffset != 0 {
-			return ApplyOffset(currentVal, allOffset)
+		if allRule, ok := adjustments["Все молитвы"]; ok {
+			if allRule.FixedTime != "" {
+				return allRule.FixedTime
+			}
+			if allRule.OffsetMinutes != 0 {
+				return ApplyOffset(currentVal, allRule.OffsetMinutes)
+			}
 		}
-		if allOffset, ok := adjustments["all"]; ok && allOffset != 0 {
-			return ApplyOffset(currentVal, allOffset)
+		if allRule, ok := adjustments["all"]; ok {
+			if allRule.FixedTime != "" {
+				return allRule.FixedTime
+			}
+			if allRule.OffsetMinutes != 0 {
+				return ApplyOffset(currentVal, allRule.OffsetMinutes)
+			}
 		}
 		return currentVal
 	}
@@ -63,10 +83,14 @@ func ApplyPrayerAdjustments(item *DUMRBItem, adjustments map[string]int) {
 	fajrBefore := item.Fajr
 	item.Fajr = apply([]string{"Фаджр", "fajr"}, item.Fajr)
 	if item.Fajr != fajrBefore && item.SuhurDo != "" {
-		// Сдвигаем конец сухура на то же смещение, что и Фаджр
+		// Сдвигаем конец сухура
 		for _, name := range []string{"Фаджр", "fajr", "Все молитвы", "all"} {
-			if offset, ok := adjustments[name]; ok && offset != 0 {
-				item.SuhurDo = ApplyOffset(item.SuhurDo, offset)
+			if rule, ok := adjustments[name]; ok {
+				if rule.FixedTime != "" {
+					item.SuhurDo = rule.FixedTime
+				} else if rule.OffsetMinutes != 0 {
+					item.SuhurDo = ApplyOffset(item.SuhurDo, rule.OffsetMinutes)
+				}
 				break
 			}
 		}

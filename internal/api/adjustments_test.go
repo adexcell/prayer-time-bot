@@ -44,9 +44,9 @@ func TestApplyPrayerAdjustments(t *testing.T) {
 		Isha:    "21:32",
 	}
 
-	adjustments := map[string]int{
-		"Иша":   5,  // 21:32 -> 21:37
-		"Фаджр": -3, // 04:53 -> 04:50, SuhurDo 04:38 -> 04:35
+	adjustments := map[string]PrayerRule{
+		"Иша":   {OffsetMinutes: 5},  // 21:32 -> 21:37
+		"Фаджр": {OffsetMinutes: -3}, // 04:53 -> 04:50, SuhurDo 04:38 -> 04:35
 	}
 
 	ApplyPrayerAdjustments(item, adjustments)
@@ -65,6 +65,38 @@ func TestApplyPrayerAdjustments(t *testing.T) {
 	}
 }
 
+func TestApplyPrayerAdjustments_FixedTime(t *testing.T) {
+	item := &DUMRBItem{
+		SuhurDo: "04:38",
+		Fajr:    "04:53",
+		Sunrise: "06:48",
+		Dhuhr:   "13:11",
+		Asr:     "16:35",
+		Maghrib: "19:33",
+		Isha:    "21:32",
+	}
+
+	adjustments := map[string]PrayerRule{
+		"Зухр":  {FixedTime: "13:30"},
+		"Фаджр": {FixedTime: "05:00"},
+	}
+
+	ApplyPrayerAdjustments(item, adjustments)
+
+	if item.Dhuhr != "13:30" {
+		t.Errorf("Expected fixed Dhuhr '13:30', got %q", item.Dhuhr)
+	}
+	if item.Fajr != "05:00" {
+		t.Errorf("Expected fixed Fajr '05:00', got %q", item.Fajr)
+	}
+	if item.SuhurDo != "05:00" {
+		t.Errorf("Expected SuhurDo '05:00', got %q", item.SuhurDo)
+	}
+	if item.Isha != "21:32" {
+		t.Errorf("Expected unchanged Isha '21:32', got %q", item.Isha)
+	}
+}
+
 func TestApplyPrayerAdjustments_All(t *testing.T) {
 	item := &DUMRBItem{
 		Fajr:    "05:00",
@@ -75,8 +107,8 @@ func TestApplyPrayerAdjustments_All(t *testing.T) {
 		Isha:    "21:00",
 	}
 
-	adjustments := map[string]int{
-		"all": 2,
+	adjustments := map[string]PrayerRule{
+		"all": {OffsetMinutes: 2},
 	}
 
 	ApplyPrayerAdjustments(item, adjustments)
