@@ -93,33 +93,40 @@ func (s *Scheduler) checkAndSendReminders() {
 			"Иша":    timing.Isha,
 		}
 
-		msgDaily := api.FormatMessage(timing, userCity, now)
-
-		// 1. Рассылка утреннего расписания в выбранное пользователем время
-		dailyTime := user.DailyScheduleTime
-		if dailyTime == "" {
-			dailyTime = "06:00"
-		}
-		if dailyTime == currentTimeStr {
-			s.bot.SendToChat(user.ChatID, msgDaily)
+		cfg := api.PrayerFormatConfig{
+			Preset:        user.PrayerNamesPreset,
+			CustomHeader:  user.CustomHeader,
+			CustomFooter:  user.CustomFooter,
+			CustomPrayers: storage.ParseCustomPrayerNames(user.CustomPrayerNames),
 		}
 
-		// 2. Рассылка Вечерняя рассылка (оставшиеся намазы сегодня + расписание на завтра)
-		if user.EveningScheduleTime != "" && user.EveningScheduleTime == currentTimeStr {
-			tomorrowTiming, tExists := tomorrowCache[userCity]
-			if !tExists {
-				tomorrowDate := now.AddDate(0, 0, 1)
-				tt, err := s.client.FetchPrayerTimes(userCity, tomorrowDate)
-				if err != nil {
-					log.Printf("Ошибка получения завтрашнего расписания для %s: %v", userCity, err)
+		msgDaily := api.FormatMessageCustom(timing, userCity, now, cfg)
+
+		// 1. Рассылка расписания по всем настроенным временам
+		broadcastTimes := user.GetParsedBroadcastTimes()
+		for _, bTime := range broadcastTimes {
+			if bTime == currentTimeStr {
+				if now.Hour() >= 16 {
+					tomorrowTiming, tExists := tomorrowCache[userCity]
+					if !tExists {
+						tomorrowDate := now.AddDate(0, 0, 1)
+						tt, err := s.client.FetchPrayerTimes(userCity, tomorrowDate)
+						if err != nil {
+							log.Printf("Ошибка получения завтрашнего расписания для %s: %v", userCity, err)
+						} else {
+							tomorrowCache[userCity] = tt
+							tomorrowTiming = tt
+						}
+					}
+					if tomorrowTiming != nil {
+						msgEvening := api.FormatEveningMessageCustom(timing, tomorrowTiming, userCity, now, cfg)
+						s.bot.SendToChatWithShare(user.ChatID, msgEvening)
+					} else {
+						s.bot.SendToChatWithShare(user.ChatID, msgDaily)
+					}
 				} else {
-					tomorrowCache[userCity] = tt
-					tomorrowTiming = tt
+					s.bot.SendToChatWithShare(user.ChatID, msgDaily)
 				}
-			}
-			if tomorrowTiming != nil {
-				msgEvening := api.FormatEveningMessage(timing, tomorrowTiming, userCity, now)
-				s.bot.SendToChat(user.ChatID, msgEvening)
 			}
 		}
 
@@ -135,7 +142,7 @@ func (s *Scheduler) checkAndSendReminders() {
 			if user.Notify15Min {
 				fifteenMinBefore := subtractMinutes(timeStr, 15)
 				if fifteenMinBefore == currentTimeStr {
-					msg := fmt.Sprintf("⏳ *До намаза %s осталась 15 минут!* (%s, г. %s)", name, timeStr, userCity)
+					msg := fmt.Sprintf("⏳ *До намаза %s осталось 15 минут!* (%s, г. %s)", name, timeStr, userCity)
 					s.bot.SendToChat(user.ChatID, msg)
 				}
 			}

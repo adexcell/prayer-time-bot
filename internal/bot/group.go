@@ -10,6 +10,7 @@ import (
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 
 	"namaz-time-bot/internal/api"
+	"namaz-time-bot/internal/storage"
 )
 
 // isGroupAdmin проверяет, является ли пользователь администратором/создателем группы или супер-админом бота
@@ -92,95 +93,109 @@ func (b *Bot) handleGroupSettingsRedirect(chatID int64, messageID int) {
 	}
 }
 
-// handleGroupSettings выводит панель управления настройками конкретной группы в ЛС
+// handleGroupSettings выводит панель управления настройками конкретной группы/канала в ЛС
 func (b *Bot) handleGroupSettings(userChatID int64, targetGroupID int64, groupTitle string, messageID int) {
 	u, _ := b.storage.GetUser(targetGroupID)
 	currentCity, _ := b.storage.GetUserCity(targetGroupID, b.defaultCity)
 
-	selectedTime := "06:00"
-	eveningTime := ""
 	notify15min := true
 	notifyAtTime := true
 	isSubscribed := false
+	preset := "ru"
+	customFooter := ""
+	customHeader := ""
+	var broadcastTimes []string
 
 	if u != nil {
-		isSubscribed = true
-		if u.DailyScheduleTime != "" {
-			selectedTime = u.DailyScheduleTime
+		broadcastTimes = u.GetParsedBroadcastTimes()
+		if len(broadcastTimes) > 0 {
+			isSubscribed = true
 		}
-		eveningTime = u.EveningScheduleTime
 		notify15min = u.Notify15Min
 		notifyAtTime = u.NotifyAtTime
+		if u.PrayerNamesPreset != "" {
+			preset = u.PrayerNamesPreset
+		}
+		customFooter = u.CustomFooter
+		customHeader = u.CustomHeader
 	}
 
 	subStatus := "🔕 Отключена"
-	if isSubscribed {
+	timesDisplay := "🔕 Отключена"
+	if isSubscribed && len(broadcastTimes) > 0 {
 		subStatus = "🔔 Включена"
+		timesDisplay = strings.Join(broadcastTimes, ", ")
 	}
 
-	eveningDisplay := "Отключена"
-	if eveningTime != "" {
-		eveningDisplay = eveningTime
+	presetNames := map[string]string{
+		"ru":    "Русский",
+		"ar":    "العربية (Арабский)",
+		"ru_ar": "Русский + Арабский",
+		"ba":    "Башкирский / Татарский",
+	}
+	presetDisplay := presetNames[preset]
+	if presetDisplay == "" {
+		presetDisplay = "Русский"
+	}
+
+	footerDisplay := "По умолчанию"
+	if customFooter != "" {
+		footerDisplay = customFooter
+	}
+	headerDisplay := "По умолчанию"
+	if customHeader != "" {
+		headerDisplay = customHeader
 	}
 
 	safeTitle := escapeMarkdown(groupTitle)
 	safeCity := escapeMarkdown(currentCity)
 
 	text := fmt.Sprintf(
-		"👥 *Управление настройками группы*\n"+
+		"👥 *Управление настройками канала / группы*\n"+
 			"Чат: *%s*\n\n"+
 			"📍 *Населенный пункт:* %s\n"+
-			"🌅 *Утренняя рассылка (на день):* %s\n"+
-			"🌙 *Вечерняя рассылка (на завтра):* %s\n"+
-			"📢 *Статус рассылки в группу:* %s\n\n"+
-			"Выберите параметр для изменения:",
-		safeTitle, safeCity, selectedTime, eveningDisplay, subStatus,
+			"⏰ *Времена рассылки:* %s\n"+
+			"📢 *Статус рассылки:* %s\n"+
+			"🎨 *Стиль названий молитв:* %s\n"+
+			"✍️ *Подпись (footer):* %s\n"+
+			"📝 *Заголовок:* %s\n\n"+
+			"Нажмите *«➕ Добавить время»*, чтобы ввести время (ЧЧ:ММ), или нажмите на крестик у времени для его удаления:",
+		safeTitle, safeCity, escapeMarkdown(timesDisplay), subStatus,
+		escapeMarkdown(presetDisplay), escapeMarkdown(footerDisplay), escapeMarkdown(headerDisplay),
 	)
 
-	// 1. Утреннее время
-	times := []string{"05:00", "06:00", "07:00", "08:00", "09:00", "10:00"}
-	var timeRow1 []tgbotapi.InlineKeyboardButton
-	var timeRow2 []tgbotapi.InlineKeyboardButton
+	var keyboardRows [][]tgbotapi.InlineKeyboardButton
 
-	for i, t := range times {
-		label := t
-		if t == selectedTime {
-			label = "✓ " + t
-		}
-		btn := tgbotapi.NewInlineKeyboardButtonData(label, fmt.Sprintf("gtime:%d:%s", targetGroupID, t))
-		if i < 3 {
-			timeRow1 = append(timeRow1, btn)
-		} else {
-			timeRow2 = append(timeRow2, btn)
-		}
-	}
+	// 1. Кнопка смены города
+	keyboardRows = append(keyboardRows, []tgbotapi.InlineKeyboardButton{
+		tgbotapi.NewInlineKeyboardButtonData("🏙 Изменить город / район", fmt.Sprintf("gloc:%d:city:1", targetGroupID)),
+	})
 
-	// 2. Вечернее время
-	etimes := []struct {
-		val   string
-		label string
-	}{
-		{"off", "🌙 Откл"},
-		{"17:00", "17:00"},
-		{"18:00", "18:00"},
-		{"19:00", "19:00"},
-		{"20:00", "20:00"},
-		{"21:00", "21:00"},
-	}
-	var eveningRow1 []tgbotapi.InlineKeyboardButton
-	var eveningRow2 []tgbotapi.InlineKeyboardButton
+	// 2. Кнопки удаления имеющихся времен рассылки (по 3 в строке)
+	if len(broadcastTimes) > 0 {
+		var curRow []tgbotapi.InlineKeyboardButton
+		for _, t := range broadcastTimes {
+			btn := tgbotapi.NewInlineKeyboardButtonData("✕ "+t, fmt.Sprintf("gdeltime:%d:%s", targetGroupID, t))
+			curRow = append(curRow, btn)
+			if len(curRow) == 3 {
+				keyboardRows = append(keyboardRows, curRow)
+				curRow = []tgbotapi.InlineKeyboardButton{}
+			}
+		}
+		if len(curRow) > 0 {
+			keyboardRows = append(keyboardRows, curRow)
+		}
 
-	for i, et := range etimes {
-		display := et.label
-		if (et.val == "off" && eveningTime == "") || (et.val == eveningTime) {
-			display = "✓ " + et.label
-		}
-		btn := tgbotapi.NewInlineKeyboardButtonData(display, fmt.Sprintf("getime:%d:%s", targetGroupID, et.val))
-		if i < 3 {
-			eveningRow1 = append(eveningRow1, btn)
-		} else {
-			eveningRow2 = append(eveningRow2, btn)
-		}
+		// Строка добавления и очистки
+		keyboardRows = append(keyboardRows, []tgbotapi.InlineKeyboardButton{
+			tgbotapi.NewInlineKeyboardButtonData("➕ Добавить время", fmt.Sprintf("gaddtime:%d", targetGroupID)),
+			tgbotapi.NewInlineKeyboardButtonData("🗑 Очистить все", fmt.Sprintf("gcleartimes:%d", targetGroupID)),
+		})
+	} else {
+		// Если времен нет
+		keyboardRows = append(keyboardRows, []tgbotapi.InlineKeyboardButton{
+			tgbotapi.NewInlineKeyboardButtonData("➕ Добавить время рассылки", fmt.Sprintf("gaddtime:%d", targetGroupID)),
+		})
 	}
 
 	label15 := "⏳ 15 мин: [ ]"
@@ -198,23 +213,26 @@ func (b *Bot) handleGroupSettings(userChatID int64, targetGroupID int64, groupTi
 		labelSub = "📢 Рассылка: [✓]"
 	}
 
-	keyboard := tgbotapi.NewInlineKeyboardMarkup(
-		tgbotapi.NewInlineKeyboardRow(
-			tgbotapi.NewInlineKeyboardButtonData("🏙 Изменить город / район", fmt.Sprintf("gloc:%d:city:1", targetGroupID)),
-		),
-		timeRow1,
-		timeRow2,
-		eveningRow1,
-		eveningRow2,
-		tgbotapi.NewInlineKeyboardRow(
-			tgbotapi.NewInlineKeyboardButtonData(label15, fmt.Sprintf("gtog15:%d", targetGroupID)),
-			tgbotapi.NewInlineKeyboardButtonData(labelAtTime, fmt.Sprintf("gtogat:%d", targetGroupID)),
-		),
-		tgbotapi.NewInlineKeyboardRow(
-			tgbotapi.NewInlineKeyboardButtonData(labelSub, fmt.Sprintf("gtogsub:%d", targetGroupID)),
-			tgbotapi.NewInlineKeyboardButtonData("📤 Опубликовать пост", fmt.Sprintf("gpost:%d", targetGroupID)),
-		),
-	)
+	keyboardRows = append(keyboardRows, []tgbotapi.InlineKeyboardButton{
+		tgbotapi.NewInlineKeyboardButtonData(label15, fmt.Sprintf("gtog15:%d", targetGroupID)),
+		tgbotapi.NewInlineKeyboardButtonData(labelAtTime, fmt.Sprintf("gtogat:%d", targetGroupID)),
+	})
+	keyboardRows = append(keyboardRows, []tgbotapi.InlineKeyboardButton{
+		tgbotapi.NewInlineKeyboardButtonData(labelSub, fmt.Sprintf("gtogsub:%d", targetGroupID)),
+		tgbotapi.NewInlineKeyboardButtonData("📤 Опубликовать пост", fmt.Sprintf("gpost:%d", targetGroupID)),
+	})
+	keyboardRows = append(keyboardRows, []tgbotapi.InlineKeyboardButton{
+		tgbotapi.NewInlineKeyboardButtonData("🎨 Оформление и текст", fmt.Sprintf("gstyle:%d", targetGroupID)),
+		tgbotapi.NewInlineKeyboardButtonData("👁 Предпросмотр", fmt.Sprintf("gprev:%d", targetGroupID)),
+	})
+	keyboardRows = append(keyboardRows, []tgbotapi.InlineKeyboardButton{
+		tgbotapi.NewInlineKeyboardButtonData("🗑 Отключить канал от бота", fmt.Sprintf("gdisconnect:%d", targetGroupID)),
+	})
+	keyboardRows = append(keyboardRows, []tgbotapi.InlineKeyboardButton{
+		tgbotapi.NewInlineKeyboardButtonData("🔙 К списку каналов", "adm_channels:1"),
+	})
+
+	keyboard := tgbotapi.NewInlineKeyboardMarkup(keyboardRows...)
 
 	if messageID > 0 {
 		editMsg := tgbotapi.NewEditMessageText(userChatID, messageID, text)
@@ -229,6 +247,206 @@ func (b *Bot) handleGroupSettings(userChatID int64, targetGroupID int64, groupTi
 		msg.ReplyMarkup = keyboard
 		if _, err := b.api.Send(msg); err != nil {
 			log.Printf("Ошибка отправки handleGroupSettings: %v", err)
+		}
+	}
+}
+
+// handleGroupStyleSettings выводит меню настройки текста и оформления рассылки
+func (b *Bot) handleGroupStyleSettings(userChatID int64, targetGroupID int64, messageID int) {
+	u, _ := b.storage.GetUser(targetGroupID)
+	groupTitle := b.getGroupTitle(targetGroupID)
+
+	preset := "ru"
+	customFooter := ""
+	customHeader := ""
+	if u != nil {
+		if u.PrayerNamesPreset != "" {
+			preset = u.PrayerNamesPreset
+		}
+		customFooter = u.CustomFooter
+		customHeader = u.CustomHeader
+	}
+
+	presetNames := map[string]string{
+		"ru":    "Русский",
+		"ar":    "العربية (Арабский)",
+		"ru_ar": "Русский + Арабский (Двуязычный)",
+		"ba":    "Башкирский / Татарский",
+	}
+
+	footerText := "не задана (по умолчанию)"
+	if customFooter != "" {
+		footerText = customFooter
+	}
+	headerText := "по умолчанию (🕌 Расписание намаза)"
+	if customHeader != "" {
+		headerText = customHeader
+	}
+
+	text := fmt.Sprintf(
+		"🎨 *Настройка оформления рассылки*\n"+
+			"Канал / Группа: *%s*\n\n"+
+			"🏷 *Текущий стиль названий:* %s\n"+
+			"📝 *Текущий заголовок:* %s\n"+
+			"✍️ *Текущая подпись (footer):* %s\n\n"+
+			"Выберите стиль названий молитв или настройте текст:",
+		escapeMarkdown(groupTitle),
+		escapeMarkdown(presetNames[preset]),
+		escapeMarkdown(headerText),
+		escapeMarkdown(footerText),
+	)
+
+	ruLabel := "Русский"
+	if preset == "ru" {
+		ruLabel = "✓ Русский"
+	}
+	arLabel := "العربية"
+	if preset == "ar" {
+		arLabel = "✓ العربية"
+	}
+	ruArLabel := "Рус + Ар"
+	if preset == "ru_ar" {
+		ruArLabel = "✓ Рус + Ар"
+	}
+	baLabel := "Баш / Тат"
+	if preset == "ba" {
+		baLabel = "✓ Баш / Тат"
+	}
+
+	keyboard := tgbotapi.NewInlineKeyboardMarkup(
+		tgbotapi.NewInlineKeyboardRow(
+			tgbotapi.NewInlineKeyboardButtonData(ruLabel, fmt.Sprintf("gpreset:%d:ru", targetGroupID)),
+			tgbotapi.NewInlineKeyboardButtonData(arLabel, fmt.Sprintf("gpreset:%d:ar", targetGroupID)),
+		),
+		tgbotapi.NewInlineKeyboardRow(
+			tgbotapi.NewInlineKeyboardButtonData(ruArLabel, fmt.Sprintf("gpreset:%d:ru_ar", targetGroupID)),
+			tgbotapi.NewInlineKeyboardButtonData(baLabel, fmt.Sprintf("gpreset:%d:ba", targetGroupID)),
+		),
+		tgbotapi.NewInlineKeyboardRow(
+			tgbotapi.NewInlineKeyboardButtonData("✏️ Названия молитв", fmt.Sprintf("gprayers:%d", targetGroupID)),
+		),
+		tgbotapi.NewInlineKeyboardRow(
+			tgbotapi.NewInlineKeyboardButtonData("📝 Изменить заголовок", fmt.Sprintf("gheader:%d", targetGroupID)),
+			tgbotapi.NewInlineKeyboardButtonData("✍️ Изменить подпись", fmt.Sprintf("gfooter:%d", targetGroupID)),
+		),
+		tgbotapi.NewInlineKeyboardRow(
+			tgbotapi.NewInlineKeyboardButtonData("🔄 Сбросить оформление", fmt.Sprintf("gresetstyle:%d", targetGroupID)),
+			tgbotapi.NewInlineKeyboardButtonData("👁 Предпросмотр", fmt.Sprintf("gprev:%d", targetGroupID)),
+		),
+		tgbotapi.NewInlineKeyboardRow(
+			tgbotapi.NewInlineKeyboardButtonData("🔙 Назад к настройкам канала", fmt.Sprintf("gback:%d", targetGroupID)),
+		),
+	)
+
+	if messageID > 0 {
+		editMsg := tgbotapi.NewEditMessageText(userChatID, messageID, text)
+		editMsg.ParseMode = "Markdown"
+		editMsg.ReplyMarkup = &keyboard
+		if _, err := b.api.Send(editMsg); err != nil && !strings.Contains(err.Error(), "message is not modified") {
+			log.Printf("Ошибка редактирования handleGroupStyleSettings: %v", err)
+		}
+	} else {
+		msg := tgbotapi.NewMessage(userChatID, text)
+		msg.ParseMode = "Markdown"
+		msg.ReplyMarkup = keyboard
+		if _, err := b.api.Send(msg); err != nil {
+			log.Printf("Ошибка отправки handleGroupStyleSettings: %v", err)
+		}
+	}
+}
+
+func cleanPrayerDisplay(label string) string {
+	s := strings.TrimSpace(label)
+	s = strings.TrimPrefix(s, "*")
+	s = strings.TrimSuffix(s, "*")
+	s = strings.TrimSuffix(s, ":")
+	return strings.TrimSpace(s)
+}
+
+// handleGroupPrayersMenu выводит 2x3 меню для точечной настройки названий молитв
+func (b *Bot) handleGroupPrayersMenu(userChatID int64, targetGroupID int64, messageID int) {
+	u, _ := b.storage.GetUser(targetGroupID)
+	groupTitle := b.getGroupTitle(targetGroupID)
+
+	preset := "ru"
+	var customPrayers map[string]string
+	if u != nil {
+		if u.PrayerNamesPreset != "" {
+			preset = u.PrayerNamesPreset
+		}
+		customPrayers = storage.ParseCustomPrayerNames(u.CustomPrayerNames)
+	}
+
+	labels := api.GetPrayerLabels(preset)
+
+	getDisplay := func(key, defaultLabel string) string {
+		if custom, ok := customPrayers[key]; ok && strings.TrimSpace(custom) != "" {
+			return strings.TrimSpace(custom)
+		}
+		return cleanPrayerDisplay(defaultLabel)
+	}
+
+	fajrLabel := getDisplay("fajr", labels.Fajr)
+	sunriseLabel := getDisplay("sunrise", labels.Sunrise)
+	dhuhrLabel := getDisplay("dhuhr", labels.Dhuhr)
+	asrLabel := getDisplay("asr", labels.Asr)
+	maghribLabel := getDisplay("maghrib", labels.Maghrib)
+	ishaLabel := getDisplay("isha", labels.Isha)
+
+	text := fmt.Sprintf(
+		"✏️ *Настройка названий и эмодзи молитв*\n"+
+			"Канал / Группа: *%s*\n\n"+
+			"🌅 *Фаджр:* %s\n"+
+			"☀️ *Восход:* %s\n"+
+			"☀️ *Зухр:* %s\n"+
+			"🌤 *Аср:* %s\n"+
+			"🌆 *Магриб:* %s\n"+
+			"🌙 *Иша:* %s\n\n"+
+			"Нажмите на кнопку с молитвой, чтобы точечно изменить её название или эмодзи (поддерживаются любые эмодзи, включая кастомные из Telegram):",
+		escapeMarkdown(groupTitle),
+		escapeMarkdown(fajrLabel),
+		escapeMarkdown(sunriseLabel),
+		escapeMarkdown(dhuhrLabel),
+		escapeMarkdown(asrLabel),
+		escapeMarkdown(maghribLabel),
+		escapeMarkdown(ishaLabel),
+	)
+
+	keyboard := tgbotapi.NewInlineKeyboardMarkup(
+		tgbotapi.NewInlineKeyboardRow(
+			tgbotapi.NewInlineKeyboardButtonData(fajrLabel, fmt.Sprintf("gprayer:%d:fajr", targetGroupID)),
+			tgbotapi.NewInlineKeyboardButtonData(sunriseLabel, fmt.Sprintf("gprayer:%d:sunrise", targetGroupID)),
+		),
+		tgbotapi.NewInlineKeyboardRow(
+			tgbotapi.NewInlineKeyboardButtonData(dhuhrLabel, fmt.Sprintf("gprayer:%d:dhuhr", targetGroupID)),
+			tgbotapi.NewInlineKeyboardButtonData(asrLabel, fmt.Sprintf("gprayer:%d:asr", targetGroupID)),
+		),
+		tgbotapi.NewInlineKeyboardRow(
+			tgbotapi.NewInlineKeyboardButtonData(maghribLabel, fmt.Sprintf("gprayer:%d:maghrib", targetGroupID)),
+			tgbotapi.NewInlineKeyboardButtonData(ishaLabel, fmt.Sprintf("gprayer:%d:isha", targetGroupID)),
+		),
+		tgbotapi.NewInlineKeyboardRow(
+			tgbotapi.NewInlineKeyboardButtonData("🔄 Сбросить названия", fmt.Sprintf("gresetprayers:%d", targetGroupID)),
+			tgbotapi.NewInlineKeyboardButtonData("👁 Предпросмотр", fmt.Sprintf("gprev:%d", targetGroupID)),
+		),
+		tgbotapi.NewInlineKeyboardRow(
+			tgbotapi.NewInlineKeyboardButtonData("🔙 Назад в оформление", fmt.Sprintf("gstyle:%d", targetGroupID)),
+		),
+	)
+
+	if messageID > 0 {
+		editMsg := tgbotapi.NewEditMessageText(userChatID, messageID, text)
+		editMsg.ParseMode = "Markdown"
+		editMsg.ReplyMarkup = &keyboard
+		if _, err := b.api.Send(editMsg); err != nil && !strings.Contains(err.Error(), "message is not modified") {
+			log.Printf("Ошибка редактирования handleGroupPrayersMenu: %v", err)
+		}
+	} else {
+		msg := tgbotapi.NewMessage(userChatID, text)
+		msg.ParseMode = "Markdown"
+		msg.ReplyMarkup = keyboard
+		if _, err := b.api.Send(msg); err != nil {
+			log.Printf("Ошибка отправки handleGroupPrayersMenu: %v", err)
 		}
 	}
 }
@@ -392,13 +610,24 @@ func (b *Bot) handleGroupCallbacks(cb *tgbotapi.CallbackQuery) bool {
 
 	if !strings.HasPrefix(data, "gloc:") &&
 		!strings.HasPrefix(data, "gcity:") &&
-		!strings.HasPrefix(data, "gtime:") &&
-		!strings.HasPrefix(data, "getime:") &&
+		!strings.HasPrefix(data, "gaddtime:") &&
+		!strings.HasPrefix(data, "gdeltime:") &&
+		!strings.HasPrefix(data, "gcleartimes:") &&
 		!strings.HasPrefix(data, "gtog15:") &&
 		!strings.HasPrefix(data, "gtogat:") &&
 		!strings.HasPrefix(data, "gtogsub:") &&
 		!strings.HasPrefix(data, "gtoday:") &&
 		!strings.HasPrefix(data, "gpost:") &&
+		!strings.HasPrefix(data, "gprev:") &&
+		!strings.HasPrefix(data, "gstyle:") &&
+		!strings.HasPrefix(data, "gpreset:") &&
+		!strings.HasPrefix(data, "gprayers:") &&
+		!strings.HasPrefix(data, "gprayer:") &&
+		!strings.HasPrefix(data, "gresetprayers:") &&
+		!strings.HasPrefix(data, "gheader:") &&
+		!strings.HasPrefix(data, "gfooter:") &&
+		!strings.HasPrefix(data, "gresetstyle:") &&
+		!strings.HasPrefix(data, "gdisconnect:") &&
 		!strings.HasPrefix(data, "gback:") {
 		return false
 	}
@@ -456,27 +685,32 @@ func (b *Bot) handleGroupCallbacks(cb *tgbotapi.CallbackQuery) bool {
 		}
 		b.handleGroupSettings(userChatID, targetGroupID, groupTitle, messageID)
 
-	case "gtime":
-		// gtime:<targetGroupID>:<time>
+	case "gaddtime":
+		b.setUserState(fromID, userState{
+			action:        pendingActionBroadcastTime,
+			targetGroupID: targetGroupID,
+		})
+		prompt := fmt.Sprintf(
+			"⏰ *Введите время для рассылки в «%s» в формате ЧЧ:ММ*\n\n"+
+				"Например: `06:30` или `19:00`.\n\n"+
+				"Вы можете настроить любое количество времён рассылки. Отправьте время ответным сообщением (или `/cancel` для отмены).",
+			escapeMarkdown(groupTitle),
+		)
+		b.sendMessage(userChatID, prompt)
+		b.answerCallback(cb.ID, "")
+
+	case "gdeltime":
+		// gdeltime:<targetGroupID>:<time>
 		if len(parts) >= 3 {
-			timeStr := parts[2]
-			_ = b.storage.UpdateDailyTime(targetGroupID, timeStr)
-			b.answerCallback(cb.ID, "Время утренней рассылки: "+timeStr)
+			timeStr := strings.Join(parts[2:], ":")
+			_ = b.storage.RemoveBroadcastTime(targetGroupID, timeStr)
+			b.answerCallback(cb.ID, "Время "+timeStr+" удалено")
 		}
 		b.handleGroupSettings(userChatID, targetGroupID, groupTitle, messageID)
 
-	case "getime":
-		// getime:<targetGroupID>:<time>
-		if len(parts) >= 3 {
-			timeStr := parts[2]
-			if timeStr == "off" {
-				_ = b.storage.UpdateEveningTime(targetGroupID, "")
-				b.answerCallback(cb.ID, "Вечерняя рассылка отключена")
-			} else {
-				_ = b.storage.UpdateEveningTime(targetGroupID, timeStr)
-				b.answerCallback(cb.ID, "Вечерняя рассылка: "+timeStr)
-			}
-		}
+	case "gcleartimes":
+		_ = b.storage.ClearBroadcastTimes(targetGroupID)
+		b.answerCallback(cb.ID, "Все времена рассылки очищены")
 		b.handleGroupSettings(userChatID, targetGroupID, groupTitle, messageID)
 
 	case "gtog15":
@@ -491,13 +725,13 @@ func (b *Bot) handleGroupCallbacks(cb *tgbotapi.CallbackQuery) bool {
 
 	case "gtogsub":
 		u, _ := b.storage.GetUser(targetGroupID)
-		if u != nil {
+		if u != nil && len(u.GetParsedBroadcastTimes()) > 0 {
 			_ = b.storage.Unsubscribe(targetGroupID)
-			b.api.Send(tgbotapi.NewCallbackWithAlert(cb.ID, "🔕 Ежедневная рассылка в группу отключена"))
+			b.api.Send(tgbotapi.NewCallbackWithAlert(cb.ID, "🔕 Рассылка отключена"))
 		} else {
 			city, _ := b.storage.GetUserCity(targetGroupID, b.defaultCity)
 			_ = b.storage.Subscribe(targetGroupID, city)
-			b.api.Send(tgbotapi.NewCallbackWithAlert(cb.ID, fmt.Sprintf("🔔 Ежедневная рассылка в группу включена (%s)", city)))
+			b.api.Send(tgbotapi.NewCallbackWithAlert(cb.ID, fmt.Sprintf("🔔 Рассылка включена (%s)", city)))
 		}
 		b.handleGroupSettings(userChatID, targetGroupID, groupTitle, messageID)
 
@@ -508,9 +742,49 @@ func (b *Bot) handleGroupCallbacks(cb *tgbotapi.CallbackQuery) bool {
 		if err != nil {
 			b.sendMessage(userChatID, fmt.Sprintf("К сожалению, не удалось получить расписание для города %s с сервера ДУМ РБ.", city))
 		} else {
+			u, _ := b.storage.GetUser(targetGroupID)
+			cfg := api.PrayerFormatConfig{Preset: "ru"}
+			if u != nil {
+				cfg.Preset = u.PrayerNamesPreset
+				cfg.CustomHeader = u.CustomHeader
+				cfg.CustomFooter = u.CustomFooter
+				cfg.CustomPrayers = storage.ParseCustomPrayerNames(u.CustomPrayerNames)
+			}
 			msgText := fmt.Sprintf("🕌 *Расписание для «%s» (%s):*\n\n", escapeMarkdown(groupTitle), escapeMarkdown(city)) +
-				api.FormatMessage(item, city, now)
+				api.FormatMessageCustom(item, city, now, cfg)
 			b.sendMessage(userChatID, msgText)
+		}
+		b.answerCallback(cb.ID, "")
+
+	case "gprev":
+		city, _ := b.storage.GetUserCity(targetGroupID, b.defaultCity)
+		now := time.Now()
+		item, err := b.client.FetchPrayerTimes(city, now)
+		if err != nil {
+			b.sendMessage(userChatID, fmt.Sprintf("❌ Не удалось получить расписание для города %s от ДУМ РБ.", city))
+		} else {
+			u, _ := b.storage.GetUser(targetGroupID)
+			cfg := api.PrayerFormatConfig{Preset: "ru"}
+			if u != nil {
+				cfg.Preset = u.PrayerNamesPreset
+				cfg.CustomHeader = u.CustomHeader
+				cfg.CustomFooter = u.CustomFooter
+				cfg.CustomPrayers = storage.ParseCustomPrayerNames(u.CustomPrayerNames)
+			}
+			previewText := fmt.Sprintf("👁 *Предпросмотр рассылки для «%s»:*\n\n", escapeMarkdown(groupTitle)) +
+				api.FormatMessageCustom(item, city, now, cfg)
+
+			// Удаляем предыдущее превью сообщение пользователя при повторных нажатиях
+			if prevID := b.getAndClearPreviewMessage(userChatID); prevID > 0 {
+				_, _ = b.api.Request(tgbotapi.NewDeleteMessage(userChatID, prevID))
+			}
+
+			msg := tgbotapi.NewMessage(userChatID, previewText)
+			msg.ParseMode = "Markdown"
+			sentMsg, err := b.api.Send(msg)
+			if err == nil {
+				b.setPreviewMessage(userChatID, sentMsg.MessageID)
+			}
 		}
 		b.answerCallback(cb.ID, "")
 
@@ -521,16 +795,104 @@ func (b *Bot) handleGroupCallbacks(cb *tgbotapi.CallbackQuery) bool {
 		if err != nil {
 			b.api.Send(tgbotapi.NewCallbackWithAlert(cb.ID, "❌ Ошибка получения расписания от ДУМ РБ"))
 		} else {
-			msgText := api.FormatMessage(item, city, now)
+			u, _ := b.storage.GetUser(targetGroupID)
+			cfg := api.PrayerFormatConfig{Preset: "ru"}
+			if u != nil {
+				cfg.Preset = u.PrayerNamesPreset
+				cfg.CustomHeader = u.CustomHeader
+				cfg.CustomFooter = u.CustomFooter
+				cfg.CustomPrayers = storage.ParseCustomPrayerNames(u.CustomPrayerNames)
+			}
+			msgText := api.FormatMessageCustom(item, city, now, cfg)
 			msg := tgbotapi.NewMessage(targetGroupID, msgText)
 			msg.ParseMode = "Markdown"
+			msg.ReplyMarkup = CreateShareInlineKeyboard(msgText)
 			if _, sendErr := b.api.Send(msg); sendErr != nil {
 				log.Printf("Ошибка публикации в канал/группу %d: %v", targetGroupID, sendErr)
-				b.api.Send(tgbotapi.NewCallbackWithAlert(cb.ID, "❌ Ошибка публикации. Проверьте, что бот является администратором с правом публикации сообщений."))
+				b.api.Send(tgbotapi.NewCallbackWithAlert(cb.ID, "❌ Ошибка публикации. Проверьте, что бот назначен администратором канала с правом публикации сообщений."))
 			} else {
 				b.api.Send(tgbotapi.NewCallbackWithAlert(cb.ID, "✅ Расписание успешно опубликовано в канале/группе!"))
 			}
 		}
+
+	case "gstyle":
+		b.handleGroupStyleSettings(userChatID, targetGroupID, messageID)
+		b.answerCallback(cb.ID, "")
+
+	case "gpreset":
+		// gpreset:<targetGroupID>:<preset>
+		if len(parts) >= 3 {
+			preset := parts[2]
+			_ = b.storage.UpdateChatPreset(targetGroupID, preset)
+			b.answerCallback(cb.ID, "Стиль названий обновлен")
+		}
+		b.handleGroupStyleSettings(userChatID, targetGroupID, messageID)
+
+	case "gprayers":
+		b.handleGroupPrayersMenu(userChatID, targetGroupID, messageID)
+		b.answerCallback(cb.ID, "")
+
+	case "gprayer":
+		// gprayer:<targetGroupID>:<prayerKey>
+		if len(parts) >= 3 {
+			prayerKey := parts[2]
+			b.setUserState(fromID, userState{
+				action:        pendingActionPrayer,
+				targetGroupID: targetGroupID,
+				prayerKey:     prayerKey,
+			})
+			prayerNamesRu := map[string]string{
+				"fajr":    "Фаджр",
+				"sunrise": "Восход",
+				"dhuhr":   "Зухр",
+				"asr":     "Аср",
+				"maghrib": "Магриб",
+				"isha":    "Иша",
+			}
+			nameRu := prayerNamesRu[prayerKey]
+			prompt := fmt.Sprintf(
+				"✏️ *Введите новое название или эмодзи для «%s» в группе/канале «%s»*\n\n"+
+					"Вы можете указать любой текст, стандартные эмодзи или кастомные эмодзи из Telegram.\n"+
+					"Например:\n`🌅 Утренний намаз (Фаджр)`\n\n"+
+					"Отправьте текст ответным сообщением, либо `-` для возврата к названию из выбранного стиля.",
+				nameRu, escapeMarkdown(groupTitle),
+			)
+			b.sendMessage(userChatID, prompt)
+		}
+		b.answerCallback(cb.ID, "")
+
+	case "gresetprayers":
+		_ = b.storage.ResetCustomPrayerNames(targetGroupID)
+		b.api.Send(tgbotapi.NewCallbackWithAlert(cb.ID, "Все названия молитв сброшены к выбранному стилю"))
+		b.handleGroupPrayersMenu(userChatID, targetGroupID, messageID)
+
+	case "gheader":
+		b.setUserState(fromID, userState{action: pendingActionHeader, targetGroupID: targetGroupID})
+		prompt := fmt.Sprintf("📝 *Введите заголовок рассылки для «%s»*\n\nНапример:\n`🕌 Расписание намаза в мечети Ихлас`\n\nОтправьте текст ответным сообщением, либо `-` для возврата к заголовку по умолчанию.", escapeMarkdown(groupTitle))
+		b.sendMessage(userChatID, prompt)
+		b.answerCallback(cb.ID, "")
+
+	case "gfooter":
+		b.setUserState(fromID, userState{action: pendingActionFooter, targetGroupID: targetGroupID})
+		prompt := fmt.Sprintf("✍️ *Введите подпись (footer) для «%s»*\n\n"+
+			"Этот текст будет добавляться в конце каждого сообщения рассылки.\n\n"+
+			"💡 *Примеры оформления:*\n"+
+			"• Ссылка текстом (гиперссылка): `📢 [Подписаться на канал](https://t.me/channel_name)`\n"+
+			"• Обычный текст: `📢 Мечеть «Ихлас»`\n"+
+			"• Тег канала: `📢 Наш канал: @channel_name`\n\n"+
+			"Отправьте текст ответным сообщением, либо `-` для удаления подписи.", escapeMarkdown(groupTitle))
+		b.sendMessage(userChatID, prompt)
+		b.answerCallback(cb.ID, "")
+
+	case "gresetstyle":
+		_ = b.storage.ResetChatCustomization(targetGroupID)
+		b.answerCallback(cb.ID, "Оформление сброшено по умолчанию")
+		b.handleGroupStyleSettings(userChatID, targetGroupID, messageID)
+
+	case "gdisconnect":
+		_ = b.storage.DeleteChat(targetGroupID)
+		b.api.Send(tgbotapi.NewCallbackWithAlert(cb.ID, "🗑 Канал успешно отключен от рассылки и удален."))
+		b.handleMyChannelsList(userChatID, fromID, 1, messageID)
 
 	case "gback":
 		b.handleGroupSettings(userChatID, targetGroupID, groupTitle, messageID)

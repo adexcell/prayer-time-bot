@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
+	"strings"
 	"sync"
 	"time"
 )
@@ -253,63 +254,239 @@ func (c *Client) FetchPrayerTimes(city string, date time.Time) (*DUMRBItem, erro
 	return &todayTiming, nil
 }
 
-// FormatMessage форматирует данные о расписании намаза (ДУМ РБ) и восходе (voshod-solnca.ru)
-func FormatMessage(item *DUMRBItem, city string, date time.Time) string {
-	dateStr := date.Format("02.01.2006")
-
-	return fmt.Sprintf(
-		"🕌 *Расписание намаза*\n"+
-			"📅 *Дата:* %s\n"+
-			"📍 *Город/Район:* %s\n\n"+
-			"🌅 *Фаджр:* %s\n"+
-			"☀️ *Восход:* %s\n"+
-			"☀️ *Зухр:* %s\n"+
-			"🌤 *Аср:* %s\n"+
-			"🌆 *Магриб:* %s\n"+
-			"🌙 *Иша:* %s\n\n"+
-			"ℹ️ _Времена намазов: ДУМ РБ_",
-		dateStr,
-		city,
-		item.Fajr,
-		item.Sunrise,
-		item.Dhuhr,
-		item.Asr,
-		item.Maghrib,
-		item.Isha,
-	)
+// PrayerLabels содержит локализованные и кастомизированные заголовки молитв
+type PrayerLabels struct {
+	Header         string
+	DateLabel      string
+	CityLabel      string
+	Fajr           string
+	Sunrise        string
+	Dhuhr          string
+	Asr            string
+	Maghrib        string
+	Isha           string
+	SourceNote     string
+	EveningHeader  string
+	RemainingTitle string
+	TomorrowTitle  string
 }
 
-// FormatEveningMessage форматирует Вечерняя рассылка: оставшиеся намазы на сегодня (Магриб, Иша) и полное расписание на завтра
+// PrayerFormatConfig определяет параметры форматирования расписания
+type PrayerFormatConfig struct {
+	Preset        string            // "ru", "ar", "ru_ar", "ba"
+	CustomHeader  string
+	CustomFooter  string
+	CustomPrayers map[string]string // "fajr", "sunrise", "dhuhr", "asr", "maghrib", "isha"
+}
+
+func applyPrayerOverrides(labels PrayerLabels, custom map[string]string) PrayerLabels {
+	if len(custom) == 0 {
+		return labels
+	}
+	if v, ok := custom["fajr"]; ok && strings.TrimSpace(v) != "" {
+		labels.Fajr = formatPrayerLabel(v)
+	}
+	if v, ok := custom["sunrise"]; ok && strings.TrimSpace(v) != "" {
+		labels.Sunrise = formatPrayerLabel(v)
+	}
+	if v, ok := custom["dhuhr"]; ok && strings.TrimSpace(v) != "" {
+		labels.Dhuhr = formatPrayerLabel(v)
+	}
+	if v, ok := custom["asr"]; ok && strings.TrimSpace(v) != "" {
+		labels.Asr = formatPrayerLabel(v)
+	}
+	if v, ok := custom["maghrib"]; ok && strings.TrimSpace(v) != "" {
+		labels.Maghrib = formatPrayerLabel(v)
+	}
+	if v, ok := custom["isha"]; ok && strings.TrimSpace(v) != "" {
+		labels.Isha = formatPrayerLabel(v)
+	}
+	return labels
+}
+
+func formatPrayerLabel(s string) string {
+	s = strings.TrimSpace(s)
+	if !strings.HasSuffix(s, ":") {
+		s += ":"
+	}
+	if !strings.Contains(s, "*") {
+		s = "*" + s + "*"
+	}
+	return s
+}
+
+// GetPrayerLabels возвращает набор подписей для заданного пресета
+func GetPrayerLabels(preset string) PrayerLabels {
+	switch preset {
+	case "ar":
+		return PrayerLabels{
+			Header:         "🕌 *مواقيت الصلاة*",
+			DateLabel:      "📅 *التاريخ:*",
+			CityLabel:      "📍 *المدينة/المنطقة:*",
+			Fajr:           "🌅 *الفجر:*",
+			Sunrise:        "☀️ *الشروق:*",
+			Dhuhr:          "☀️ *الظهر:*",
+			Asr:            "🌤 *العصر:*",
+			Maghrib:        "🌆 *المغرب:*",
+			Isha:           "🌙 *العشاء:*",
+			SourceNote:     "ℹ️ _مواقيت الصلاة: الإدارة الدينية_",
+			EveningHeader:  "🌙 *مواقيت الصلاة للمساء والغد*",
+			RemainingTitle: "📌 *الصلوات المتبقية اليوم (%s):*",
+			TomorrowTitle:  "📅 *جدول الغد (%s):*",
+		}
+	case "ru_ar":
+		return PrayerLabels{
+			Header:         "🕌 *Расписание намаза | مواقيت الصلاة*",
+			DateLabel:      "📅 *Дата:*",
+			CityLabel:      "📍 *Город/Район:*",
+			Fajr:           "🌅 *Фаджр (الفجر):*",
+			Sunrise:        "☀️ *Восход (الشروق):*",
+			Dhuhr:          "☀️ *Зухр (الظهر):*",
+			Asr:            "🌤 *Аср (العصر):*",
+			Maghrib:        "🌆 *Магриб (المغرب):*",
+			Isha:           "🌙 *Иша (العشاء):*",
+			SourceNote:     "ℹ️ _Времена намазов: ДУМ РБ_",
+			EveningHeader:  "🌙 *Вечерняя рассылка расписания намаза*",
+			RemainingTitle: "📌 *Оставшиеся намазы на сегодня (%s):*",
+			TomorrowTitle:  "📅 *Расписание на завтра (%s):*",
+		}
+	case "ba":
+		return PrayerLabels{
+			Header:         "🕌 *Намаҙ ваҡыттары*",
+			DateLabel:      "📅 *Көн:*",
+			CityLabel:      "📍 *Ҡала/Район:*",
+			Fajr:           "🌅 *Иртәнге:*",
+			Sunrise:        "☀️ *Кояш сығыуы:*",
+			Dhuhr:          "☀️ *Өйлә:*",
+			Asr:            "🌤 *Икенде:*",
+			Maghrib:        "🌆 *Аҡшам:*",
+			Isha:           "🌙 *Йәстү:*",
+			SourceNote:     "ℹ️ _Намаҙ ваҡыттары: БР МДН_",
+			EveningHeader:  "🌙 *Кичке намаҙ ваҡыттары*",
+			RemainingTitle: "📌 *Бөгөнгә ҡалған намаҙҙар (%s):*",
+			TomorrowTitle:  "📅 *Иртәгәгә расписание (%s):*",
+		}
+	default: // "ru"
+		return PrayerLabels{
+			Header:         "🕌 *Расписание намаза*",
+			DateLabel:      "📅 *Дата:*",
+			CityLabel:      "📍 *Город/Район:*",
+			Fajr:           "🌅 *Фаджр:*",
+			Sunrise:        "☀️ *Восход:*",
+			Dhuhr:          "☀️ *Зухр:*",
+			Asr:            "🌤 *Аср:*",
+			Maghrib:        "🌆 *Магриб:*",
+			Isha:           "🌙 *Иша:*",
+			SourceNote:     "ℹ️ _Времена намазов: ДУМ РБ_",
+			EveningHeader:  "🌙 *Вечерняя рассылка расписания намаза*",
+			RemainingTitle: "📌 *Оставшиеся намазы на сегодня (%s):*",
+			TomorrowTitle:  "📅 *Расписание на завтра (%s):*",
+		}
+	}
+}
+
+// FormatMessage форматирует данные о расписании намаза по умолчанию
+func FormatMessage(item *DUMRBItem, city string, date time.Time) string {
+	return FormatMessageCustom(item, city, date, PrayerFormatConfig{Preset: "ru"})
+}
+
+// FormatMessageCustom форматирует данные с учетом пресета и кастомного оформления
+func FormatMessageCustom(item *DUMRBItem, city string, date time.Time, cfg PrayerFormatConfig) string {
+	labels := GetPrayerLabels(cfg.Preset)
+	labels = applyPrayerOverrides(labels, cfg.CustomPrayers)
+
+	header := labels.Header
+	if strings.TrimSpace(cfg.CustomHeader) != "" {
+		header = strings.TrimSpace(cfg.CustomHeader)
+	}
+
+	dateStr := date.Format("02.01.2006")
+
+	text := fmt.Sprintf(
+		"%s\n"+
+			"%s %s\n"+
+			"%s %s\n\n"+
+			"%s %s\n"+
+			"%s %s\n"+
+			"%s %s\n"+
+			"%s %s\n"+
+			"%s %s\n"+
+			"%s %s\n\n"+
+			"%s",
+		header,
+		labels.DateLabel, dateStr,
+		labels.CityLabel, city,
+		labels.Fajr, item.Fajr,
+		labels.Sunrise, item.Sunrise,
+		labels.Dhuhr, item.Dhuhr,
+		labels.Asr, item.Asr,
+		labels.Maghrib, item.Maghrib,
+		labels.Isha, item.Isha,
+		labels.SourceNote,
+	)
+
+	if strings.TrimSpace(cfg.CustomFooter) != "" {
+		text += "\n\n" + strings.TrimSpace(cfg.CustomFooter)
+	}
+
+	return text
+}
+
+// FormatEveningMessage форматирует Вечернюю рассылку по умолчанию
 func FormatEveningMessage(todayItem *DUMRBItem, tomorrowItem *DUMRBItem, city string, today time.Time) string {
+	return FormatEveningMessageCustom(todayItem, tomorrowItem, city, today, PrayerFormatConfig{Preset: "ru"})
+}
+
+// FormatEveningMessageCustom форматирует Вечернюю рассылку с учетом пресета и кастомного оформления
+func FormatEveningMessageCustom(todayItem *DUMRBItem, tomorrowItem *DUMRBItem, city string, today time.Time, cfg PrayerFormatConfig) string {
+	labels := GetPrayerLabels(cfg.Preset)
+	labels = applyPrayerOverrides(labels, cfg.CustomPrayers)
+
+	header := labels.EveningHeader
+	if strings.TrimSpace(cfg.CustomHeader) != "" {
+		header = strings.TrimSpace(cfg.CustomHeader)
+	}
+
 	tomorrow := today.AddDate(0, 0, 1)
 	todayStr := today.Format("02.01.2006")
 	tomorrowStr := tomorrow.Format("02.01.2006")
 
-	return fmt.Sprintf(
-		"🌙 *Вечерняя рассылка расписания намаза*\n"+
-			"📍 *Город/Район:* %s\n\n"+
-			"📌 *Оставшиеся намазы на сегодня (%s):*\n"+
-			"🌆 *Магриб:* %s\n"+
-			"🌙 *Иша:* %s\n\n"+
-			"📅 *Расписание на завтра (%s):*\n"+
-			"🌅 *Фаджр:* %s\n"+
-			"☀️ *Восход:* %s\n"+
-			"☀️ *Зухр:* %s\n"+
-			"🌤 *Аср:* %s\n"+
-			"🌆 *Магриб:* %s\n"+
-			"🌙 *Иша:* %s\n\n"+
-			"ℹ️ _Времена намазов: ДУМ РБ_",
-		city,
-		todayStr,
-		todayItem.Maghrib,
-		todayItem.Isha,
-		tomorrowStr,
-		tomorrowItem.Fajr,
-		tomorrowItem.Sunrise,
-		tomorrowItem.Dhuhr,
-		tomorrowItem.Asr,
-		tomorrowItem.Maghrib,
-		tomorrowItem.Isha,
+	remTitle := fmt.Sprintf(labels.RemainingTitle, todayStr)
+	tomTitle := fmt.Sprintf(labels.TomorrowTitle, tomorrowStr)
+
+	text := fmt.Sprintf(
+		"%s\n"+
+			"%s %s\n\n"+
+			"%s\n"+
+			"%s %s\n"+
+			"%s %s\n\n"+
+			"%s\n"+
+			"%s %s\n"+
+			"%s %s\n"+
+			"%s %s\n"+
+			"%s %s\n"+
+			"%s %s\n"+
+			"%s %s\n\n"+
+			"%s",
+		header,
+		labels.CityLabel, city,
+		remTitle,
+		labels.Maghrib, todayItem.Maghrib,
+		labels.Isha, todayItem.Isha,
+		tomTitle,
+		labels.Fajr, tomorrowItem.Fajr,
+		labels.Sunrise, tomorrowItem.Sunrise,
+		labels.Dhuhr, tomorrowItem.Dhuhr,
+		labels.Asr, tomorrowItem.Asr,
+		labels.Maghrib, tomorrowItem.Maghrib,
+		labels.Isha, tomorrowItem.Isha,
+		labels.SourceNote,
 	)
+
+	if strings.TrimSpace(cfg.CustomFooter) != "" {
+		text += "\n\n" + strings.TrimSpace(cfg.CustomFooter)
+	}
+
+	return text
 }
 

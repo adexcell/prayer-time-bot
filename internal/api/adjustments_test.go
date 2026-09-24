@@ -1,7 +1,9 @@
 package api
 
 import (
+	"strings"
 	"testing"
+	"time"
 )
 
 func TestApplyOffset(t *testing.T) {
@@ -82,5 +84,116 @@ func TestApplyPrayerAdjustments_All(t *testing.T) {
 	if item.Fajr != "05:02" || item.Sunrise != "06:02" || item.Dhuhr != "13:02" ||
 		item.Asr != "16:02" || item.Maghrib != "19:02" || item.Isha != "21:02" {
 		t.Errorf("Unexpected result with 'all' adjustment: %+v", item)
+	}
+}
+
+func TestFormatMessageCustom(t *testing.T) {
+	item := &DUMRBItem{
+		Fajr:    "05:00",
+		Sunrise: "06:30",
+		Dhuhr:   "13:00",
+		Asr:     "16:30",
+		Maghrib: "19:00",
+		Isha:    "21:00",
+	}
+	date := time.Date(2026, 9, 21, 10, 0, 0, 0, time.UTC)
+
+	// 1. Default (Russian)
+	msgRu := FormatMessage(item, "Уфа", date)
+	if !strings.Contains(msgRu, "Фаджр") || !strings.Contains(msgRu, "05:00") {
+		t.Errorf("Expected Russian format to contain 'Фаджр', got: %s", msgRu)
+	}
+
+	// 2. Arabic preset
+	msgAr := FormatMessageCustom(item, "Уфа", date, PrayerFormatConfig{
+		Preset:       "ar",
+		CustomHeader: "🕌 *مواقيت الصلاة في أوفا*",
+		CustomFooter: "📢 @mychannel",
+	})
+	if !strings.Contains(msgAr, "الفجر") || !strings.Contains(msgAr, "مواقيت الصلاة في أوفا") || !strings.Contains(msgAr, "@mychannel") {
+		t.Errorf("Expected Arabic format with custom header and footer, got: %s", msgAr)
+	}
+
+	// 3. Bilingual preset
+	msgBi := FormatMessageCustom(item, "Уфа", date, PrayerFormatConfig{
+		Preset: "ru_ar",
+	})
+	if !strings.Contains(msgBi, "Фаджр (الفجر)") {
+		t.Errorf("Expected Bilingual format with 'Фаджр (الفجر)', got: %s", msgBi)
+	}
+
+	// 4. Bashkir preset
+	msgBa := FormatMessageCustom(item, "Уфа", date, PrayerFormatConfig{
+		Preset: "ba",
+	})
+	if !strings.Contains(msgBa, "Иртәнге") || !strings.Contains(msgBa, "Кояш сығыуы") {
+		t.Errorf("Expected Bashkir format with 'Иртәнге', got: %s", msgBa)
+	}
+
+	// 5. Custom footer with Markdown hyperlink
+	msgLink := FormatMessageCustom(item, "Уфа", date, PrayerFormatConfig{
+		Preset:       "ru",
+		CustomFooter: "📢 [Наш канал](https://t.me/mychannel)",
+	})
+	if !strings.Contains(msgLink, "📢 [Наш канал](https://t.me/mychannel)") {
+		t.Errorf("Expected message to contain custom markdown link footer, got: %s", msgLink)
+	}
+}
+
+func TestFormatEveningMessageCustom(t *testing.T) {
+	today := &DUMRBItem{
+		Maghrib: "19:00",
+		Isha:    "21:00",
+	}
+	tomorrow := &DUMRBItem{
+		Fajr:    "05:01",
+		Sunrise: "06:31",
+		Dhuhr:   "13:00",
+		Asr:     "16:29",
+		Maghrib: "18:58",
+		Isha:    "20:58",
+	}
+	date := time.Date(2026, 9, 21, 20, 0, 0, 0, time.UTC)
+
+	msg := FormatEveningMessageCustom(today, tomorrow, "Уфа", date, PrayerFormatConfig{
+		Preset:       "ar",
+		CustomFooter: "📢 @channel",
+	})
+
+	if !strings.Contains(msg, "المغرب") || !strings.Contains(msg, "@channel") {
+		t.Errorf("Expected evening arabic format, got: %s", msg)
+	}
+}
+
+func TestFormatMessageCustom_IndividualPrayerOverridesWithEmoji(t *testing.T) {
+	item := &DUMRBItem{
+		Fajr:    "05:00",
+		Sunrise: "06:30",
+		Dhuhr:   "13:00",
+		Asr:     "16:30",
+		Maghrib: "19:00",
+		Isha:    "21:00",
+	}
+	date := time.Date(2026, 9, 21, 10, 0, 0, 0, time.UTC)
+
+	cfg := PrayerFormatConfig{
+		Preset: "ru",
+		CustomPrayers: map[string]string{
+			"fajr":    "✨ 🌅 Фаджр Намаз",
+			"maghrib": "🌙 Аҡшам (Магриб)",
+		},
+	}
+
+	msg := FormatMessageCustom(item, "Уфа", date, cfg)
+
+	if !strings.Contains(msg, "✨ 🌅 Фаджр Намаз") {
+		t.Errorf("Expected custom Fajr override with emoji, got: %s", msg)
+	}
+	if !strings.Contains(msg, "🌙 Аҡшам (Магриб)") {
+		t.Errorf("Expected custom Maghrib override, got: %s", msg)
+	}
+	// Other prayers should remain default Russian
+	if !strings.Contains(msg, "Зухр") {
+		t.Errorf("Expected default Dhuhr in Russian, got: %s", msg)
 	}
 }

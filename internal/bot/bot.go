@@ -3,7 +3,9 @@ package bot
 import (
 	"fmt"
 	"log"
+	"net/url"
 	"strings"
+	"sync"
 	"time"
 
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
@@ -12,12 +14,32 @@ import (
 	"namaz-time-bot/internal/storage"
 )
 
+type pendingActionType string
+
+const (
+	pendingActionNone          pendingActionType = ""
+	pendingActionHeader        pendingActionType = "header"
+	pendingActionFooter        pendingActionType = "footer"
+	pendingActionPrayer        pendingActionType = "prayer"
+	pendingActionBroadcastTime pendingActionType = "broadcast_time"
+)
+
+type userState struct {
+	action        pendingActionType
+	targetGroupID int64
+	prayerKey     string
+}
+
 type Bot struct {
-	api            *tgbotapi.BotAPI
-	client         *api.Client
-	storage        *storage.Storage
-	defaultCity    string
-	configAdminIDs []int64
+	api             *tgbotapi.BotAPI
+	client          *api.Client
+	storage         *storage.Storage
+	defaultCity     string
+	configAdminIDs  []int64
+	userStates      map[int64]userState
+	stateMu         sync.RWMutex
+	previewMessages map[int64]int
+	previewMu       sync.Mutex
 }
 
 func New(token, defaultCity string, configAdminIDs []int64, client *api.Client, store *storage.Storage) (*Bot, error) {
@@ -29,12 +51,47 @@ func New(token, defaultCity string, configAdminIDs []int64, client *api.Client, 
 	log.Printf("Авторизован аккаунт бота: %s", botAPI.Self.UserName)
 
 	return &Bot{
-		api:            botAPI,
-		client:         client,
-		storage:        store,
-		defaultCity:    defaultCity,
-		configAdminIDs: configAdminIDs,
+		api:             botAPI,
+		client:          client,
+		storage:         store,
+		defaultCity:     defaultCity,
+		configAdminIDs:  configAdminIDs,
+		userStates:      make(map[int64]userState),
+		previewMessages: make(map[int64]int),
 	}, nil
+}
+
+func (b *Bot) setUserState(userID int64, state userState) {
+	b.stateMu.Lock()
+	defer b.stateMu.Unlock()
+	b.userStates[userID] = state
+}
+
+func (b *Bot) getUserState(userID int64) (userState, bool) {
+	b.stateMu.RLock()
+	defer b.stateMu.RUnlock()
+	state, exists := b.userStates[userID]
+	return state, exists
+}
+
+func (b *Bot) clearUserState(userID int64) {
+	b.stateMu.Lock()
+	defer b.stateMu.Unlock()
+	delete(b.userStates, userID)
+}
+
+func (b *Bot) setPreviewMessage(userID int64, msgID int) {
+	b.previewMu.Lock()
+	defer b.previewMu.Unlock()
+	b.previewMessages[userID] = msgID
+}
+
+func (b *Bot) getAndClearPreviewMessage(userID int64) int {
+	b.previewMu.Lock()
+	defer b.previewMu.Unlock()
+	msgID := b.previewMessages[userID]
+	delete(b.previewMessages, userID)
+	return msgID
 }
 
 // Start запускает цикл прослушивания входящих сообщений
@@ -101,6 +158,64 @@ func (b *Bot) Start() {
 			continue
 		}
 
+		// Обработка ввода текста для настройки оформления (заголовок, подпись, названия молитв, время рассылки) в ЛС
+		if chatID > 0 {
+			if state, ok := b.getUserState(fromID); ok && state.action != pendingActionNone {
+				b.clearUserState(fromID)
+				if text == "-" || text == "сброс" || text == "/cancel" || strings.ToLower(text) == "отмена" {
+					if state.action == pendingActionHeader {
+						_ = b.storage.UpdateChatHeader(state.targetGroupID, "")
+						b.sendMessage(chatID, "✅ Заголовок сброшен по умолчанию.")
+						b.handleGroupStyleSettings(chatID, state.targetGroupID, 0)
+					} else if state.action == pendingActionFooter {
+						_ = b.storage.UpdateChatFooter(state.targetGroupID, "")
+						b.sendMessage(chatID, "✅ Подпись (footer) удалена.")
+						b.handleGroupStyleSettings(chatID, state.targetGroupID, 0)
+					} else if state.action == pendingActionPrayer {
+						_ = b.storage.UpdateCustomPrayerName(state.targetGroupID, state.prayerKey, "")
+						b.sendMessage(chatID, "✅ Название молитвы сброшено к выбранному стилю.")
+						b.handleGroupPrayersMenu(chatID, state.targetGroupID, 0)
+					} else if state.action == pendingActionBroadcastTime {
+						b.sendMessage(chatID, "❌ Ввод времени рассылки отменен.")
+						if state.targetGroupID < 0 {
+							b.handleGroupSettings(chatID, state.targetGroupID, b.getGroupTitle(state.targetGroupID), 0)
+						} else {
+							b.handleSettings(chatID, 0)
+						}
+					}
+				} else {
+					if state.action == pendingActionHeader {
+						_ = b.storage.UpdateChatHeader(state.targetGroupID, text)
+						b.sendMessage(chatID, "✅ Заголовок рассылки успешно сохранен!")
+						b.handleGroupStyleSettings(chatID, state.targetGroupID, 0)
+					} else if state.action == pendingActionFooter {
+						_ = b.storage.UpdateChatFooter(state.targetGroupID, text)
+						b.sendMessage(chatID, "✅ Подпись (footer) рассылки успешно сохранена!")
+						b.handleGroupStyleSettings(chatID, state.targetGroupID, 0)
+					} else if state.action == pendingActionPrayer {
+						_ = b.storage.UpdateCustomPrayerName(state.targetGroupID, state.prayerKey, text)
+						b.sendMessage(chatID, "✅ Название молитвы успешно сохранено!")
+						b.handleGroupPrayersMenu(chatID, state.targetGroupID, 0)
+					} else if state.action == pendingActionBroadcastTime {
+						normTime, err := b.storage.AddBroadcastTime(state.targetGroupID, text)
+						if err != nil {
+							// Возвращаем состояние, чтобы дать пользователю ввести время снова
+							b.setUserState(fromID, state)
+							b.sendMessage(chatID, "❌ Некорректный формат времени. Введите время в формате `ЧЧ:ММ` (например: `06:30` или `19:00`):")
+							continue
+						}
+						b.sendMessage(chatID, fmt.Sprintf("✅ Время рассылки *%s* успешно добавлено!", normTime))
+						if state.targetGroupID < 0 {
+							b.handleGroupSettings(chatID, state.targetGroupID, b.getGroupTitle(state.targetGroupID), 0)
+						} else {
+							b.handleSettings(chatID, 0)
+						}
+					}
+				}
+				continue
+			}
+		}
+
 		// 3. Нормализация команд (удаление @BotUsername)
 		cmd := text
 		botUsernameSuffix := "@" + strings.ToLower(b.api.Self.UserName)
@@ -133,6 +248,8 @@ func (b *Bot) Start() {
 			} else {
 				b.handleSettings(chatID, 0)
 			}
+		case cmd == "/channels" || cmd == "/mychannels":
+			b.handleMyChannelsList(chatID, fromID, 1, 0)
 		case cmd == "/channel":
 			b.handleChannelCommand(chatID, fromID, parts)
 		case cmd == "/subscribe" || text == "🔔 Подписаться на рассылку":
@@ -156,7 +273,7 @@ func (b *Bot) Start() {
 		default:
 			// Для личных чатов выводим подсказку
 			if chatID > 0 {
-				b.sendMessage(chatID, "Используйте меню или команды:\n/today — Расписание на сегодня\n/city — Выбрать город или район РБ\n/settings — Настройки уведомлений\n/channel — Подключить Telegram-канал\n/subscribe — Подписаться на рассылку\n/unsubscribe — Отписаться\n/admin — Панель администратора")
+				b.sendMessage(chatID, "Используйте меню или команды:\n/today — Расписание на сегодня\n/city — Выбрать город или район РБ\n/settings — Настройки уведомлений\n/channels — Мои каналы и группы\n/channel — Подключить Telegram-канал\n/subscribe — Подписаться на рассылку\n/unsubscribe — Отписаться\n/admin — Панель администратора")
 			}
 		}
 	}
@@ -319,23 +436,19 @@ func escapeMarkdown(s string) string {
 func (b *Bot) handleSettings(chatID int64, messageID int) {
 	u, _ := b.storage.GetUser(chatID)
 
-	selectedTime := "06:00"
-	eveningTime := ""
 	notify15min := true
 	notifyAtTime := true
+	var broadcastTimes []string
 
 	if u != nil {
-		if u.DailyScheduleTime != "" {
-			selectedTime = u.DailyScheduleTime
-		}
-		eveningTime = u.EveningScheduleTime
+		broadcastTimes = u.GetParsedBroadcastTimes()
 		notify15min = u.Notify15Min
 		notifyAtTime = u.NotifyAtTime
 	}
 
-	eveningDisplay := "Отключена"
-	if eveningTime != "" {
-		eveningDisplay = eveningTime
+	timesDisplay := "🔕 Отключена"
+	if len(broadcastTimes) > 0 {
+		timesDisplay = strings.Join(broadcastTimes, ", ")
 	}
 
 	currentCity, _ := b.storage.GetUserCity(chatID, b.defaultCity)
@@ -343,56 +456,38 @@ func (b *Bot) handleSettings(chatID int64, messageID int) {
 	text := fmt.Sprintf(
 		"⚙️ *Настройки рассылки и напоминаний*\n\n"+
 			"📍 *Текущий город/район:* %s\n"+
-			"🌅 *Утренняя рассылка (на день):* %s\n"+
-			"🌙 *Вечерняя рассылка (на вечер и завтра):* %s\n\n"+
-			"Нажмите на нужную кнопку для изменения параметров:",
-		escapeMarkdown(currentCity), selectedTime, eveningDisplay,
+			"⏰ *Времена рассылки:* %s\n\n"+
+			"Нажмите *«➕ Добавить время»*, чтобы ввести время (ЧЧ:ММ), или нажмите на крестик у времени для его удаления:",
+		escapeMarkdown(currentCity), escapeMarkdown(timesDisplay),
 	)
 
-	// 1. Утреннее время
-	times := []string{"05:00", "06:00", "07:00", "08:00", "09:00", "10:00"}
-	var morningRow1 []tgbotapi.InlineKeyboardButton
-	var morningRow2 []tgbotapi.InlineKeyboardButton
+	var keyboardRows [][]tgbotapi.InlineKeyboardButton
 
-	for i, t := range times {
-		label := t
-		if t == selectedTime {
-			label = "✓ " + t
+	// 1. Кнопки удаления имеющихся времен рассылки (по 3 в строке)
+	if len(broadcastTimes) > 0 {
+		var curRow []tgbotapi.InlineKeyboardButton
+		for _, t := range broadcastTimes {
+			btn := tgbotapi.NewInlineKeyboardButtonData("✕ "+t, "user_del_time:"+t)
+			curRow = append(curRow, btn)
+			if len(curRow) == 3 {
+				keyboardRows = append(keyboardRows, curRow)
+				curRow = []tgbotapi.InlineKeyboardButton{}
+			}
 		}
-		btn := tgbotapi.NewInlineKeyboardButtonData(label, "set_time:"+t)
-		if i < 3 {
-			morningRow1 = append(morningRow1, btn)
-		} else {
-			morningRow2 = append(morningRow2, btn)
+		if len(curRow) > 0 {
+			keyboardRows = append(keyboardRows, curRow)
 		}
-	}
 
-	// 2. Вечернее время
-	etimes := []struct {
-		val   string
-		label string
-	}{
-		{"off", "🌙 Откл"},
-		{"17:00", "17:00"},
-		{"18:00", "18:00"},
-		{"19:00", "19:00"},
-		{"20:00", "20:00"},
-		{"21:00", "21:00"},
-	}
-	var eveningRow1 []tgbotapi.InlineKeyboardButton
-	var eveningRow2 []tgbotapi.InlineKeyboardButton
-
-	for i, et := range etimes {
-		display := et.label
-		if (et.val == "off" && eveningTime == "") || (et.val == eveningTime) {
-			display = "✓ " + et.label
-		}
-		btn := tgbotapi.NewInlineKeyboardButtonData(display, "set_etime:"+et.val)
-		if i < 3 {
-			eveningRow1 = append(eveningRow1, btn)
-		} else {
-			eveningRow2 = append(eveningRow2, btn)
-		}
+		// Строка добавления и очистки
+		keyboardRows = append(keyboardRows, []tgbotapi.InlineKeyboardButton{
+			tgbotapi.NewInlineKeyboardButtonData("➕ Добавить время", "user_add_time"),
+			tgbotapi.NewInlineKeyboardButtonData("🗑 Очистить все", "user_clear_times"),
+		})
+	} else {
+		// Если времен нет
+		keyboardRows = append(keyboardRows, []tgbotapi.InlineKeyboardButton{
+			tgbotapi.NewInlineKeyboardButtonData("➕ Добавить время рассылки", "user_add_time"),
+		})
 	}
 
 	label15 := "⏳ 15 мин: [ ]"
@@ -405,16 +500,12 @@ func (b *Bot) handleSettings(chatID int64, messageID int) {
 		labelAtTime = "🔔 В намаз: [✓]"
 	}
 
-	keyboard := tgbotapi.NewInlineKeyboardMarkup(
-		morningRow1,
-		morningRow2,
-		eveningRow1,
-		eveningRow2,
-		tgbotapi.NewInlineKeyboardRow(
-			tgbotapi.NewInlineKeyboardButtonData(label15, "toggle_15min"),
-			tgbotapi.NewInlineKeyboardButtonData(labelAtTime, "toggle_attime"),
-		),
-	)
+	keyboardRows = append(keyboardRows, []tgbotapi.InlineKeyboardButton{
+		tgbotapi.NewInlineKeyboardButtonData(label15, "toggle_15min"),
+		tgbotapi.NewInlineKeyboardButtonData(labelAtTime, "toggle_attime"),
+	})
+
+	keyboard := tgbotapi.NewInlineKeyboardMarkup(keyboardRows...)
 
 	if messageID > 0 {
 		editMsg := tgbotapi.NewEditMessageText(chatID, messageID, text)
@@ -505,23 +596,28 @@ func (b *Bot) handleCallback(cb *tgbotapi.CallbackQuery) {
 		return
 	}
 
-	if strings.HasPrefix(data, "set_time:") {
-		timeStr := strings.TrimPrefix(data, "set_time:")
-		_ = b.storage.UpdateDailyTime(chatID, timeStr)
-		b.answerCallback(cb.ID, "Утренняя рассылка: "+timeStr)
+	if data == "user_add_time" {
+		b.setUserState(fromID, userState{
+			action:        pendingActionBroadcastTime,
+			targetGroupID: chatID,
+		})
+		prompt := "⏰ *Введите время для рассылки в формате ЧЧ:ММ*\n\nНапример: `07:00` или `19:30`.\n\nОтправьте время ответным сообщением (или `/cancel` для отмены)."
+		b.sendMessage(chatID, prompt)
+		b.answerCallback(cb.ID, "")
+		return
+	}
+
+	if strings.HasPrefix(data, "user_del_time:") {
+		timeStr := strings.TrimPrefix(data, "user_del_time:")
+		_ = b.storage.RemoveBroadcastTime(chatID, timeStr)
+		b.answerCallback(cb.ID, "Время "+timeStr+" удалено")
 		b.handleSettings(chatID, messageID)
 		return
 	}
 
-	if strings.HasPrefix(data, "set_etime:") {
-		timeStr := strings.TrimPrefix(data, "set_etime:")
-		if timeStr == "off" {
-			_ = b.storage.UpdateEveningTime(chatID, "")
-			b.answerCallback(cb.ID, "Вечерняя рассылка отключена")
-		} else {
-			_ = b.storage.UpdateEveningTime(chatID, timeStr)
-			b.answerCallback(cb.ID, "Вечерняя рассылка: "+timeStr)
-		}
+	if data == "user_clear_times" {
+		_ = b.storage.ClearBroadcastTimes(chatID)
+		b.answerCallback(cb.ID, "Все времена рассылки очищены")
 		b.handleSettings(chatID, messageID)
 		return
 	}
@@ -594,7 +690,7 @@ func (b *Bot) sendTodayForCity(chatID int64, city string) {
 	}
 
 	msgText := api.FormatMessage(item, city, now)
-	b.sendMessage(chatID, msgText)
+	b.sendMessageWithShare(chatID, msgText)
 }
 
 func (b *Bot) handleSubscribe(chatID int64) {
@@ -616,11 +712,34 @@ func (b *Bot) handleUnsubscribe(chatID int64) {
 	b.sendMessage(chatID, "🔕 Вы отписались от ежедневной рассылки.")
 }
 
+// CreateShareInlineKeyboard создает кнопки «Поделиться» для WhatsApp и MAX
+func CreateShareInlineKeyboard(text string) tgbotapi.InlineKeyboardMarkup {
+	encodedText := url.QueryEscape(text)
+	waURL := "https://api.whatsapp.com/send?text=" + encodedText
+	maxURL := "https://max.ru/share?text=" + encodedText
+
+	return tgbotapi.NewInlineKeyboardMarkup(
+		tgbotapi.NewInlineKeyboardRow(
+			tgbotapi.NewInlineKeyboardButtonURL("🟢 WhatsApp", waURL),
+			tgbotapi.NewInlineKeyboardButtonURL("🔵 MAX", maxURL),
+		),
+	)
+}
+
 func (b *Bot) sendMessage(chatID int64, text string) {
 	msg := tgbotapi.NewMessage(chatID, text)
 	msg.ParseMode = "Markdown"
 	if _, err := b.api.Send(msg); err != nil {
 		log.Printf("Ошибка отправки сообщения: %v", err)
+	}
+}
+
+func (b *Bot) sendMessageWithShare(chatID int64, text string) {
+	msg := tgbotapi.NewMessage(chatID, text)
+	msg.ParseMode = "Markdown"
+	msg.ReplyMarkup = CreateShareInlineKeyboard(text)
+	if _, err := b.api.Send(msg); err != nil {
+		log.Printf("Ошибка отправки сообщения с кнопками 'Поделиться': %v", err)
 	}
 }
 
@@ -649,8 +768,13 @@ func (b *Bot) sendMessageWithKeyboard(chatID int64, text string) {
 	}
 }
 
-// SendToChat используется планировщиком для рассылки сообщений
+// SendToChat используется планировщиком для рассылки обычных сообщений
 func (b *Bot) SendToChat(chatID int64, text string) {
 	b.sendMessage(chatID, text)
+}
+
+// SendToChatWithShare используется планировщиком для рассылки расписания с кнопками «Поделиться»
+func (b *Bot) SendToChatWithShare(chatID int64, text string) {
+	b.sendMessageWithShare(chatID, text)
 }
 

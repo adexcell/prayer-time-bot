@@ -20,9 +20,12 @@ func (b *Bot) handleAdmin(chatID int64, fromID int64, messageID int) {
 	}
 
 	text := "🛠 *Панель администратора*\n\n" +
-		"Здесь вы можете управлять временем молитв для городов и районов РБ, настраивать срок действия корректировок, а также управлять администраторами бота."
+		"Здесь вы можете управлять подключенными каналами и группами, временем молитв для городов и районов РБ, настраивать срок действия корректировок, а также управлять администраторами бота."
 
 	keyboard := tgbotapi.NewInlineKeyboardMarkup(
+		tgbotapi.NewInlineKeyboardRow(
+			tgbotapi.NewInlineKeyboardButtonData("📢 Каналы и группы", "adm_channels:1"),
+		),
 		tgbotapi.NewInlineKeyboardRow(
 			tgbotapi.NewInlineKeyboardButtonData("➕ Добавить корректировку", "adm_add_rule:city:1"),
 		),
@@ -639,6 +642,27 @@ func (b *Bot) handleAdminCallbacks(cb *tgbotapi.CallbackQuery) bool {
 	switch {
 	case data == "adm_main":
 		b.handleAdmin(chatID, fromID, messageID)
+		b.answerCallback(cb.ID, "")
+
+	case strings.HasPrefix(data, "adm_channels:"):
+		pageStr := strings.TrimPrefix(data, "adm_channels:")
+		page, _ := strconv.Atoi(pageStr)
+		b.handleMyChannelsList(chatID, fromID, page, messageID)
+		b.answerCallback(cb.ID, "")
+
+	case data == "adm_add_channel":
+		helpText := "📢 *Как подключить Telegram-канал или группу:*\n\n" +
+			"1. Перейдите в ваш канал или группу в Telegram.\n" +
+			"2. Добавьте этого бота в администраторы (для канала обязательно право *«Публикация сообщений»*).\n" +
+			"3. Отправьте команду в этот чат:\n" +
+			"   `/channel @username_канала`\n\n" +
+			"💡 *Либо просто перешлите сюда любой пост из вашего канала!*"
+		keyboard := tgbotapi.NewInlineKeyboardMarkup(
+			tgbotapi.NewInlineKeyboardRow(
+				tgbotapi.NewInlineKeyboardButtonData("🔙 К списку каналов", "adm_channels:1"),
+			),
+		)
+		b.sendOrEditMessage(chatID, messageID, helpText, &keyboard)
 		b.answerCallback(cb.ID, "")
 
 	case data == "adm_rules":

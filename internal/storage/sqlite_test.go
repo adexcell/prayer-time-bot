@@ -70,6 +70,106 @@ func TestStorage_CityAndSettings(t *testing.T) {
 	if u.EveningScheduleTime != "19:00" {
 		t.Errorf("Expected EveningScheduleTime '19:00', got '%s'", u.EveningScheduleTime)
 	}
+
+	// 6. Test normalization of "10" and "21"
+	if err := store.UpdateDailyTime(chatID, "10"); err != nil {
+		t.Fatalf("UpdateDailyTime with '10' failed: %v", err)
+	}
+	if err := store.UpdateEveningTime(chatID, "21"); err != nil {
+		t.Fatalf("UpdateEveningTime with '21' failed: %v", err)
+	}
+	u, _ = store.GetUser(chatID)
+	if u.DailyScheduleTime != "10:00" {
+		t.Errorf("Expected normalized DailyScheduleTime '10:00', got '%s'", u.DailyScheduleTime)
+	}
+	if u.EveningScheduleTime != "21:00" {
+		t.Errorf("Expected normalized EveningScheduleTime '21:00', got '%s'", u.EveningScheduleTime)
+	}
+}
+
+func TestStorage_ManagedChatsAndCustomization(t *testing.T) {
+	dbPath := "test_chats.db"
+	defer os.Remove(dbPath)
+
+	store, err := New(dbPath)
+	if err != nil {
+		t.Fatalf("Failed to create storage: %v", err)
+	}
+	defer store.Close()
+
+	channel1 := int64(-100111)
+	channel2 := int64(-100222)
+	adminID := int64(999)
+
+	// 1. Save chat info
+	if err := store.SaveChatInfo(channel1, "Канал 1", "channel", adminID); err != nil {
+		t.Fatalf("SaveChatInfo failed: %v", err)
+	}
+	if err := store.SaveChatInfo(channel2, "Канал 2", "channel", adminID); err != nil {
+		t.Fatalf("SaveChatInfo failed: %v", err)
+	}
+	_ = store.SetUserCity(channel1, "Уфа")
+	_ = store.SetUserCity(channel2, "Стерлитамак")
+
+	// 2. Retrieve managed chats
+	chats, err := store.GetManagedChats(adminID, false)
+	if err != nil || len(chats) != 2 {
+		t.Fatalf("Expected 2 managed chats, got %d (err: %v)", len(chats), err)
+	}
+
+	// 3. Customization
+	if err := store.UpdateChatPreset(channel1, "ar"); err != nil {
+		t.Fatalf("UpdateChatPreset failed: %v", err)
+	}
+	if err := store.UpdateChatFooter(channel1, "📢 @channel1"); err != nil {
+		t.Fatalf("UpdateChatFooter failed: %v", err)
+	}
+	if err := store.UpdateChatHeader(channel1, "🕌 Расписание"); err != nil {
+		t.Fatalf("UpdateChatHeader failed: %v", err)
+	}
+	if err := store.UpdateCustomPrayerName(channel1, "fajr", "✨ 🌅 Фаджр (Кастом)"); err != nil {
+		t.Fatalf("UpdateCustomPrayerName failed: %v", err)
+	}
+
+	u1, err := store.GetUser(channel1)
+	if err != nil {
+		t.Fatalf("GetUser failed: %v", err)
+	}
+	if u1.PrayerNamesPreset != "ar" || u1.CustomFooter != "📢 @channel1" || u1.CustomHeader != "🕌 Расписание" {
+		t.Errorf("Unexpected customization values: %+v", u1)
+	}
+	pMap := ParseCustomPrayerNames(u1.CustomPrayerNames)
+	if pMap["fajr"] != "✨ 🌅 Фаджр (Кастом)" {
+		t.Errorf("Expected custom Fajr name, got %v", pMap)
+	}
+
+	// 4. Remove single prayer override with '-'
+	if err := store.UpdateCustomPrayerName(channel1, "fajr", "-"); err != nil {
+		t.Fatalf("UpdateCustomPrayerName with '-' failed: %v", err)
+	}
+	u1, _ = store.GetUser(channel1)
+	pMap = ParseCustomPrayerNames(u1.CustomPrayerNames)
+	if _, exists := pMap["fajr"]; exists {
+		t.Errorf("Expected fajr override to be deleted, got %v", pMap)
+	}
+
+	// 5. Reset customization
+	if err := store.ResetChatCustomization(channel1); err != nil {
+		t.Fatalf("ResetChatCustomization failed: %v", err)
+	}
+	u1, _ = store.GetUser(channel1)
+	if u1.PrayerNamesPreset != "ru" || u1.CustomFooter != "" || u1.CustomHeader != "" || u1.CustomPrayerNames != "" {
+		t.Errorf("Expected reset customization values, got %+v", u1)
+	}
+
+	// 6. Delete chat
+	if err := store.DeleteChat(channel1); err != nil {
+		t.Fatalf("DeleteChat failed: %v", err)
+	}
+	chatsAfter, err := store.GetManagedChats(adminID, false)
+	if err != nil || len(chatsAfter) != 1 {
+		t.Fatalf("Expected 1 chat after deletion, got %d", len(chatsAfter))
+	}
 }
 
 func TestStorage_Admins(t *testing.T) {
@@ -166,5 +266,98 @@ func TestStorage_PrayerAdjustments(t *testing.T) {
 	allAfter, _ := store.GetAllActiveAdjustments()
 	if len(allAfter) != 1 {
 		t.Errorf("Expected 1 adjustment left after deletion, got %d", len(allAfter))
+	}
+}
+
+func TestNormalizeBroadcastTime(t *testing.T) {
+	tests := []struct {
+		input    string
+		expected string
+		wantErr  bool
+	}{
+		{"06:00", "06:00", false},
+		{"6:00", "06:00", false},
+		{"6.30", "06:30", false},
+		{"19-45", "19:45", false},
+		{"21 00", "21:00", false},
+		{"7", "07:00", false},
+		{"00:00", "00:00", false},
+		{"23:59", "23:59", false},
+		{"24:00", "", true},
+		{"12:60", "", true},
+		{"abc", "", true},
+		{"", "", true},
+	}
+
+	for _, tt := range tests {
+		got, err := NormalizeBroadcastTime(tt.input)
+		if tt.wantErr {
+			if err == nil {
+				t.Errorf("NormalizeBroadcastTime(%q) expected error, got %q", tt.input, got)
+			}
+		} else {
+			if err != nil || got != tt.expected {
+				t.Errorf("NormalizeBroadcastTime(%q) = %q (err: %v), expected %q", tt.input, got, err, tt.expected)
+			}
+		}
+	}
+}
+
+func TestStorage_BroadcastTimes(t *testing.T) {
+	dbPath := "test_broadcast_times.db"
+	defer os.Remove(dbPath)
+
+	store, err := New(dbPath)
+	if err != nil {
+		t.Fatalf("Failed to create storage: %v", err)
+	}
+	defer store.Close()
+
+	chatID := int64(777888)
+
+	// 1. Initial user has default ["06:00"]
+	_ = store.Subscribe(chatID, "Уфа")
+	u, err := store.GetUser(chatID)
+	if err != nil {
+		t.Fatalf("GetUser failed: %v", err)
+	}
+	times := u.GetParsedBroadcastTimes()
+	if len(times) != 1 || times[0] != "06:00" {
+		t.Errorf("Expected default time ['06:00'], got %v", times)
+	}
+
+	// 2. Add second time 19:30
+	norm, err := store.AddBroadcastTime(chatID, "19:30")
+	if err != nil || norm != "19:30" {
+		t.Fatalf("AddBroadcastTime failed: %v", err)
+	}
+
+	// 3. Add third time 12:00
+	_, _ = store.AddBroadcastTime(chatID, "12:00")
+
+	u, _ = store.GetUser(chatID)
+	times = u.GetParsedBroadcastTimes()
+	if len(times) != 3 || times[0] != "06:00" || times[1] != "12:00" || times[2] != "19:30" {
+		t.Errorf("Expected sorted times ['06:00', '12:00', '19:30'], got %v", times)
+	}
+
+	// 4. Remove time 12:00
+	if err := store.RemoveBroadcastTime(chatID, "12:00"); err != nil {
+		t.Fatalf("RemoveBroadcastTime failed: %v", err)
+	}
+	u, _ = store.GetUser(chatID)
+	times = u.GetParsedBroadcastTimes()
+	if len(times) != 2 || times[0] != "06:00" || times[1] != "19:30" {
+		t.Errorf("Expected times ['06:00', '19:30'] after removal, got %v", times)
+	}
+
+	// 5. Clear all broadcast times
+	if err := store.ClearBroadcastTimes(chatID); err != nil {
+		t.Fatalf("ClearBroadcastTimes failed: %v", err)
+	}
+	u, _ = store.GetUser(chatID)
+	times = u.GetParsedBroadcastTimes()
+	if len(times) != 0 {
+		t.Errorf("Expected 0 times after clear, got %v", times)
 	}
 }
