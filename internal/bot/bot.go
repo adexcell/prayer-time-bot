@@ -434,6 +434,7 @@ func (b *Bot) handleChooseLocation(chatID int64, isCityTab bool, page int, messa
 	if messageID > 0 {
 		editMsg := tgbotapi.NewEditMessageText(chatID, messageID, text)
 		editMsg.ParseMode = "Markdown"
+		editMsg.DisableWebPagePreview = true
 		editMsg.ReplyMarkup = &keyboard
 		if _, err := b.api.Send(editMsg); err != nil {
 			if !strings.Contains(err.Error(), "message is not modified") {
@@ -443,6 +444,7 @@ func (b *Bot) handleChooseLocation(chatID int64, isCityTab bool, page int, messa
 	} else {
 		msg := tgbotapi.NewMessage(chatID, text)
 		msg.ParseMode = "Markdown"
+		msg.DisableWebPagePreview = true
 		msg.ReplyMarkup = keyboard
 		if _, err := b.api.Send(msg); err != nil {
 			log.Printf("Ошибка отправки сообщения в handleChooseLocation: %v", err)
@@ -537,6 +539,7 @@ func (b *Bot) handleSettings(chatID int64, messageID int) {
 	if messageID > 0 {
 		editMsg := tgbotapi.NewEditMessageText(chatID, messageID, text)
 		editMsg.ParseMode = "Markdown"
+		editMsg.DisableWebPagePreview = true
 		editMsg.ReplyMarkup = &keyboard
 		if _, err := b.api.Send(editMsg); err != nil && !strings.Contains(err.Error(), "message is not modified") {
 			log.Printf("Ошибка редактирования handleSettings: %v", err)
@@ -544,6 +547,7 @@ func (b *Bot) handleSettings(chatID int64, messageID int) {
 	} else {
 		msg := tgbotapi.NewMessage(chatID, text)
 		msg.ParseMode = "Markdown"
+		msg.DisableWebPagePreview = true
 		msg.ReplyMarkup = keyboard
 		b.api.Send(msg)
 	}
@@ -756,6 +760,7 @@ func CreateShareInlineKeyboard(text string) tgbotapi.InlineKeyboardMarkup {
 func (b *Bot) sendMessage(chatID int64, text string) {
 	msg := tgbotapi.NewMessage(chatID, text)
 	msg.ParseMode = "Markdown"
+	msg.DisableWebPagePreview = true
 	if _, err := b.api.Send(msg); err != nil {
 		log.Printf("Ошибка отправки сообщения: %v", err)
 	}
@@ -764,6 +769,7 @@ func (b *Bot) sendMessage(chatID int64, text string) {
 func (b *Bot) sendMessageWithShare(chatID int64, text string) {
 	msg := tgbotapi.NewMessage(chatID, text)
 	msg.ParseMode = "Markdown"
+	msg.DisableWebPagePreview = true
 	msg.ReplyMarkup = CreateShareInlineKeyboard(text)
 	if _, err := b.api.Send(msg); err != nil {
 		log.Printf("Ошибка отправки сообщения с кнопками 'Поделиться': %v", err)
@@ -773,6 +779,7 @@ func (b *Bot) sendMessageWithShare(chatID int64, text string) {
 func (b *Bot) sendMessageWithKeyboard(chatID int64, text string) {
 	msg := tgbotapi.NewMessage(chatID, text)
 	msg.ParseMode = "Markdown"
+	msg.DisableWebPagePreview = true
 
 	keyboard := tgbotapi.NewReplyKeyboard(
 		tgbotapi.NewKeyboardButtonRow(

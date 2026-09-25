@@ -53,6 +53,7 @@ func (b *Bot) handleMyChatMember(m *tgbotapi.ChatMemberUpdated) {
 
 		msg := tgbotapi.NewMessage(adminID, text)
 		msg.ParseMode = "Markdown"
+		msg.DisableWebPagePreview = true
 		msg.ReplyMarkup = keyboard
 		if _, err := b.api.Send(msg); err != nil {
 			log.Printf("Не удалось отправить уведомление админу %d в ЛС: %v", adminID, err)

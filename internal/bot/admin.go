@@ -727,6 +727,7 @@ func (b *Bot) sendOrEditMessage(chatID int64, messageID int, text string, keyboa
 	if messageID > 0 {
 		editMsg := tgbotapi.NewEditMessageText(chatID, messageID, text)
 		editMsg.ParseMode = "Markdown"
+		editMsg.DisableWebPagePreview = true
 		if keyboard != nil {
 			editMsg.ReplyMarkup = keyboard
 		}
@@ -738,6 +739,7 @@ func (b *Bot) sendOrEditMessage(chatID int64, messageID int, text string, keyboa
 	} else {
 		msg := tgbotapi.NewMessage(chatID, text)
 		msg.ParseMode = "Markdown"
+		msg.DisableWebPagePreview = true
 		if keyboard != nil {
 			msg.ReplyMarkup = keyboard
 		}

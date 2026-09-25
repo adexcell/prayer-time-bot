@@ -237,6 +237,7 @@ func (b *Bot) handleGroupSettings(userChatID int64, targetGroupID int64, groupTi
 	if messageID > 0 {
 		editMsg := tgbotapi.NewEditMessageText(userChatID, messageID, text)
 		editMsg.ParseMode = "Markdown"
+		editMsg.DisableWebPagePreview = true
 		editMsg.ReplyMarkup = &keyboard
 		if _, err := b.api.Send(editMsg); err != nil && !strings.Contains(err.Error(), "message is not modified") {
 			log.Printf("Ошибка редактирования handleGroupSettings: %v", err)
@@ -244,6 +245,7 @@ func (b *Bot) handleGroupSettings(userChatID int64, targetGroupID int64, groupTi
 	} else {
 		msg := tgbotapi.NewMessage(userChatID, text)
 		msg.ParseMode = "Markdown"
+		msg.DisableWebPagePreview = true
 		msg.ReplyMarkup = keyboard
 		if _, err := b.api.Send(msg); err != nil {
 			log.Printf("Ошибка отправки handleGroupSettings: %v", err)
@@ -341,6 +343,7 @@ func (b *Bot) handleGroupStyleSettings(userChatID int64, targetGroupID int64, me
 	if messageID > 0 {
 		editMsg := tgbotapi.NewEditMessageText(userChatID, messageID, text)
 		editMsg.ParseMode = "Markdown"
+		editMsg.DisableWebPagePreview = true
 		editMsg.ReplyMarkup = &keyboard
 		if _, err := b.api.Send(editMsg); err != nil && !strings.Contains(err.Error(), "message is not modified") {
 			log.Printf("Ошибка редактирования handleGroupStyleSettings: %v", err)
@@ -348,6 +351,7 @@ func (b *Bot) handleGroupStyleSettings(userChatID int64, targetGroupID int64, me
 	} else {
 		msg := tgbotapi.NewMessage(userChatID, text)
 		msg.ParseMode = "Markdown"
+		msg.DisableWebPagePreview = true
 		msg.ReplyMarkup = keyboard
 		if _, err := b.api.Send(msg); err != nil {
 			log.Printf("Ошибка отправки handleGroupStyleSettings: %v", err)
@@ -437,6 +441,7 @@ func (b *Bot) handleGroupPrayersMenu(userChatID int64, targetGroupID int64, mess
 	if messageID > 0 {
 		editMsg := tgbotapi.NewEditMessageText(userChatID, messageID, text)
 		editMsg.ParseMode = "Markdown"
+		editMsg.DisableWebPagePreview = true
 		editMsg.ReplyMarkup = &keyboard
 		if _, err := b.api.Send(editMsg); err != nil && !strings.Contains(err.Error(), "message is not modified") {
 			log.Printf("Ошибка редактирования handleGroupPrayersMenu: %v", err)
@@ -444,6 +449,7 @@ func (b *Bot) handleGroupPrayersMenu(userChatID int64, targetGroupID int64, mess
 	} else {
 		msg := tgbotapi.NewMessage(userChatID, text)
 		msg.ParseMode = "Markdown"
+		msg.DisableWebPagePreview = true
 		msg.ReplyMarkup = keyboard
 		if _, err := b.api.Send(msg); err != nil {
 			log.Printf("Ошибка отправки handleGroupPrayersMenu: %v", err)
@@ -567,6 +573,7 @@ func (b *Bot) handleChooseLocationForGroup(userChatID int64, targetGroupID int64
 	if messageID > 0 {
 		editMsg := tgbotapi.NewEditMessageText(userChatID, messageID, text)
 		editMsg.ParseMode = "Markdown"
+		editMsg.DisableWebPagePreview = true
 		editMsg.ReplyMarkup = &keyboard
 		if _, err := b.api.Send(editMsg); err != nil && !strings.Contains(err.Error(), "message is not modified") {
 			log.Printf("Ошибка редактирования handleChooseLocationForGroup: %v", err)
@@ -574,6 +581,7 @@ func (b *Bot) handleChooseLocationForGroup(userChatID int64, targetGroupID int64
 	} else {
 		msg := tgbotapi.NewMessage(userChatID, text)
 		msg.ParseMode = "Markdown"
+		msg.DisableWebPagePreview = true
 		msg.ReplyMarkup = keyboard
 		if _, err := b.api.Send(msg); err != nil {
 			log.Printf("Ошибка отправки handleChooseLocationForGroup: %v", err)
@@ -781,6 +789,7 @@ func (b *Bot) handleGroupCallbacks(cb *tgbotapi.CallbackQuery) bool {
 
 			msg := tgbotapi.NewMessage(userChatID, previewText)
 			msg.ParseMode = "Markdown"
+			msg.DisableWebPagePreview = true
 			sentMsg, err := b.api.Send(msg)
 			if err == nil {
 				b.setPreviewMessage(userChatID, sentMsg.MessageID)
@@ -806,6 +815,7 @@ func (b *Bot) handleGroupCallbacks(cb *tgbotapi.CallbackQuery) bool {
 			msgText := api.FormatMessageCustom(item, city, now, cfg)
 			msg := tgbotapi.NewMessage(targetGroupID, msgText)
 			msg.ParseMode = "Markdown"
+			msg.DisableWebPagePreview = true
 			msg.ReplyMarkup = CreateShareInlineKeyboard(msgText)
 			if _, sendErr := b.api.Send(msg); sendErr != nil {
 				log.Printf("Ошибка публикации в канал/группу %d: %v", targetGroupID, sendErr)
