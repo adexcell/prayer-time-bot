@@ -126,6 +126,18 @@ type User struct {
 	CustomHeader        string
 	PrayerNamesPreset   string
 	CustomPrayerNames   string
+	FavoriteCities      string
+}
+
+func (u *User) GetParsedFavoriteCities() []string {
+	if u == nil || strings.TrimSpace(u.FavoriteCities) == "" {
+		return []string{}
+	}
+	var cities []string
+	if err := json.Unmarshal([]byte(u.FavoriteCities), &cities); err == nil {
+		return cities
+	}
+	return []string{}
 }
 
 func (u *User) GetParsedBroadcastTimes() []string {
@@ -197,15 +209,16 @@ func (s *Storage) init() error {
 			daily_schedule_time TEXT DEFAULT '06:00',
 			evening_schedule_time TEXT DEFAULT '',
 			broadcast_times TEXT DEFAULT '["06:00"]',
-			notify_15_min BOOLEAN DEFAULT TRUE,
-			notify_at_time BOOLEAN DEFAULT TRUE,
+			notify_15min BOOLEAN DEFAULT 1,
+			notify_at_time BOOLEAN DEFAULT 1,
 			title TEXT DEFAULT '',
 			chat_type TEXT DEFAULT 'private',
 			added_by INTEGER DEFAULT 0,
 			custom_footer TEXT DEFAULT '',
 			custom_header TEXT DEFAULT '',
 			prayer_names_preset TEXT DEFAULT 'ru',
-			custom_prayer_names TEXT DEFAULT ''
+			custom_prayer_names TEXT DEFAULT '',
+			favorite_cities TEXT DEFAULT '[]'
 		);`,
 		`CREATE TABLE IF NOT EXISTS bot_admins (
 			user_id INTEGER PRIMARY KEY,
@@ -242,6 +255,7 @@ func (s *Storage) init() error {
 	_ = s.addColumnIfNotExist("custom_header", "TEXT DEFAULT ''")
 	_ = s.addColumnIfNotExist("prayer_names_preset", "TEXT DEFAULT 'ru'")
 	_ = s.addColumnIfNotExist("custom_prayer_names", "TEXT DEFAULT ''")
+	_ = s.addColumnIfNotExist("favorite_cities", "TEXT DEFAULT '[]'")
 	_ = s.addTableColumnIfNotExist("prayer_adjustments", "fixed_time", "TEXT DEFAULT ''")
 	return nil
 }
@@ -261,11 +275,11 @@ func (s *Storage) addTableColumnIfNotExist(table, column, colType string) error 
 // --- Управление пользователями и чатами ---
 
 func (s *Storage) GetUser(chatID int64) (*User, error) {
-	query := `SELECT chat_id, city, subscribed_at, daily_schedule_time, COALESCE(evening_schedule_time, ''), COALESCE(broadcast_times, ''), notify_15min, notify_at_time, COALESCE(title, ''), COALESCE(chat_type, 'private'), COALESCE(added_by, 0), COALESCE(custom_footer, ''), COALESCE(custom_header, ''), COALESCE(prayer_names_preset, 'ru'), COALESCE(custom_prayer_names, '') FROM users WHERE chat_id = ?;`
+	query := `SELECT chat_id, city, subscribed_at, daily_schedule_time, COALESCE(evening_schedule_time, ''), COALESCE(broadcast_times, ''), COALESCE(notify_15min, 1), COALESCE(notify_at_time, 1), COALESCE(title, ''), COALESCE(chat_type, 'private'), COALESCE(added_by, 0), COALESCE(custom_footer, ''), COALESCE(custom_header, ''), COALESCE(prayer_names_preset, 'ru'), COALESCE(custom_prayer_names, ''), COALESCE(favorite_cities, '[]') FROM users WHERE chat_id = ?;`
 	row := s.db.QueryRow(query, chatID)
 
 	var u User
-	err := row.Scan(&u.ChatID, &u.City, &u.SubscribedAt, &u.DailyScheduleTime, &u.EveningScheduleTime, &u.BroadcastTimes, &u.Notify15Min, &u.NotifyAtTime, &u.Title, &u.ChatType, &u.AddedBy, &u.CustomFooter, &u.CustomHeader, &u.PrayerNamesPreset, &u.CustomPrayerNames)
+	err := row.Scan(&u.ChatID, &u.City, &u.SubscribedAt, &u.DailyScheduleTime, &u.EveningScheduleTime, &u.BroadcastTimes, &u.Notify15Min, &u.NotifyAtTime, &u.Title, &u.ChatType, &u.AddedBy, &u.CustomFooter, &u.CustomHeader, &u.PrayerNamesPreset, &u.CustomPrayerNames, &u.FavoriteCities)
 	if err == sql.ErrNoRows {
 		return nil, nil
 	}
@@ -474,9 +488,9 @@ func (s *Storage) GetManagedChats(adminID int64, isSuperAdmin bool) ([]User, err
 	var args []interface{}
 
 	if isSuperAdmin {
-		query = `SELECT chat_id, city, subscribed_at, daily_schedule_time, COALESCE(evening_schedule_time, ''), COALESCE(broadcast_times, ''), notify_15min, notify_at_time, COALESCE(title, ''), COALESCE(chat_type, 'private'), COALESCE(added_by, 0), COALESCE(custom_footer, ''), COALESCE(custom_header, ''), COALESCE(prayer_names_preset, 'ru'), COALESCE(custom_prayer_names, '') FROM users WHERE chat_id < 0 ORDER BY chat_id DESC;`
+		query = `SELECT chat_id, city, subscribed_at, daily_schedule_time, COALESCE(evening_schedule_time, ''), COALESCE(broadcast_times, ''), COALESCE(notify_15min, 1), COALESCE(notify_at_time, 1), COALESCE(title, ''), COALESCE(chat_type, 'private'), COALESCE(added_by, 0), COALESCE(custom_footer, ''), COALESCE(custom_header, ''), COALESCE(prayer_names_preset, 'ru'), COALESCE(custom_prayer_names, ''), COALESCE(favorite_cities, '[]') FROM users WHERE chat_id < 0 ORDER BY chat_id DESC;`
 	} else {
-		query = `SELECT chat_id, city, subscribed_at, daily_schedule_time, COALESCE(evening_schedule_time, ''), COALESCE(broadcast_times, ''), notify_15min, notify_at_time, COALESCE(title, ''), COALESCE(chat_type, 'private'), COALESCE(added_by, 0), COALESCE(custom_footer, ''), COALESCE(custom_header, ''), COALESCE(prayer_names_preset, 'ru'), COALESCE(custom_prayer_names, '') FROM users WHERE chat_id < 0 AND (added_by = ? OR added_by = 0) ORDER BY chat_id DESC;`
+		query = `SELECT chat_id, city, subscribed_at, daily_schedule_time, COALESCE(evening_schedule_time, ''), COALESCE(broadcast_times, ''), COALESCE(notify_15min, 1), COALESCE(notify_at_time, 1), COALESCE(title, ''), COALESCE(chat_type, 'private'), COALESCE(added_by, 0), COALESCE(custom_footer, ''), COALESCE(custom_header, ''), COALESCE(prayer_names_preset, 'ru'), COALESCE(custom_prayer_names, ''), COALESCE(favorite_cities, '[]') FROM users WHERE chat_id < 0 AND (added_by = ? OR added_by = 0) ORDER BY chat_id DESC;`
 		args = append(args, adminID)
 	}
 
@@ -489,7 +503,7 @@ func (s *Storage) GetManagedChats(adminID int64, isSuperAdmin bool) ([]User, err
 	var chats []User
 	for rows.Next() {
 		var u User
-		if err := rows.Scan(&u.ChatID, &u.City, &u.SubscribedAt, &u.DailyScheduleTime, &u.EveningScheduleTime, &u.BroadcastTimes, &u.Notify15Min, &u.NotifyAtTime, &u.Title, &u.ChatType, &u.AddedBy, &u.CustomFooter, &u.CustomHeader, &u.PrayerNamesPreset, &u.CustomPrayerNames); err != nil {
+		if err := rows.Scan(&u.ChatID, &u.City, &u.SubscribedAt, &u.DailyScheduleTime, &u.EveningScheduleTime, &u.BroadcastTimes, &u.Notify15Min, &u.NotifyAtTime, &u.Title, &u.ChatType, &u.AddedBy, &u.CustomFooter, &u.CustomHeader, &u.PrayerNamesPreset, &u.CustomPrayerNames, &u.FavoriteCities); err != nil {
 			return nil, err
 		}
 		u.DailyScheduleTime = normalizeScheduleTime(u.DailyScheduleTime)
@@ -584,7 +598,7 @@ func (s *Storage) ResetChatCustomization(chatID int64) error {
 }
 
 func (s *Storage) GetSubscribers() ([]User, error) {
-	query := `SELECT chat_id, city, subscribed_at, daily_schedule_time, COALESCE(evening_schedule_time, ''), COALESCE(broadcast_times, ''), notify_15min, notify_at_time, COALESCE(title, ''), COALESCE(chat_type, 'private'), COALESCE(added_by, 0), COALESCE(custom_footer, ''), COALESCE(custom_header, ''), COALESCE(prayer_names_preset, 'ru'), COALESCE(custom_prayer_names, '') FROM users;`
+	query := `SELECT chat_id, city, subscribed_at, daily_schedule_time, COALESCE(evening_schedule_time, ''), COALESCE(broadcast_times, ''), COALESCE(notify_15min, 1), COALESCE(notify_at_time, 1), COALESCE(title, ''), COALESCE(chat_type, 'private'), COALESCE(added_by, 0), COALESCE(custom_footer, ''), COALESCE(custom_header, ''), COALESCE(prayer_names_preset, 'ru'), COALESCE(custom_prayer_names, ''), COALESCE(favorite_cities, '[]') FROM users;`
 	rows, err := s.db.Query(query)
 	if err != nil {
 		return nil, fmt.Errorf("ошибка получения подписчиков: %w", err)
@@ -593,7 +607,7 @@ func (s *Storage) GetSubscribers() ([]User, error) {
 	var users []User
 	for rows.Next() {
 		var u User
-		if err := rows.Scan(&u.ChatID, &u.City, &u.SubscribedAt, &u.DailyScheduleTime, &u.EveningScheduleTime, &u.BroadcastTimes, &u.Notify15Min, &u.NotifyAtTime, &u.Title, &u.ChatType, &u.AddedBy, &u.CustomFooter, &u.CustomHeader, &u.PrayerNamesPreset, &u.CustomPrayerNames); err != nil {
+		if err := rows.Scan(&u.ChatID, &u.City, &u.SubscribedAt, &u.DailyScheduleTime, &u.EveningScheduleTime, &u.BroadcastTimes, &u.Notify15Min, &u.NotifyAtTime, &u.Title, &u.ChatType, &u.AddedBy, &u.CustomFooter, &u.CustomHeader, &u.PrayerNamesPreset, &u.CustomPrayerNames, &u.FavoriteCities); err != nil {
 			return nil, err
 		}
 		u.DailyScheduleTime = normalizeScheduleTime(u.DailyScheduleTime)
@@ -770,6 +784,66 @@ func (s *Storage) GetStats() (totalUsers, totalGroups, totalSubscribers, activeA
 
 func (s *Storage) Close() error {
 	return s.db.Close()
+}
+
+// --- Управление любимыми городами (Дайджест) ---
+
+func (s *Storage) GetFavoriteCities(chatID int64) ([]string, error) {
+	u, err := s.GetUser(chatID)
+	if err != nil || u == nil {
+		return []string{}, err
+	}
+	cities := u.GetParsedFavoriteCities()
+	if len(cities) == 0 && u.City != "" {
+		cities = []string{u.City}
+	}
+	return cities, nil
+}
+
+func (s *Storage) AddFavoriteCity(chatID int64, city string) error {
+	city = strings.TrimSpace(city)
+	if city == "" {
+		return nil
+	}
+	u, _ := s.GetUser(chatID)
+	var list []string
+	if u != nil {
+		list = u.GetParsedFavoriteCities()
+		if len(list) == 0 && u.City != "" {
+			list = append(list, u.City)
+		}
+	}
+	for _, c := range list {
+		if c == city {
+			return nil
+		}
+	}
+	list = append(list, city)
+	jsonBytes, _ := json.Marshal(list)
+	query := `
+	INSERT INTO users (chat_id, city, subscribed_at, favorite_cities)
+	VALUES (?, ?, ?, ?)
+	ON CONFLICT(chat_id) DO UPDATE SET favorite_cities = excluded.favorite_cities;
+	`
+	_, err := s.db.Exec(query, chatID, city, time.Now(), string(jsonBytes))
+	return err
+}
+
+func (s *Storage) RemoveFavoriteCity(chatID int64, city string) error {
+	u, _ := s.GetUser(chatID)
+	if u == nil {
+		return nil
+	}
+	var newCities []string
+	for _, c := range u.GetParsedFavoriteCities() {
+		if c != city {
+			newCities = append(newCities, c)
+		}
+	}
+	jsonBytes, _ := json.Marshal(newCities)
+	query := `UPDATE users SET favorite_cities = ? WHERE chat_id = ?;`
+	_, err := s.db.Exec(query, string(jsonBytes), chatID)
+	return err
 }
 
 

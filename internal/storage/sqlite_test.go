@@ -364,3 +364,44 @@ func TestStorage_BroadcastTimes(t *testing.T) {
 		t.Errorf("Expected 0 times after clear, got %v", times)
 	}
 }
+
+func TestStorage_FavoriteCities(t *testing.T) {
+	dbPath := "test_fav_cities.db"
+	defer os.Remove(dbPath)
+
+	store, err := New(dbPath)
+	if err != nil {
+		t.Fatalf("Failed to create storage: %v", err)
+	}
+	defer store.Close()
+
+	chatID := int64(998877)
+
+	// 1. Initial favorite cities defaults to user's main city
+	_ = store.SetUserCity(chatID, "Уфа")
+	favs, err := store.GetFavoriteCities(chatID)
+	if err != nil {
+		t.Fatalf("GetFavoriteCities failed: %v", err)
+	}
+	if len(favs) != 1 || favs[0] != "Уфа" {
+		t.Errorf("Expected ['Уфа'], got %v", favs)
+	}
+
+	// 2. Add Sterlitamak
+	if err := store.AddFavoriteCity(chatID, "Стерлитамак"); err != nil {
+		t.Fatalf("AddFavoriteCity failed: %v", err)
+	}
+	favs, _ = store.GetFavoriteCities(chatID)
+	if len(favs) != 2 || favs[0] != "Уфа" || favs[1] != "Стерлитамак" {
+		t.Errorf("Expected ['Уфа', 'Стерлитамак'], got %v", favs)
+	}
+
+	// 3. Remove Ufa
+	if err := store.RemoveFavoriteCity(chatID, "Уфа"); err != nil {
+		t.Fatalf("RemoveFavoriteCity failed: %v", err)
+	}
+	favs, _ = store.GetFavoriteCities(chatID)
+	if len(favs) != 1 || favs[0] != "Стерлитамак" {
+		t.Errorf("Expected ['Стерлитамак'], got %v", favs)
+	}
+}

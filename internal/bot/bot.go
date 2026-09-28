@@ -53,6 +53,20 @@ func New(token, defaultCity string, configAdminIDs []int64, client *api.Client, 
 
 	log.Printf("Авторизован аккаунт бота: %s", botAPI.Self.UserName)
 
+	// Регистрируем системное меню команд Telegram (кнопка Menu/[/] возле поля ввода)
+	commandsConfig := tgbotapi.NewSetMyCommands(
+		tgbotapi.BotCommand{Command: "today", Description: "Расписание на сегодня"},
+		tgbotapi.BotCommand{Command: "digest", Description: "Дайджест городов для WhatsApp/MAX"},
+		tgbotapi.BotCommand{Command: "city", Description: "Выбрать город или район"},
+		tgbotapi.BotCommand{Command: "settings", Description: "Настройки рассылки и оформления"},
+		tgbotapi.BotCommand{Command: "channels", Description: "Мои подконтрольные каналы и группы"},
+		tgbotapi.BotCommand{Command: "subscribe", Description: "Включить ежедневную рассылку"},
+		tgbotapi.BotCommand{Command: "unsubscribe", Description: "Отключить рассылку"},
+	)
+	if _, err := botAPI.Request(commandsConfig); err != nil {
+		log.Printf("Предупреждение: Не удалось зарегистрировать меню команд Telegram: %v", err)
+	}
+
 	return &Bot{
 		api:             botAPI,
 		client:          client,
@@ -263,6 +277,8 @@ func (b *Bot) Start() {
 			b.handleStart(chatID, fromID, parts)
 		case cmd == "/today" || text == "🕌 Расписание на сегодня":
 			b.handleToday(chatID)
+		case cmd == "/digest" || text == "📋 Дайджест (WA/MAX)" || text == "📋 Дайджест рассылки":
+			b.handleDigest(chatID, 0)
 		case cmd == "/city" || text == "🏙 Выбрать город":
 			if chatID < 0 {
 				b.handleGroupSettingsRedirect(chatID, update.Message.MessageID)
@@ -627,6 +643,53 @@ func (b *Bot) handleCallback(cb *tgbotapi.CallbackQuery) {
 		return
 	}
 
+	if strings.HasPrefix(data, "fav_add_select") {
+		b.handleChooseFavLocation(chatID, true, 1, messageID)
+		b.answerCallback(cb.ID, "")
+		return
+	}
+
+	if strings.HasPrefix(data, "fav_tab_cities:") {
+		pageStr := strings.TrimPrefix(data, "fav_tab_cities:")
+		var page int
+		fmt.Sscanf(pageStr, "%d", &page)
+		b.handleChooseFavLocation(chatID, true, page, messageID)
+		b.answerCallback(cb.ID, "")
+		return
+	}
+
+	if strings.HasPrefix(data, "fav_tab_districts:") {
+		pageStr := strings.TrimPrefix(data, "fav_tab_districts:")
+		var page int
+		fmt.Sscanf(pageStr, "%d", &page)
+		b.handleChooseFavLocation(chatID, false, page, messageID)
+		b.answerCallback(cb.ID, "")
+		return
+	}
+
+	if strings.HasPrefix(data, "fav_add_city:") {
+		val := strings.TrimPrefix(data, "fav_add_city:")
+		cityName := val
+		var cityID int
+		if _, err := fmt.Sscanf(val, "%d", &cityID); err == nil && cityID > 0 {
+			if cityInfo, ok := api.GetCityByID(cityID); ok {
+				cityName = cityInfo.DisplayName
+			}
+		}
+		_ = b.storage.AddFavoriteCity(chatID, cityName)
+		b.answerCallback(cb.ID, "Добавлено в дайджест: "+cityName)
+		b.handleDigest(chatID, 0)
+		return
+	}
+
+	if strings.HasPrefix(data, "fav_del:") {
+		cityName := strings.TrimPrefix(data, "fav_del:")
+		_ = b.storage.RemoveFavoriteCity(chatID, cityName)
+		b.answerCallback(cb.ID, "Удалено из дайджеста: "+cityName)
+		b.handleDigest(chatID, 0)
+		return
+	}
+
 	if data == "user_add_time" {
 		b.setUserState(fromID, userState{
 			action:        pendingActionBroadcastTime,
@@ -784,14 +847,12 @@ func (b *Bot) sendMessageWithKeyboard(chatID int64, text string) {
 	keyboard := tgbotapi.NewReplyKeyboard(
 		tgbotapi.NewKeyboardButtonRow(
 			tgbotapi.NewKeyboardButton("🕌 Расписание на сегодня"),
+			tgbotapi.NewKeyboardButton("📋 Дайджест (WA/MAX)"),
 		),
 		tgbotapi.NewKeyboardButtonRow(
 			tgbotapi.NewKeyboardButton("🏙 Выбрать город"),
 			tgbotapi.NewKeyboardButton("⚙️ Настройки"),
-		),
-		tgbotapi.NewKeyboardButtonRow(
-			tgbotapi.NewKeyboardButton("🔔 Подписаться на рассылку"),
-			tgbotapi.NewKeyboardButton("🔕 Отписаться"),
+			tgbotapi.NewKeyboardButton("📢 Мои каналы"),
 		),
 	)
 	keyboard.ResizeKeyboard = true
@@ -799,6 +860,178 @@ func (b *Bot) sendMessageWithKeyboard(chatID int64, text string) {
 
 	if _, err := b.api.Send(msg); err != nil {
 		log.Printf("Ошибка отправки сообщения с клавиатурой: %v", err)
+	}
+}
+
+// handleDigest отправляет расписание для всех выбранных в дайджест городов с кнопками WhatsApp и MAX
+func (b *Bot) handleDigest(chatID int64, messageID int) {
+	cities, err := b.storage.GetFavoriteCities(chatID)
+	if err != nil || len(cities) == 0 {
+		defaultCity, _ := b.storage.GetUserCity(chatID, b.defaultCity)
+		cities = []string{defaultCity}
+	}
+
+	now := time.Now()
+	headerText := fmt.Sprintf("📋 *Дайджест расписания намазов (%s)*\n\n"+
+		"Ниже выведены карточки расписания для ваших городов.\n"+
+		"Нажмите *«WhatsApp ↗»* или *«MAX ↗»* под нужным городом для быстрой отправки в соответствующий чат:", now.Format("02.01.2006"))
+	b.sendMessage(chatID, headerText)
+
+	for _, city := range cities {
+		item, err := b.client.FetchPrayerTimes(city, now)
+		if err != nil {
+			log.Printf("Ошибка получения времени намаза для %s в дайджесте: %v", city, err)
+			continue
+		}
+		msgText := api.FormatMessage(item, city, now)
+		b.sendMessageWithShare(chatID, msgText)
+	}
+
+	// Панель управления любимыми городами
+	citiesList := strings.Join(cities, ", ")
+	manageText := fmt.Sprintf("⚙️ *Ваши города для дайджеста:* %s\n\n"+
+		"Вы можете добавить новые города или удалить ненужные кнопками ниже:", escapeMarkdown(citiesList))
+
+	var rows [][]tgbotapi.InlineKeyboardButton
+	rows = append(rows, []tgbotapi.InlineKeyboardButton{
+		tgbotapi.NewInlineKeyboardButtonData("➕ Добавить город в дайджест", "fav_add_select:1"),
+	})
+
+	if len(cities) > 0 {
+		var delRow []tgbotapi.InlineKeyboardButton
+		for _, c := range cities {
+			btn := tgbotapi.NewInlineKeyboardButtonData("✕ "+c, "fav_del:"+c)
+			delRow = append(delRow, btn)
+			if len(delRow) == 2 {
+				rows = append(rows, delRow)
+				delRow = []tgbotapi.InlineKeyboardButton{}
+			}
+		}
+		if len(delRow) > 0 {
+			rows = append(rows, delRow)
+		}
+	}
+
+	keyboard := tgbotapi.NewInlineKeyboardMarkup(rows...)
+	msg := tgbotapi.NewMessage(chatID, manageText)
+	msg.ParseMode = "Markdown"
+	msg.ReplyMarkup = keyboard
+	b.api.Send(msg)
+}
+
+// handleChooseFavLocation позволяет выбрать город для добавления в дайджест
+func (b *Bot) handleChooseFavLocation(chatID int64, isCityTab bool, page int, messageID int) {
+	if page < 1 {
+		page = 1
+	}
+
+	var items []api.CityInfo
+	if isCityTab {
+		items = api.GetCitiesOnly()
+	} else {
+		items = api.GetDistrictsOnly()
+	}
+
+	totalItems := len(items)
+	totalPages := (totalItems + locationPageSize - 1) / locationPageSize
+	if page > totalPages {
+		page = totalPages
+	}
+
+	startIdx := (page - 1) * locationPageSize
+	endIdx := startIdx + locationPageSize
+	if endIdx > totalItems {
+		endIdx = totalItems
+	}
+
+	favCities, _ := b.storage.GetFavoriteCities(chatID)
+	favMap := make(map[string]bool)
+	for _, c := range favCities {
+		favMap[c] = true
+	}
+
+	text := fmt.Sprintf(
+		"➕ *Добавление города в ваш дайджест рассылки:*\n\n"+
+			"Выберите населенный пункт из списка ниже:\n"+
+			"📄 Страница: %d из %d",
+		page, totalPages,
+	)
+
+	var rows [][]tgbotapi.InlineKeyboardButton
+
+	// 1. Вкладки категорий
+	citiesTabLabel := "🌆 Города (21)"
+	districtsTabLabel := "🏡 Районы (40)"
+	if isCityTab {
+		citiesTabLabel = "🔹 🌆 Города (21)"
+	} else {
+		districtsTabLabel = "🔹 🏡 Районы (40)"
+	}
+
+	tabRow := []tgbotapi.InlineKeyboardButton{
+		tgbotapi.NewInlineKeyboardButtonData(citiesTabLabel, "fav_tab_cities:1"),
+		tgbotapi.NewInlineKeyboardButtonData(districtsTabLabel, "fav_tab_districts:1"),
+	}
+	rows = append(rows, tabRow)
+
+	// 2. Кнопки городов
+	pageItems := items[startIdx:endIdx]
+	var currentRow []tgbotapi.InlineKeyboardButton
+
+	for _, item := range pageItems {
+		btnText := item.DisplayName
+		if favMap[item.DisplayName] || favMap[item.CleanName] {
+			btnText = "✓ " + item.DisplayName
+		}
+		btn := tgbotapi.NewInlineKeyboardButtonData(btnText, fmt.Sprintf("fav_add_city:%d", item.ID))
+		currentRow = append(currentRow, btn)
+
+		if len(currentRow) == 2 {
+			rows = append(rows, currentRow)
+			currentRow = []tgbotapi.InlineKeyboardButton{}
+		}
+	}
+	if len(currentRow) > 0 {
+		rows = append(rows, currentRow)
+	}
+
+	// 3. Строка пагинации
+	pagePrefix := "fav_tab_cities"
+	if !isCityTab {
+		pagePrefix = "fav_tab_districts"
+	}
+
+	var navRow []tgbotapi.InlineKeyboardButton
+	if page > 1 {
+		navRow = append(navRow, tgbotapi.NewInlineKeyboardButtonData("⬅️ Назад", fmt.Sprintf("%s:%d", pagePrefix, page-1)))
+	} else {
+		navRow = append(navRow, tgbotapi.NewInlineKeyboardButtonData(" ", "noop"))
+	}
+
+	navRow = append(navRow, tgbotapi.NewInlineKeyboardButtonData(fmt.Sprintf("%d / %d", page, totalPages), "noop"))
+
+	if page < totalPages {
+		navRow = append(navRow, tgbotapi.NewInlineKeyboardButtonData("Вперед ➡️", fmt.Sprintf("%s:%d", pagePrefix, page+1)))
+	} else {
+		navRow = append(navRow, tgbotapi.NewInlineKeyboardButtonData(" ", "noop"))
+	}
+
+	rows = append(rows, navRow)
+
+	keyboard := tgbotapi.NewInlineKeyboardMarkup(rows...)
+
+	if messageID > 0 {
+		editMsg := tgbotapi.NewEditMessageText(chatID, messageID, text)
+		editMsg.ParseMode = "Markdown"
+		editMsg.DisableWebPagePreview = true
+		editMsg.ReplyMarkup = &keyboard
+		_, _ = b.api.Send(editMsg)
+	} else {
+		msg := tgbotapi.NewMessage(chatID, text)
+		msg.ParseMode = "Markdown"
+		msg.DisableWebPagePreview = true
+		msg.ReplyMarkup = keyboard
+		_, _ = b.api.Send(msg)
 	}
 }
 
