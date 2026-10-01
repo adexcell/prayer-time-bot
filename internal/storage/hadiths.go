@@ -229,15 +229,59 @@ func (s *Storage) GetHadiths(category string, limit, offset int) ([]Hadith, int,
 	return list, total, rows.Err()
 }
 
-// GetRandomHadith возвращает случайный активный хадис по категории
+// GetActiveCollections возвращает список включенных администратором сборников хадисов
+func (s *Storage) GetActiveCollections() []string {
+	var cols []string
+	if s.GetSetting("hadith_col_bukhari", "1") == "1" {
+		cols = append(cols, CollectionBukhari)
+	}
+	if s.GetSetting("hadith_col_muslim", "1") == "1" {
+		cols = append(cols, CollectionMuslim)
+	}
+	if s.GetSetting("hadith_col_riyad", "1") == "1" {
+		cols = append(cols, CollectionRiyad)
+	}
+	if len(cols) == 0 {
+		return []string{CollectionBukhari, CollectionMuslim, CollectionRiyad}
+	}
+	return cols
+}
+
+// IsCollectionActive проверяет, включен ли сборник
+func (s *Storage) IsCollectionActive(col string) bool {
+	return s.GetSetting("hadith_col_"+col, "1") == "1"
+}
+
+// ToggleCollection переключает активность сборника
+func (s *Storage) ToggleCollection(col string) error {
+	key := "hadith_col_" + col
+	cur := s.GetSetting(key, "1")
+	if cur == "1" {
+		return s.SetSetting(key, "0")
+	}
+	return s.SetSetting(key, "1")
+}
+
+// GetRandomHadith возвращает случайный активный хадис по категории с учетом включенных сборников
 func (s *Storage) GetRandomHadith(category string) (*Hadith, error) {
-	query := `SELECT id, text, source, collection, category, is_active, created_at FROM hadiths WHERE category = ? AND is_active = 1 ORDER BY RANDOM() LIMIT 1;`
-	row := s.db.QueryRow(query, category)
+	activeCols := s.GetActiveCollections()
+	placeholders := make([]string, len(activeCols))
+	args := make([]interface{}, len(activeCols)+1)
+	args[0] = category
+	for i, c := range activeCols {
+		placeholders[i] = "?"
+		args[i+1] = c
+	}
+	query := fmt.Sprintf(
+		"SELECT id, text, source, collection, category, is_active, created_at FROM hadiths WHERE category = ? AND is_active = 1 AND collection IN (%s) ORDER BY RANDOM() LIMIT 1;",
+		strings.Join(placeholders, ","),
+	)
+	row := s.db.QueryRow(query, args...)
 
 	var h Hadith
 	err := row.Scan(&h.ID, &h.Text, &h.Source, &h.Collection, &h.Category, &h.IsActive, &h.CreatedAt)
 	if err == sql.ErrNoRows {
-		// Если по конкретной категории ничего нет, пробуем CategoryGeneral или любой активный
+		// Если по конкретной категории ничего нет, пробуем любой активный из включенных сборников
 		return s.GetRandomHadithAny()
 	}
 	if err != nil {
@@ -246,10 +290,20 @@ func (s *Storage) GetRandomHadith(category string) (*Hadith, error) {
 	return &h, nil
 }
 
-// GetRandomHadithAny возвращает любой активный случайный хадис
+// GetRandomHadithAny возвращает любой активный случайный хадис из включенных сборников
 func (s *Storage) GetRandomHadithAny() (*Hadith, error) {
-	query := `SELECT id, text, source, collection, category, is_active, created_at FROM hadiths WHERE is_active = 1 ORDER BY RANDOM() LIMIT 1;`
-	row := s.db.QueryRow(query)
+	activeCols := s.GetActiveCollections()
+	placeholders := make([]string, len(activeCols))
+	args := make([]interface{}, len(activeCols))
+	for i, c := range activeCols {
+		placeholders[i] = "?"
+		args[i] = c
+	}
+	query := fmt.Sprintf(
+		"SELECT id, text, source, collection, category, is_active, created_at FROM hadiths WHERE is_active = 1 AND collection IN (%s) ORDER BY RANDOM() LIMIT 1;",
+		strings.Join(placeholders, ","),
+	)
+	row := s.db.QueryRow(query, args...)
 
 	var h Hadith
 	err := row.Scan(&h.ID, &h.Text, &h.Source, &h.Collection, &h.Category, &h.IsActive, &h.CreatedAt)

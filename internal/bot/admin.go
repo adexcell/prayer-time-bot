@@ -741,13 +741,8 @@ func (b *Bot) isGlobalAdmin(userID int64) bool {
 
 // handleAdminHijri отображает меню управления и корректировки мусульманского календаря (Хиджры)
 func (b *Bot) handleAdminHijri(chatID int64, fromID int64, messageID int) {
-	if !b.isGlobalAdmin(fromID) {
-		backKb := tgbotapi.NewInlineKeyboardMarkup(
-			tgbotapi.NewInlineKeyboardRow(
-				tgbotapi.NewInlineKeyboardButtonData("« Назад в админку", "adm_main"),
-			),
-		)
-		b.sendOrEditMessage(chatID, messageID, "⛔️ Управление лунным календарем доступно только главному администратору (.env).", &backKb)
+	if !b.storage.IsAdmin(fromID, b.configAdminIDs) {
+		b.sendMessage(chatID, "⛔️ У вас нет прав администратора.")
 		return
 	}
 
@@ -779,14 +774,30 @@ func (b *Bot) handleAdminHijri(chatID int64, fromID int64, messageID int) {
 
 	text := fmt.Sprintf(
 		"🌙 *Управление календарем Хиджры*\n\n"+
-			"🔭 *Астрономический расчет (без сдвига):*\n`%s`\n\n"+
+			"🔭 *Астрономический расчет сегодня (без сдвига):*\n`%s`\n\n"+
 			"⚙️ *Текущая корректировка духовенства:* `%s`\n\n"+
-			"✨ *Итоговая дата во всех рассылках и боте:*\n*%s*\n\n"+
-			"💡 _Бывают случаи, когда официальное решение духовенства (ДУМ РБ) не совпадает с астрономическим расчетом. Выберите нужное смещение или укажите сегодняшнее число вручную — весь календарь автоматически сдвинется на выбранное количество дней._",
+			"✨ *Итоговая дата во всем боте и рассылках:*\n*%s*\n\n"+
+			"💡 *Как скорректировать дату:*\n"+
+			"Если духовенство (ДУМ РБ) объявило, что сегодня другое число (например, по расчету 1 число, а объявлено 2 число) — нажмите кнопку с нужным числом ниже или выберите сдвиг дней. Весь календарь автоматически сдвинется во всем боте и сохранится в базе данных.",
 		baseStr, offsetText, adjStr,
 	)
 
+	// Быстрые кнопки прямого выбора числа дня
+	var quickDayButtons []tgbotapi.InlineKeyboardButton
+	for diff := -2; diff <= 2; diff++ {
+		testOffset := diff
+		hd, errHd := api.GetHijriDate(now, testOffset)
+		if errHd == nil {
+			btnLabel := fmt.Sprintf("%d-е", hd.Day)
+			if testOffset == offset {
+				btnLabel = fmt.Sprintf("✓ %d-е", hd.Day)
+			}
+			quickDayButtons = append(quickDayButtons, tgbotapi.NewInlineKeyboardButtonData(btnLabel, fmt.Sprintf("adm_hijri_shift:%d", testOffset)))
+		}
+	}
+
 	keyboard := tgbotapi.NewInlineKeyboardMarkup(
+		quickDayButtons,
 		tgbotapi.NewInlineKeyboardRow(
 			tgbotapi.NewInlineKeyboardButtonData("◀️ -1 день", "adm_hijri_shift:-1"),
 			tgbotapi.NewInlineKeyboardButtonData("Сброс (0)", "adm_hijri_shift:0"),
@@ -797,7 +808,7 @@ func (b *Bot) handleAdminHijri(chatID int64, fromID int64, messageID int) {
 			tgbotapi.NewInlineKeyboardButtonData("+2 дня ⏩", "adm_hijri_shift:2"),
 		),
 		tgbotapi.NewInlineKeyboardRow(
-			tgbotapi.NewInlineKeyboardButtonData("🔢 Задать сегодняшнее число дня", "adm_hijri_set_day"),
+			tgbotapi.NewInlineKeyboardButtonData("🔢 Ввести число дня вручную (1-30)", "adm_hijri_set_day"),
 		),
 		tgbotapi.NewInlineKeyboardRow(
 			tgbotapi.NewInlineKeyboardButtonData("« Назад в админку", "adm_main"),
@@ -938,22 +949,17 @@ func (b *Bot) handleAdminCallbacks(cb *tgbotapi.CallbackQuery) bool {
 		b.answerCallback(cb.ID, "")
 
 	case strings.HasPrefix(data, "adm_hijri_shift:"):
-		if !b.isGlobalAdmin(fromID) {
-			b.answerCallback(cb.ID, "⛔️ Доступно только главному администратору.")
-			return true
-		}
 		valStr := strings.TrimPrefix(data, "adm_hijri_shift:")
 		shift, _ := strconv.Atoi(valStr)
 		_ = b.storage.SetHijriOffset(shift)
 		api.SetGlobalHijriOffset(shift)
+		now := time.Now()
+		adjHD, _ := api.GetHijriDate(now, shift)
+		monthName := api.GetHijriMonthName(adjHD.Month, "ru")
 		b.handleAdminHijri(chatID, fromID, messageID)
-		b.answerCallback(cb.ID, fmt.Sprintf("✅ Смещение установлено: %+d дн.", shift))
+		b.answerCallback(cb.ID, fmt.Sprintf("✅ Сегодня установлено: %d %s (сдвиг: %+d дн.)", adjHD.Day, monthName, shift))
 
 	case data == "adm_hijri_set_day":
-		if !b.isGlobalAdmin(fromID) {
-			b.answerCallback(cb.ID, "⛔️ Доступно только главному администратору.")
-			return true
-		}
 		b.setUserState(fromID, userState{
 			action: pendingActionHijriDay,
 		})

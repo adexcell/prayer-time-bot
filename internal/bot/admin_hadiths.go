@@ -99,8 +99,50 @@ func (b *Bot) handleAdminHadithsConfig(chatID int64, fromID int64, messageID int
 	monthsEn := b.storage.GetSetting("hadith_months_enabled", "1") == "1"
 	monthsTime := b.storage.GetSetting("hadith_months_time", "12:00")
 
-	text := "⚙️ *Настройки показа и рассылок хадисов*\n\n" +
-		"Здесь вы можете включить или отключить показ хадисов в различных сценариях, а также изменить время автоматических рассылок:"
+	bukhariEn := b.storage.IsCollectionActive(storage.CollectionBukhari)
+	muslimEn := b.storage.IsCollectionActive(storage.CollectionMuslim)
+	riyadEn := b.storage.IsCollectionActive(storage.CollectionRiyad)
+
+	formatStatus := func(en bool) string {
+		if en {
+			return "🟢 Вкл"
+		}
+		return "🔴 Выкл"
+	}
+
+	text := fmt.Sprintf(
+		"⚙️ *Настройки показа и рассылок хадисов*\n\n"+
+			"Здесь вы можете включать и отключать сборники хадисов, а также настраивать типы и время рассылок:\n\n"+
+			"📚 *Сборники хадисов:*\n"+
+			"• Сахих аль-Бухари: %s\n"+
+			"• Сахих Муслим: %s\n"+
+			"• Сады праведных: %s\n\n"+
+			"⏰ *Типы рассылок:*\n"+
+			"• Хадис дня: %s (%s)\n"+
+			"• К намазам: %s\n"+
+			"• О посте (Пн/Чт и 13-15): %s (%s)\n"+
+			"• О месяцах: %s (%s)",
+		formatStatus(bukhariEn),
+		formatStatus(muslimEn),
+		formatStatus(riyadEn),
+		formatStatus(dailyEn), dailyTime,
+		formatStatus(prayerEn),
+		formatStatus(fastingEn), fastingTime,
+		formatStatus(monthsEn), monthsTime,
+	)
+
+	btnBukhari := "Бухари: [ ]"
+	if bukhariEn {
+		btnBukhari = "Бухари: [✓]"
+	}
+	btnMuslim := "Муслим: [ ]"
+	if muslimEn {
+		btnMuslim = "Муслим: [✓]"
+	}
+	btnRiyad := "Сады праведных: [ ]"
+	if riyadEn {
+		btnRiyad = "Сады праведных: [✓]"
+	}
 
 	btnTogDaily := "Хадис дня: [ ]"
 	if dailyEn {
@@ -120,6 +162,13 @@ func (b *Bot) handleAdminHadithsConfig(chatID int64, fromID int64, messageID int
 	}
 
 	keyboard := tgbotapi.NewInlineKeyboardMarkup(
+		tgbotapi.NewInlineKeyboardRow(
+			tgbotapi.NewInlineKeyboardButtonData(btnBukhari, "adm_hadith_tog_col:bukhari"),
+			tgbotapi.NewInlineKeyboardButtonData(btnMuslim, "adm_hadith_tog_col:muslim"),
+		),
+		tgbotapi.NewInlineKeyboardRow(
+			tgbotapi.NewInlineKeyboardButtonData(btnRiyad, "adm_hadith_tog_col:riyad"),
+		),
 		tgbotapi.NewInlineKeyboardRow(
 			tgbotapi.NewInlineKeyboardButtonData(btnTogDaily, "adm_hadith_tog:daily"),
 			tgbotapi.NewInlineKeyboardButtonData(fmt.Sprintf("⏰ Время: %s", dailyTime), "adm_hadith_settime:daily"),
@@ -395,6 +444,12 @@ func (b *Bot) handleAdminHadithsCallbacks(cb *tgbotapi.CallbackQuery) bool {
 	case data == "adm_hadith_cfg":
 		b.handleAdminHadithsConfig(chatID, fromID, messageID)
 		b.answerCallback(cb.ID, "")
+
+	case strings.HasPrefix(data, "adm_hadith_tog_col:"):
+		col := strings.TrimPrefix(data, "adm_hadith_tog_col:")
+		_ = b.storage.ToggleCollection(col)
+		b.handleAdminHadithsConfig(chatID, fromID, messageID)
+		b.answerCallback(cb.ID, "Статус сборника изменен")
 
 	case strings.HasPrefix(data, "adm_hadith_tog:"):
 		feature := strings.TrimPrefix(data, "adm_hadith_tog:")

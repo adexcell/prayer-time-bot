@@ -63,6 +63,7 @@ func New(token, defaultCity string, configAdminIDs []int64, client *api.Client, 
 
 	// Регистрируем системное меню команд Telegram (кнопка Menu/[/] возле поля ввода)
 	commandsConfig := tgbotapi.NewSetMyCommands(
+		tgbotapi.BotCommand{Command: "start", Description: "Главное меню бота"},
 		tgbotapi.BotCommand{Command: "today", Description: "Расписание на сегодня"},
 		tgbotapi.BotCommand{Command: "digest", Description: "Дайджест городов для WhatsApp/MAX"},
 		tgbotapi.BotCommand{Command: "city", Description: "Выбрать город или район"},
@@ -71,6 +72,7 @@ func New(token, defaultCity string, configAdminIDs []int64, client *api.Client, 
 		tgbotapi.BotCommand{Command: "channels", Description: "Мои подконтрольные каналы и группы"},
 		tgbotapi.BotCommand{Command: "subscribe", Description: "Включить ежедневную рассылку"},
 		tgbotapi.BotCommand{Command: "unsubscribe", Description: "Отключить рассылку"},
+		tgbotapi.BotCommand{Command: "admin", Description: "Панель администратора"},
 	)
 	if _, err := botAPI.Request(commandsConfig); err != nil {
 		log.Printf("Предупреждение: Не удалось зарегистрировать меню команд Telegram: %v", err)
@@ -270,8 +272,8 @@ func (b *Bot) Start() {
 						fixedTime := fmt.Sprintf("%02d:%02d", hour, min)
 						b.handleAdminSelectDurationStepForFixed(chatID, state.cityID, state.prayerKey, fixedTime, 0)
 					} else if state.action == pendingActionHijriDay {
-						if !b.isGlobalAdmin(fromID) {
-							b.sendMessage(chatID, "⛔️ Корректировка календаря доступна только главному администратору (.env).")
+						if !b.storage.IsAdmin(fromID, b.configAdminIDs) {
+							b.sendMessage(chatID, "⛔️ Корректировка календаря доступна только администраторам.")
 							continue
 						}
 						targetDay, err := strconv.Atoi(strings.TrimSpace(text))
@@ -401,7 +403,7 @@ func (b *Bot) Start() {
 		default:
 			// Для личных чатов выводим подсказку
 			if chatID > 0 {
-				b.sendMessage(chatID, "Используйте меню или команды:\n/today — Расписание на сегодня\n/city — Выбрать город или район РБ\n/hadith — Случайный хадис дня\n/settings — Настройки уведомлений\n/channels — Мои каналы и группы\n/channel — Подключить Telegram-канал\n/subscribe — Подписаться на рассылку\n/unsubscribe — Отписаться\n/admin — Панель администратора")
+				b.sendMessage(chatID, "Используйте меню или команды:\n/start — Главное меню\n/today — Расписание на сегодня\n/digest — Дайджест городов (WA/MAX)\n/city — Выбрать город или район РБ\n/hadith — Случайный хадис дня\n/settings — Настройки уведомлений\n/channels — Мои каналы и группы\n/channel — Подключить Telegram-канал\n/subscribe — Подписаться на рассылку\n/unsubscribe — Отписаться\n/admin — Панель администратора")
 			}
 		}
 	}

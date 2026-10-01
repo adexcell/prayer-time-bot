@@ -213,9 +213,23 @@ func (b *Bot) handleGroupSettings(userChatID int64, targetGroupID int64, groupTi
 		labelSub = "📢 Рассылка: [✓]"
 	}
 
+	labelHadithDaily := "📖 Хадис дня: [ ]"
+	if u != nil && u.HadithDailyEnabled {
+		labelHadithDaily = "📖 Хадис дня: [✓]"
+	}
+
+	labelHadithPrayer := "📖 Хадис к намазу: [ ]"
+	if u != nil && u.HadithPrayerEnabled {
+		labelHadithPrayer = "📖 Хадис к намазу: [✓]"
+	}
+
 	keyboardRows = append(keyboardRows, []tgbotapi.InlineKeyboardButton{
 		tgbotapi.NewInlineKeyboardButtonData(label15, fmt.Sprintf("gtog15:%d", targetGroupID)),
 		tgbotapi.NewInlineKeyboardButtonData(labelAtTime, fmt.Sprintf("gtogat:%d", targetGroupID)),
+	})
+	keyboardRows = append(keyboardRows, []tgbotapi.InlineKeyboardButton{
+		tgbotapi.NewInlineKeyboardButtonData(labelHadithDaily, fmt.Sprintf("gtog_h_daily:%d", targetGroupID)),
+		tgbotapi.NewInlineKeyboardButtonData(labelHadithPrayer, fmt.Sprintf("gtog_h_pray:%d", targetGroupID)),
 	})
 	keyboardRows = append(keyboardRows, []tgbotapi.InlineKeyboardButton{
 		tgbotapi.NewInlineKeyboardButtonData(labelSub, fmt.Sprintf("gtogsub:%d", targetGroupID)),
@@ -729,6 +743,16 @@ func (b *Bot) handleGroupCallbacks(cb *tgbotapi.CallbackQuery) bool {
 	case "gtogat":
 		_ = b.storage.ToggleNotifyAtTime(targetGroupID)
 		b.answerCallback(cb.ID, "Настройка напоминания в момент намаза обновлена")
+		b.handleGroupSettings(userChatID, targetGroupID, groupTitle, messageID)
+
+	case "gtog_h_daily":
+		_ = b.storage.ToggleHadithDaily(targetGroupID)
+		b.answerCallback(cb.ID, "Настройка рассылки хадиса дня обновлена")
+		b.handleGroupSettings(userChatID, targetGroupID, groupTitle, messageID)
+
+	case "gtog_h_pray":
+		_ = b.storage.ToggleHadithPrayer(targetGroupID)
+		b.answerCallback(cb.ID, "Настройка хадисов к намазам обновлена")
 		b.handleGroupSettings(userChatID, targetGroupID, groupTitle, messageID)
 
 	case "gtogsub":

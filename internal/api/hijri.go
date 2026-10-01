@@ -121,7 +121,8 @@ func FindOffsetForTargetDay(t time.Time, targetDay int) (int, error) {
 		return 0, fmt.Errorf("число месяца должно быть от 1 до 30")
 	}
 
-	for offset := -5; offset <= 5; offset++ {
+	// Ищем смещение в порядке минимального отклонения от сегодняшней даты: 0, +1, -1, +2, -2...
+	for _, offset := range []int{0, 1, -1, 2, -2, 3, -3, 4, -4, 5, -5} {
 		hd, err := GetHijriDate(t, offset)
 		if err == nil && hd.Day == targetDay {
 			return offset, nil
