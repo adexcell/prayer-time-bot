@@ -277,6 +277,7 @@ type PrayerFormatConfig struct {
 	CustomHeader  string
 	CustomFooter  string
 	CustomPrayers map[string]string // "fajr", "sunrise", "dhuhr", "asr", "maghrib", "isha"
+	HijriOffset   int               // Явное смещение календаря Хиджры (0 = использовать глобальное)
 }
 
 func applyPrayerOverrides(labels PrayerLabels, custom map[string]string) PrayerLabels {
@@ -401,6 +402,11 @@ func FormatMessageCustom(item *DUMRBItem, city string, date time.Time, cfg Praye
 	}
 
 	dateStr := date.Format("02.01.2006")
+	hijriStr := FormatHijriDate(date, cfg.Preset, cfg.HijriOffset)
+	fullDateStr := dateStr
+	if hijriStr != "" {
+		fullDateStr = fmt.Sprintf("%s (%s)", dateStr, hijriStr)
+	}
 
 	text := fmt.Sprintf(
 		"%s\n"+
@@ -414,7 +420,7 @@ func FormatMessageCustom(item *DUMRBItem, city string, date time.Time, cfg Praye
 			"%s %s\n\n"+
 			"%s",
 		header,
-		labels.DateLabel, dateStr,
+		labels.DateLabel, fullDateStr,
 		labels.CityLabel, city,
 		labels.Fajr, item.Fajr,
 		labels.Sunrise, item.Sunrise,
@@ -450,6 +456,10 @@ func FormatEveningMessageCustom(todayItem *DUMRBItem, tomorrowItem *DUMRBItem, c
 	tomorrow := today.AddDate(0, 0, 1)
 	todayStr := today.Format("02.01.2006")
 	tomorrowStr := tomorrow.Format("02.01.2006")
+	tomorrowHijriStr := FormatHijriDate(tomorrow, cfg.Preset, cfg.HijriOffset)
+	if tomorrowHijriStr != "" {
+		tomorrowStr = fmt.Sprintf("%s, %s", tomorrowStr, tomorrowHijriStr)
+	}
 
 	remTitle := fmt.Sprintf(labels.RemainingTitle, todayStr)
 	tomTitle := fmt.Sprintf(labels.TomorrowTitle, tomorrowStr)

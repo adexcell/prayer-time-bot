@@ -33,6 +33,9 @@ func (b *Bot) handleAdmin(chatID int64, fromID int64, messageID int) {
 			tgbotapi.NewInlineKeyboardButtonData("📋 Активные правила", "adm_rules"),
 		),
 		tgbotapi.NewInlineKeyboardRow(
+			tgbotapi.NewInlineKeyboardButtonData("🌙 Календарь Хиджры", "adm_hijri"),
+		),
+		tgbotapi.NewInlineKeyboardRow(
 			tgbotapi.NewInlineKeyboardButtonData("👥 Администраторы", "adm_admins"),
 			tgbotapi.NewInlineKeyboardButtonData("📊 Статистика", "adm_stats"),
 		),
@@ -722,6 +725,119 @@ func (b *Bot) handleAdminStats(chatID int64, messageID int) {
 	b.sendOrEditMessage(chatID, messageID, text, &keyboard)
 }
 
+// isGlobalAdmin проверяет, является ли пользователь главным администратором (заданным в .env)
+func (b *Bot) isGlobalAdmin(userID int64) bool {
+	if len(b.configAdminIDs) == 0 {
+		return b.storage.IsAdmin(userID, nil)
+	}
+	for _, id := range b.configAdminIDs {
+		if id == userID {
+			return true
+		}
+	}
+	return false
+}
+
+// handleAdminHijri отображает меню управления и корректировки мусульманского календаря (Хиджры)
+func (b *Bot) handleAdminHijri(chatID int64, fromID int64, messageID int) {
+	if !b.isGlobalAdmin(fromID) {
+		backKb := tgbotapi.NewInlineKeyboardMarkup(
+			tgbotapi.NewInlineKeyboardRow(
+				tgbotapi.NewInlineKeyboardButtonData("« Назад в админку", "adm_main"),
+			),
+		)
+		b.sendOrEditMessage(chatID, messageID, "⛔️ Управление лунным календарем доступно только главному администратору (.env).", &backKb)
+		return
+	}
+
+	now := time.Now()
+	// Дата по расчету (без смещения)
+	baseHD, err := api.GetHijriDate(now, 0)
+	baseMonthName := api.GetHijriMonthName(baseHD.Month, "ru")
+	baseStr := fmt.Sprintf("%d %s %d г. х.", baseHD.Day, baseMonthName, baseHD.Year)
+	if err != nil {
+		baseStr = "ошибка расчета"
+	}
+
+	offset := b.storage.GetHijriOffset()
+
+	// Итоговая дата со смещением
+	adjHD, errAdj := api.GetHijriDate(now, offset)
+	adjMonthName := api.GetHijriMonthName(adjHD.Month, "ru")
+	adjStr := fmt.Sprintf("%d %s %d г. х.", adjHD.Day, adjMonthName, adjHD.Year)
+	if errAdj != nil {
+		adjStr = "ошибка расчета"
+	}
+
+	offsetText := "0 (без изменений)"
+	if offset > 0 {
+		offsetText = fmt.Sprintf("+%d дн.", offset)
+	} else if offset < 0 {
+		offsetText = fmt.Sprintf("%d дн.", offset)
+	}
+
+	text := fmt.Sprintf(
+		"🌙 *Управление календарем Хиджры*\n\n"+
+			"🔭 *Астрономический расчет (без сдвига):*\n`%s`\n\n"+
+			"⚙️ *Текущая корректировка духовенства:* `%s`\n\n"+
+			"✨ *Итоговая дата во всех рассылках и боте:*\n*%s*\n\n"+
+			"💡 _Бывают случаи, когда официальное решение духовенства (ДУМ РБ) не совпадает с астрономическим расчетом. Выберите нужное смещение или укажите сегодняшнее число вручную — весь календарь автоматически сдвинется на выбранное количество дней._",
+		baseStr, offsetText, adjStr,
+	)
+
+	keyboard := tgbotapi.NewInlineKeyboardMarkup(
+		tgbotapi.NewInlineKeyboardRow(
+			tgbotapi.NewInlineKeyboardButtonData("◀️ -1 день", "adm_hijri_shift:-1"),
+			tgbotapi.NewInlineKeyboardButtonData("Сброс (0)", "adm_hijri_shift:0"),
+			tgbotapi.NewInlineKeyboardButtonData("+1 день ▶️", "adm_hijri_shift:1"),
+		),
+		tgbotapi.NewInlineKeyboardRow(
+			tgbotapi.NewInlineKeyboardButtonData("⏪ -2 дня", "adm_hijri_shift:-2"),
+			tgbotapi.NewInlineKeyboardButtonData("+2 дня ⏩", "adm_hijri_shift:2"),
+		),
+		tgbotapi.NewInlineKeyboardRow(
+			tgbotapi.NewInlineKeyboardButtonData("🔢 Задать сегодняшнее число дня", "adm_hijri_set_day"),
+		),
+		tgbotapi.NewInlineKeyboardRow(
+			tgbotapi.NewInlineKeyboardButtonData("« Назад в админку", "adm_main"),
+		),
+	)
+
+	b.sendOrEditMessage(chatID, messageID, text, &keyboard)
+}
+
+// handleHijriCommand обрабатывает команду /hijri [смещение]
+func (b *Bot) handleHijriCommand(chatID int64, fromID int64, text string) {
+	if !b.isGlobalAdmin(fromID) {
+		b.sendMessage(chatID, "⛔️ Управление лунным календарем доступно только главному администратору (.env).")
+		return
+	}
+
+	parts := strings.Fields(text)
+	if len(parts) < 2 {
+		b.handleAdminHijri(chatID, fromID, 0)
+		return
+	}
+
+	shift, err := strconv.Atoi(parts[1])
+	if err != nil {
+		b.sendMessage(chatID, "❌ Некорректное значение смещения. Используйте: `/hijri +1` или `/hijri -1` или `/hijri 0`")
+		return
+	}
+
+	if err := b.storage.SetHijriOffset(shift); err != nil {
+		b.sendMessage(chatID, fmt.Sprintf("❌ Ошибка сохранения смещения: %v", err))
+		return
+	}
+	api.SetGlobalHijriOffset(shift)
+
+	now := time.Now()
+	adjHD, _ := api.GetHijriDate(now, shift)
+	adjMonthName := api.GetHijriMonthName(adjHD.Month, "ru")
+
+	b.sendMessage(chatID, fmt.Sprintf("✅ Корректировка календаря сохранена!\n\nТекущее смещение: *%+d дн.*\nСегодняшняя дата: *%d %s %d г. х.*", shift, adjHD.Day, adjMonthName, adjHD.Year))
+}
+
 // sendOrEditMessage вспомогательная функция для редактирования или отправки сообщений
 func (b *Bot) sendOrEditMessage(chatID int64, messageID int, text string, keyboard *tgbotapi.InlineKeyboardMarkup) {
 	if messageID > 0 {
@@ -766,23 +882,22 @@ func (b *Bot) handleAdminCallbacks(cb *tgbotapi.CallbackQuery) bool {
 		return false
 	}
 
-	if !b.storage.IsAdmin(fromID, b.configAdminIDs) {
-		b.answerCallback(cb.ID, "⛔️ Доступ запрещен.")
+	// Действия с каналами доступны владельцам этих каналов (не только суперадминам)
+	if data == "adm_channels_digest" {
+		b.handleChannelsDigest(chatID, fromID)
+		b.answerCallback(cb.ID, "")
 		return true
 	}
 
-	switch {
-	case data == "adm_main":
-		b.handleAdmin(chatID, fromID, messageID)
-		b.answerCallback(cb.ID, "")
-
-	case strings.HasPrefix(data, "adm_channels:"):
+	if strings.HasPrefix(data, "adm_channels:") {
 		pageStr := strings.TrimPrefix(data, "adm_channels:")
 		page, _ := strconv.Atoi(pageStr)
 		b.handleMyChannelsList(chatID, fromID, page, messageID)
 		b.answerCallback(cb.ID, "")
+		return true
+	}
 
-	case data == "adm_add_channel":
+	if data == "adm_add_channel" {
 		helpText := "📢 *Как подключить Telegram-канал или группу:*\n\n" +
 			"1. Перейдите в ваш канал или группу в Telegram.\n" +
 			"2. Добавьте этого бота в администраторы (для канала обязательно право *«Публикация сообщений»*).\n" +
@@ -796,9 +911,59 @@ func (b *Bot) handleAdminCallbacks(cb *tgbotapi.CallbackQuery) bool {
 		)
 		b.sendOrEditMessage(chatID, messageID, helpText, &keyboard)
 		b.answerCallback(cb.ID, "")
+		return true
+	}
+
+	if !b.storage.IsAdmin(fromID, b.configAdminIDs) {
+		b.answerCallback(cb.ID, "⛔️ Доступ запрещен.")
+		return true
+	}
+
+	switch {
+	case data == "adm_main":
+		b.handleAdmin(chatID, fromID, messageID)
+		b.answerCallback(cb.ID, "")
 
 	case data == "adm_rules":
 		b.handleAdminRulesList(chatID, messageID)
+		b.answerCallback(cb.ID, "")
+
+	case data == "adm_hijri":
+		b.handleAdminHijri(chatID, fromID, messageID)
+		b.answerCallback(cb.ID, "")
+
+	case strings.HasPrefix(data, "adm_hijri_shift:"):
+		if !b.isGlobalAdmin(fromID) {
+			b.answerCallback(cb.ID, "⛔️ Доступно только главному администратору.")
+			return true
+		}
+		valStr := strings.TrimPrefix(data, "adm_hijri_shift:")
+		shift, _ := strconv.Atoi(valStr)
+		_ = b.storage.SetHijriOffset(shift)
+		api.SetGlobalHijriOffset(shift)
+		b.handleAdminHijri(chatID, fromID, messageID)
+		b.answerCallback(cb.ID, fmt.Sprintf("✅ Смещение установлено: %+d дн.", shift))
+
+	case data == "adm_hijri_set_day":
+		if !b.isGlobalAdmin(fromID) {
+			b.answerCallback(cb.ID, "⛔️ Доступно только главному администратору.")
+			return true
+		}
+		b.setUserState(fromID, userState{
+			action: pendingActionHijriDay,
+		})
+		now := time.Now()
+		baseHD, _ := api.GetHijriDate(now, 0)
+		monthName := api.GetHijriMonthName(baseHD.Month, "ru")
+		prompt := fmt.Sprintf(
+			"🔢 *Установка сегодняшнего числа по Хиджре*\n\n"+
+				"Сегодня по расчету: *%d %s %d г. х.*\n\n"+
+				"Какое число этого месяца сегодня объявило духовенство?\n\n"+
+				"Отправьте в чат число месяца (от 1 до 30), например: `2`\n"+
+				"Или отправьте `-` для отмены.",
+			baseHD.Day, monthName, baseHD.Year,
+		)
+		b.sendMessage(chatID, prompt)
 		b.answerCallback(cb.ID, "")
 
 	case data == "adm_admins":

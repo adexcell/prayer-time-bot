@@ -24,6 +24,7 @@ const (
 	pendingActionPrayer        pendingActionType = "prayer"
 	pendingActionBroadcastTime pendingActionType = "broadcast_time"
 	pendingActionFixedTime     pendingActionType = "fixed_time"
+	pendingActionHijriDay      pendingActionType = "hijri_day"
 )
 
 type userState struct {
@@ -202,6 +203,9 @@ func (b *Bot) Start() {
 					} else if state.action == pendingActionFixedTime {
 						b.sendMessage(chatID, "❌ Ввод фиксированного времени отменен.")
 						b.handleAdminSelectOffsetStep(chatID, state.cityID, state.prayerKey, 0)
+					} else if state.action == pendingActionHijriDay {
+						b.sendMessage(chatID, "❌ Установка числа месяца отменена.")
+						b.handleAdminHijri(chatID, fromID, 0)
 					}
 				} else {
 					if state.action == pendingActionHeader {
@@ -251,6 +255,31 @@ func (b *Bot) Start() {
 						}
 						fixedTime := fmt.Sprintf("%02d:%02d", hour, min)
 						b.handleAdminSelectDurationStepForFixed(chatID, state.cityID, state.prayerKey, fixedTime, 0)
+					} else if state.action == pendingActionHijriDay {
+						if !b.isGlobalAdmin(fromID) {
+							b.sendMessage(chatID, "⛔️ Корректировка календаря доступна только главному администратору (.env).")
+							continue
+						}
+						targetDay, err := strconv.Atoi(strings.TrimSpace(text))
+						if err != nil || targetDay < 1 || targetDay > 30 {
+							b.setUserState(fromID, state)
+							b.sendMessage(chatID, "❌ Некорректное число дня. Введите число месяца от 1 до 30 (например: `2`):")
+							continue
+						}
+						now := time.Now()
+						offset, errFind := api.FindOffsetForTargetDay(now, targetDay)
+						if errFind != nil {
+							b.setUserState(fromID, state)
+							b.sendMessage(chatID, fmt.Sprintf("❌ %v. Попробуйте еще раз или используйте кнопки смещения в панели.", errFind))
+							continue
+						}
+						_ = b.storage.SetHijriOffset(offset)
+						api.SetGlobalHijriOffset(offset)
+
+						adjHD, _ := api.GetHijriDate(now, offset)
+						monthName := api.GetHijriMonthName(adjHD.Month, "ru")
+						b.sendMessage(chatID, fmt.Sprintf("✅ Календарь успешно скорректирован!\n\nСегодняшний день установлен как: *%d %s %d г. х.*\nСмещение: *%+d дн.*\n\nВесь календарь автоматически сдвинут.", adjHD.Day, monthName, adjHD.Year, offset))
+						b.handleAdminHijri(chatID, fromID, 0)
 					}
 				}
 				continue
@@ -275,11 +304,11 @@ func (b *Bot) Start() {
 		switch {
 		case cmd == "/start":
 			b.handleStart(chatID, fromID, parts)
-		case cmd == "/today" || text == "🕌 Расписание на сегодня":
+		case cmd == "/today" || text == "🕌 Расписание на сегодня" || text == "🕌 Сегодня":
 			b.handleToday(chatID)
-		case cmd == "/digest" || text == "📋 Дайджест (WA/MAX)" || text == "📋 Дайджест рассылки":
+		case cmd == "/digest" || text == "📋 Дайджест (WA/MAX)" || text == "📋 Дайджест рассылки" || text == "📋 Дайджест":
 			b.handleDigest(chatID, 0)
-		case cmd == "/city" || text == "🏙 Выбрать город":
+		case cmd == "/city" || text == "🏙 Выбрать город" || text == "🏙 Город":
 			if chatID < 0 {
 				b.handleGroupSettingsRedirect(chatID, update.Message.MessageID)
 			} else {
@@ -291,7 +320,7 @@ func (b *Bot) Start() {
 			} else {
 				b.handleSettings(chatID, 0)
 			}
-		case cmd == "/channels" || cmd == "/mychannels":
+		case cmd == "/channels" || cmd == "/mychannels" || text == "📢 Мои каналы":
 			b.handleMyChannelsList(chatID, fromID, 1, 0)
 		case cmd == "/channel":
 			b.handleChannelCommand(chatID, fromID, parts)
@@ -313,6 +342,8 @@ func (b *Bot) Start() {
 			b.handleAddAdminCommand(chatID, fromID, text)
 		case strings.HasPrefix(text, "/deladmin"):
 			b.handleDelAdminCommand(chatID, fromID, text)
+		case strings.HasPrefix(text, "/hijri"):
+			b.handleHijriCommand(chatID, fromID, text)
 		default:
 			// Для личных чатов выводим подсказку
 			if chatID > 0 {
@@ -678,7 +709,7 @@ func (b *Bot) handleCallback(cb *tgbotapi.CallbackQuery) {
 		}
 		_ = b.storage.AddFavoriteCity(chatID, cityName)
 		b.answerCallback(cb.ID, "Добавлено в дайджест: "+cityName)
-		b.handleDigest(chatID, 0)
+		b.handleDigestManagePanel(chatID, messageID)
 		return
 	}
 
@@ -686,7 +717,7 @@ func (b *Bot) handleCallback(cb *tgbotapi.CallbackQuery) {
 		cityName := strings.TrimPrefix(data, "fav_del:")
 		_ = b.storage.RemoveFavoriteCity(chatID, cityName)
 		b.answerCallback(cb.ID, "Удалено из дайджеста: "+cityName)
-		b.handleDigest(chatID, 0)
+		b.handleDigestManagePanel(chatID, messageID)
 		return
 	}
 
@@ -809,13 +840,13 @@ func (b *Bot) handleUnsubscribe(chatID int64) {
 // CreateShareInlineKeyboard создает кнопки «Поделиться» для WhatsApp и MAX
 func CreateShareInlineKeyboard(text string) tgbotapi.InlineKeyboardMarkup {
 	encodedText := url.QueryEscape(text)
-	waURL := "https://api.whatsapp.com/send?text=" + encodedText
+	waURL := "https://wa.me/?text=" + encodedText
 	maxURL := "https://max.ru/share?text=" + encodedText
 
 	return tgbotapi.NewInlineKeyboardMarkup(
 		tgbotapi.NewInlineKeyboardRow(
-			tgbotapi.NewInlineKeyboardButtonURL("WhatsApp ↗", waURL),
-			tgbotapi.NewInlineKeyboardButtonURL("MAX ↗", maxURL),
+			tgbotapi.NewInlineKeyboardButtonURL("WhatsApp", waURL),
+			tgbotapi.NewInlineKeyboardButtonURL("MAX", maxURL),
 		),
 	)
 }
@@ -846,11 +877,11 @@ func (b *Bot) sendMessageWithKeyboard(chatID int64, text string) {
 
 	keyboard := tgbotapi.NewReplyKeyboard(
 		tgbotapi.NewKeyboardButtonRow(
-			tgbotapi.NewKeyboardButton("🕌 Расписание на сегодня"),
-			tgbotapi.NewKeyboardButton("📋 Дайджест (WA/MAX)"),
+			tgbotapi.NewKeyboardButton("🕌 Сегодня"),
+			tgbotapi.NewKeyboardButton("📋 Дайджест"),
 		),
 		tgbotapi.NewKeyboardButtonRow(
-			tgbotapi.NewKeyboardButton("🏙 Выбрать город"),
+			tgbotapi.NewKeyboardButton("🏙 Город"),
 			tgbotapi.NewKeyboardButton("⚙️ Настройки"),
 			tgbotapi.NewKeyboardButton("📢 Мои каналы"),
 		),
@@ -874,7 +905,7 @@ func (b *Bot) handleDigest(chatID int64, messageID int) {
 	now := time.Now()
 	headerText := fmt.Sprintf("📋 *Дайджест расписания намазов (%s)*\n\n"+
 		"Ниже выведены карточки расписания для ваших городов.\n"+
-		"Нажмите *«WhatsApp ↗»* или *«MAX ↗»* под нужным городом для быстрой отправки в соответствующий чат:", now.Format("02.01.2006"))
+		"Нажмите *«WhatsApp»* или *«MAX»* под нужным городом для быстрой отправки в соответствующий чат:", now.Format("02.01.2006"))
 	b.sendMessage(chatID, headerText)
 
 	for _, city := range cities {
@@ -887,7 +918,17 @@ func (b *Bot) handleDigest(chatID int64, messageID int) {
 		b.sendMessageWithShare(chatID, msgText)
 	}
 
-	// Панель управления любимыми городами
+	b.handleDigestManagePanel(chatID, 0)
+}
+
+// handleDigestManagePanel отображает и обновляет только панель управления городами дайджеста
+func (b *Bot) handleDigestManagePanel(chatID int64, messageID int) {
+	cities, err := b.storage.GetFavoriteCities(chatID)
+	if err != nil || len(cities) == 0 {
+		defaultCity, _ := b.storage.GetUserCity(chatID, b.defaultCity)
+		cities = []string{defaultCity}
+	}
+
 	citiesList := strings.Join(cities, ", ")
 	manageText := fmt.Sprintf("⚙️ *Ваши города для дайджеста:* %s\n\n"+
 		"Вы можете добавить новые города или удалить ненужные кнопками ниже:", escapeMarkdown(citiesList))
@@ -913,10 +954,22 @@ func (b *Bot) handleDigest(chatID int64, messageID int) {
 	}
 
 	keyboard := tgbotapi.NewInlineKeyboardMarkup(rows...)
-	msg := tgbotapi.NewMessage(chatID, manageText)
-	msg.ParseMode = "Markdown"
-	msg.ReplyMarkup = keyboard
-	b.api.Send(msg)
+
+	if messageID > 0 {
+		editMsg := tgbotapi.NewEditMessageText(chatID, messageID, manageText)
+		editMsg.ParseMode = "Markdown"
+		editMsg.DisableWebPagePreview = true
+		editMsg.ReplyMarkup = &keyboard
+		if _, err := b.api.Send(editMsg); err != nil && !strings.Contains(err.Error(), "message is not modified") {
+			log.Printf("Ошибка редактирования панели дайджеста: %v", err)
+		}
+	} else {
+		msg := tgbotapi.NewMessage(chatID, manageText)
+		msg.ParseMode = "Markdown"
+		msg.DisableWebPagePreview = true
+		msg.ReplyMarkup = keyboard
+		b.api.Send(msg)
+	}
 }
 
 // handleChooseFavLocation позволяет выбрать город для добавления в дайджест

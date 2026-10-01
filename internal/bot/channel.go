@@ -4,8 +4,11 @@ import (
 	"fmt"
 	"log"
 	"strings"
+	"time"
 
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
+
+	"namaz-time-bot/internal/api"
 )
 
 // handleMyChatMember обрабатывает события добавления/изменения прав бота в каналах и группах
@@ -145,6 +148,12 @@ func (b *Bot) handleMyChannelsList(userChatID int64, fromID int64, page int, mes
 	}
 
 	// Кнопка подключения нового канала и возврат
+	if totalItems > 0 {
+		rows = append(rows, []tgbotapi.InlineKeyboardButton{
+			tgbotapi.NewInlineKeyboardButtonData("📋 Дайджест по городам каналов", "adm_channels_digest"),
+		})
+	}
+
 	rows = append(rows, []tgbotapi.InlineKeyboardButton{
 		tgbotapi.NewInlineKeyboardButtonData("➕ Подключить новый канал", "adm_add_channel"),
 	})
@@ -157,6 +166,51 @@ func (b *Bot) handleMyChannelsList(userChatID int64, fromID int64, page int, mes
 
 	keyboard := tgbotapi.NewInlineKeyboardMarkup(rows...)
 	b.sendOrEditMessage(userChatID, messageID, text, &keyboard)
+}
+
+// handleChannelsDigest собирает уникальные города подконтрольных каналов и отправляет расписания с кнопками WhatsApp и MAX
+func (b *Bot) handleChannelsDigest(userChatID int64, fromID int64) {
+	isSuper := b.storage.IsAdmin(fromID, b.configAdminIDs)
+	chats, err := b.storage.GetManagedChats(fromID, isSuper)
+	if err != nil || len(chats) == 0 {
+		b.sendMessage(userChatID, "❌ *У вас нет подключенных каналов или групп.*")
+		return
+	}
+
+	citySeen := make(map[string]bool)
+	var cities []string
+	for _, ch := range chats {
+		city := strings.TrimSpace(ch.City)
+		if city == "" {
+			city = b.defaultCity
+		}
+		if !citySeen[city] {
+			citySeen[city] = true
+			cities = append(cities, city)
+		}
+	}
+
+	if len(cities) == 0 {
+		b.sendMessage(userChatID, "❌ *Не удалось определить города для ваших каналов.*")
+		return
+	}
+
+	now := time.Now()
+	headerText := fmt.Sprintf("📋 *Дайджест расписания для городов ваших каналов (%s)*\n\n"+
+		"Ниже выведены карточки расписания для всех городов (%d шт.), привязанных к вашим подконтрольным каналам и группам.\n"+
+		"Нажмите *«WhatsApp»* или *«MAX»* под нужным городом для быстрой отправки в соответствующий чат:",
+		now.Format("02.01.2006"), len(cities))
+	b.sendMessage(userChatID, headerText)
+
+	for _, city := range cities {
+		item, err := b.client.FetchPrayerTimes(city, now)
+		if err != nil {
+			log.Printf("Ошибка получения времени намаза для %s в дайджесте каналов: %v", city, err)
+			continue
+		}
+		msgText := api.FormatMessage(item, city, now)
+		b.sendMessageWithShare(userChatID, msgText)
+	}
 }
 
 // handleChannelCommand обрабатывает команду /channel в личных сообщениях

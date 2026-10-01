@@ -235,6 +235,10 @@ func (s *Storage) init() error {
 			created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
 			fixed_time TEXT DEFAULT ''
 		);`,
+		`CREATE TABLE IF NOT EXISTS bot_settings (
+			key TEXT PRIMARY KEY,
+			value TEXT NOT NULL
+		);`,
 	}
 
 	for _, q := range queries {
@@ -846,4 +850,36 @@ func (s *Storage) RemoveFavoriteCity(chatID int64, city string) error {
 	return err
 }
 
+// --- Настройки бота (Настройки календаря Хиджры и др.) ---
 
+func (s *Storage) GetSetting(key, defaultValue string) string {
+	var val string
+	err := s.db.QueryRow(`SELECT value FROM bot_settings WHERE key = ? LIMIT 1;`, key).Scan(&val)
+	if err != nil {
+		return defaultValue
+	}
+	return val
+}
+
+func (s *Storage) SetSetting(key, value string) error {
+	query := `
+	INSERT INTO bot_settings (key, value)
+	VALUES (?, ?)
+	ON CONFLICT(key) DO UPDATE SET value = excluded.value;
+	`
+	_, err := s.db.Exec(query, key, value)
+	return err
+}
+
+func (s *Storage) GetHijriOffset() int {
+	valStr := s.GetSetting("hijri_offset", "0")
+	val, err := strconv.Atoi(valStr)
+	if err != nil {
+		return 0
+	}
+	return val
+}
+
+func (s *Storage) SetHijriOffset(offset int) error {
+	return s.SetSetting("hijri_offset", strconv.Itoa(offset))
+}

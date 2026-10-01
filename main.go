@@ -26,6 +26,11 @@ func main() {
 	}
 	defer store.Close()
 
+	// Загружаем сохраненную корректировку лунного календаря (Хиджры)
+	hijriOffset := store.GetHijriOffset()
+	api.SetGlobalHijriOffset(hijriOffset)
+	log.Printf("🌙 Корректировка календаря Хиджры: %+d дн.", hijriOffset)
+
 	// 3. Инициализация клиента ДУМ РБ и привязка хранилища для учета корректировок
 	apiClient := api.NewClient()
 	apiClient.SetStorage(store)

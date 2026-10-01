@@ -405,3 +405,36 @@ func TestStorage_FavoriteCities(t *testing.T) {
 		t.Errorf("Expected ['Стерлитамак'], got %v", favs)
 	}
 }
+
+func TestStorage_HijriOffset(t *testing.T) {
+	dbPath := "test_hijri_setting.db"
+	defer os.Remove(dbPath)
+
+	store, err := New(dbPath)
+	if err != nil {
+		t.Fatalf("Failed to create storage: %v", err)
+	}
+	defer store.Close()
+
+	// Default should be 0
+	if offset := store.GetHijriOffset(); offset != 0 {
+		t.Errorf("Expected default offset 0, got %d", offset)
+	}
+
+	// Set to +1
+	if err := store.SetHijriOffset(1); err != nil {
+		t.Fatalf("SetHijriOffset(1) failed: %v", err)
+	}
+	if offset := store.GetHijriOffset(); offset != 1 {
+		t.Errorf("Expected offset 1, got %d", offset)
+	}
+
+	// Set to -1
+	if err := store.SetHijriOffset(-1); err != nil {
+		t.Fatalf("SetHijriOffset(-1) failed: %v", err)
+	}
+	if offset := store.GetHijriOffset(); offset != -1 {
+		t.Errorf("Expected offset -1, got %d", offset)
+	}
+}
+
