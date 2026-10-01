@@ -65,6 +65,15 @@ func (s *Scheduler) checkAndSendReminders() {
 		return
 	}
 
+	// 1. Проверка ежедневной рассылки хадиса дня
+	s.checkAndSendDailyHadith(now, currentTimeStr, subscribers)
+
+	// 2. Проверка напоминаний о посте (Пн/Чт и Белые дни 13, 14, 15)
+	s.checkAndSendFastingHadith(now, currentTimeStr, subscribers)
+
+	// 3. Проверка хадисов о наступающих лунных месяцах (за 1-2 дня до месяца)
+	s.checkAndSendLunarMonthHadith(now, currentTimeStr, subscribers)
+
 	cityCache := make(map[string]*api.DUMRBItem)
 	tomorrowCache := make(map[string]*api.DUMRBItem)
 
@@ -130,11 +139,20 @@ func (s *Scheduler) checkAndSendReminders() {
 			}
 		}
 
-		// 3. Напоминания о намазах
+		// 2. Напоминания о намазах
 		for name, timeStr := range prayers {
 			// В момент наступления
 			if user.NotifyAtTime && timeStr == currentTimeStr {
 				msg := fmt.Sprintf("🕌 *Наступило время намаза %s в г. %s!* (%s)", name, userCity, timeStr)
+
+				// Добавление хадиса о соответствующей молитве
+				if user.HadithPrayerEnabled && s.storage.GetSetting("hadith_prayer_enabled", "1") == "1" {
+					cat := getPrayerHadithCategory(name, now.Weekday())
+					if h, err := s.storage.GetRandomHadith(cat); err == nil && h != nil {
+						msg += fmt.Sprintf("\n\n📖 *Хадис:*\n«%s»\n📚 _%s_", h.Text, h.Source)
+					}
+				}
+
 				s.bot.SendToChat(user.ChatID, msg)
 			}
 
@@ -149,6 +167,198 @@ func (s *Scheduler) checkAndSendReminders() {
 		}
 
 		time.Sleep(20 * time.Millisecond)
+	}
+}
+
+// checkAndSendDailyHadith отправляет ежедневный хадис дня на случайную тему
+func (s *Scheduler) checkAndSendDailyHadith(now time.Time, currentTimeStr string, subscribers []storage.User) {
+	if s.storage.GetSetting("hadith_daily_enabled", "1") != "1" {
+		return
+	}
+	targetTime := s.storage.GetSetting("hadith_daily_time", "09:00")
+	if currentTimeStr != targetTime {
+		return
+	}
+
+	todayStr := now.Format("2006-01-02")
+	if s.storage.GetSetting("last_daily_hadith_date", "") == todayStr {
+		return
+	}
+	_ = s.storage.SetSetting("last_daily_hadith_date", todayStr)
+
+	h, err := s.storage.GetRandomHadith(storage.CategoryGeneral)
+	if err != nil || h == nil {
+		h, err = s.storage.GetRandomHadithAny()
+		if err != nil || h == nil {
+			return
+		}
+	}
+
+	msg := fmt.Sprintf("📖 *Хадис дня*\n\n«%s»\n\n📚 *Источник:* %s", h.Text, h.Source)
+	for _, user := range subscribers {
+		if user.HadithDailyEnabled {
+			s.bot.SendToChatWithShare(user.ChatID, msg)
+			time.Sleep(20 * time.Millisecond)
+		}
+	}
+}
+
+// checkAndSendFastingHadith проверяет дни поста (Пн/Чт и Белые дни 13, 14, 15) и отправляет хадис
+func (s *Scheduler) checkAndSendFastingHadith(now time.Time, currentTimeStr string, subscribers []storage.User) {
+	if s.storage.GetSetting("hadith_fasting_enabled", "1") != "1" {
+		return
+	}
+	targetTime := s.storage.GetSetting("hadith_fasting_time", "07:00")
+	if currentTimeStr != targetTime {
+		return
+	}
+
+	todayStr := now.Format("2006-01-02")
+	if s.storage.GetSetting("last_fasting_hadith_date", "") == todayStr {
+		return
+	}
+
+	hd, err := api.GetHijriDate(now, api.GetGlobalHijriOffset())
+	if err == nil && (hd.Day == 13 || hd.Day == 14 || hd.Day == 15) {
+		_ = s.storage.SetSetting("last_fasting_hadith_date", todayStr)
+		h, _ := s.storage.GetRandomHadith(storage.CategoryFastingWhiteDays)
+		if h == nil {
+			h, _ = s.storage.GetRandomHadith(storage.CategoryFastingGeneral)
+		}
+		if h != nil {
+			monthName := api.GetHijriMonthName(hd.Month, "ru")
+			msg := fmt.Sprintf(
+				"🌕 *Сунна поста: Белые дни (%s)*\n\n"+
+					"Сегодня *%d-е число месяца %s* — один из трех дней (13, 14, 15 числа по лунному календарю), когда сунной является соблюдать пост.\n\n"+
+					"«%s»\n\n"+
+					"📚 *Источник:* %s",
+				monthName, hd.Day, monthName, h.Text, h.Source,
+			)
+			for _, user := range subscribers {
+				if user.HadithDailyEnabled {
+					s.bot.SendToChatWithShare(user.ChatID, msg)
+					time.Sleep(20 * time.Millisecond)
+				}
+			}
+		}
+		return
+	}
+
+	if now.Weekday() == time.Monday || now.Weekday() == time.Thursday {
+		_ = s.storage.SetSetting("last_fasting_hadith_date", todayStr)
+		dayName := "Понедельник"
+		if now.Weekday() == time.Thursday {
+			dayName = "Четверг"
+		}
+		h, _ := s.storage.GetRandomHadith(storage.CategoryFastingMonThu)
+		if h == nil {
+			h, _ = s.storage.GetRandomHadith(storage.CategoryFastingGeneral)
+		}
+		if h != nil {
+			msg := fmt.Sprintf(
+				"📅 *Сунна поста: %s*\n\n"+
+					"Сегодня *%s* — благословенный день, в который является сунной соблюдать желательный пост.\n\n"+
+					"«%s»\n\n"+
+					"📚 *Источник:* %s",
+				dayName, dayName, h.Text, h.Source,
+			)
+			for _, user := range subscribers {
+				if user.HadithDailyEnabled {
+					s.bot.SendToChatWithShare(user.ChatID, msg)
+					time.Sleep(20 * time.Millisecond)
+				}
+			}
+		}
+	}
+}
+
+// checkAndSendLunarMonthHadith отправляет хадис о наступающем лунном месяце за 1-2 дня до его начала
+func (s *Scheduler) checkAndSendLunarMonthHadith(now time.Time, currentTimeStr string, subscribers []storage.User) {
+	if s.storage.GetSetting("hadith_months_enabled", "1") != "1" {
+		return
+	}
+	targetTime := s.storage.GetSetting("hadith_months_time", "12:00")
+	if currentTimeStr != targetTime {
+		return
+	}
+
+	hd, err := api.GetHijriDate(now, api.GetGlobalHijriOffset())
+	if err != nil || hd.Day < 29 {
+		return
+	}
+
+	nextMonth := (hd.Month % 12) + 1
+	nextYear := hd.Year
+	if hd.Month == 12 {
+		nextYear++
+	}
+
+	transitionKey := fmt.Sprintf("%d-%02d", nextYear, nextMonth)
+	if s.storage.GetSetting("last_month_hadith_key", "") == transitionKey {
+		return
+	}
+
+	var cat string
+	switch nextMonth {
+	case 1:
+		cat = storage.CategoryMonthMuharram
+	case 7:
+		cat = storage.CategoryMonthRajab
+	case 8:
+		cat = storage.CategoryMonthShaban
+	case 9:
+		cat = storage.CategoryMonthRamadan
+	case 10:
+		cat = storage.CategoryMonthShawwal
+	case 11:
+		cat = storage.CategoryMonthDhulQadah
+	case 12:
+		cat = storage.CategoryMonthDhulHijjah
+	}
+
+	if cat == "" {
+		return
+	}
+
+	h, _ := s.storage.GetRandomHadith(cat)
+	if h == nil {
+		return
+	}
+
+	_ = s.storage.SetSetting("last_month_hadith_key", transitionKey)
+	monthName := api.GetHijriMonthName(nextMonth, "ru")
+	msg := fmt.Sprintf(
+		"🌙 *Приближается благословенный месяц %s!*\n\n"+
+			"«%s»\n\n"+
+			"📚 *Источник:* %s",
+		monthName, h.Text, h.Source,
+	)
+
+	for _, user := range subscribers {
+		if user.HadithDailyEnabled {
+			s.bot.SendToChatWithShare(user.ChatID, msg)
+			time.Sleep(20 * time.Millisecond)
+		}
+	}
+}
+
+func getPrayerHadithCategory(name string, wd time.Weekday) string {
+	switch name {
+	case "Фаджр":
+		return storage.CategoryPrayerFajr
+	case "Зухр":
+		if wd == time.Friday {
+			return storage.CategoryPrayerJumah
+		}
+		return storage.CategoryPrayerDhuhr
+	case "Аср":
+		return storage.CategoryPrayerAsr
+	case "Магриб":
+		return storage.CategoryPrayerMaghrib
+	case "Иша":
+		return storage.CategoryPrayerIsha
+	default:
+		return storage.CategoryGeneral
 	}
 }
 

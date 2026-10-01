@@ -34,6 +34,7 @@ func (b *Bot) handleAdmin(chatID int64, fromID int64, messageID int) {
 		),
 		tgbotapi.NewInlineKeyboardRow(
 			tgbotapi.NewInlineKeyboardButtonData("🌙 Календарь Хиджры", "adm_hijri"),
+			tgbotapi.NewInlineKeyboardButtonData("📖 Управление хадисами", "adm_hadiths"),
 		),
 		tgbotapi.NewInlineKeyboardRow(
 			tgbotapi.NewInlineKeyboardButtonData("👥 Администраторы", "adm_admins"),
@@ -880,6 +881,10 @@ func (b *Bot) handleAdminCallbacks(cb *tgbotapi.CallbackQuery) bool {
 
 	if !strings.HasPrefix(data, "adm_") {
 		return false
+	}
+
+	if strings.HasPrefix(data, "adm_hadith") {
+		return b.handleAdminHadithsCallbacks(cb)
 	}
 
 	// Действия с каналами доступны владельцам этих каналов (не только суперадминам)

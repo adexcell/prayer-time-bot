@@ -25,6 +25,9 @@ const (
 	pendingActionBroadcastTime pendingActionType = "broadcast_time"
 	pendingActionFixedTime     pendingActionType = "fixed_time"
 	pendingActionHijriDay      pendingActionType = "hijri_day"
+	pendingActionHadithText    pendingActionType = "hadith_text"
+	pendingActionHadithSource  pendingActionType = "hadith_source"
+	pendingActionHadithTime    pendingActionType = "hadith_time"
 )
 
 type userState struct {
@@ -32,6 +35,10 @@ type userState struct {
 	targetGroupID int64
 	prayerKey     string
 	cityID        int
+	hadithCat     string
+	hadithCol     string
+	hadithText    string
+	settingKey    string
 }
 
 type Bot struct {
@@ -60,6 +67,7 @@ func New(token, defaultCity string, configAdminIDs []int64, client *api.Client, 
 		tgbotapi.BotCommand{Command: "digest", Description: "Дайджест городов для WhatsApp/MAX"},
 		tgbotapi.BotCommand{Command: "city", Description: "Выбрать город или район"},
 		tgbotapi.BotCommand{Command: "settings", Description: "Настройки рассылки и оформления"},
+		tgbotapi.BotCommand{Command: "hadith", Description: "Хадис дня (Бухари, Муслим, Сады праведных)"},
 		tgbotapi.BotCommand{Command: "channels", Description: "Мои подконтрольные каналы и группы"},
 		tgbotapi.BotCommand{Command: "subscribe", Description: "Включить ежедневную рассылку"},
 		tgbotapi.BotCommand{Command: "unsubscribe", Description: "Отключить рассылку"},
@@ -206,6 +214,12 @@ func (b *Bot) Start() {
 					} else if state.action == pendingActionHijriDay {
 						b.sendMessage(chatID, "❌ Установка числа месяца отменена.")
 						b.handleAdminHijri(chatID, fromID, 0)
+					} else if state.action == pendingActionHadithText || state.action == pendingActionHadithSource {
+						b.sendMessage(chatID, "❌ Добавление хадиса отменено.")
+						b.handleAdminHadithsMenu(chatID, fromID, 0)
+					} else if state.action == pendingActionHadithTime {
+						b.sendMessage(chatID, "❌ Изменение времени рассылки отменено.")
+						b.handleAdminHadithsConfig(chatID, fromID, 0)
 					}
 				} else {
 					if state.action == pendingActionHeader {
@@ -280,6 +294,44 @@ func (b *Bot) Start() {
 						monthName := api.GetHijriMonthName(adjHD.Month, "ru")
 						b.sendMessage(chatID, fmt.Sprintf("✅ Календарь успешно скорректирован!\n\nСегодняшний день установлен как: *%d %s %d г. х.*\nСмещение: *%+d дн.*\n\nВесь календарь автоматически сдвинут.", adjHD.Day, monthName, adjHD.Year, offset))
 						b.handleAdminHijri(chatID, fromID, 0)
+					} else if state.action == pendingActionHadithText {
+						b.setUserState(fromID, userState{
+							action:     pendingActionHadithSource,
+							hadithCat:  state.hadithCat,
+							hadithCol:  state.hadithCol,
+							hadithText: text,
+						})
+						prompt := "📝 *Текст хадиса принят!*\n\n" +
+							"Теперь введите источник хадиса (например: `Сахих аль-Бухари, 1958` или `Сады праведных, 1258`):\n\n" +
+							"Отправьте `-` для отмены."
+						b.sendMessage(chatID, prompt)
+					} else if state.action == pendingActionHadithSource {
+						hID, errAdd := b.storage.AddHadith(state.hadithText, text, state.hadithCol, state.hadithCat)
+						if errAdd != nil {
+							b.sendMessage(chatID, fmt.Sprintf("❌ Ошибка сохранения хадиса: %v", errAdd))
+						} else {
+							b.sendMessage(chatID, fmt.Sprintf(
+								"✅ *Хадис #%d успешно сохранен!*\n\n"+
+									"Категория: *%s*\n"+
+									"Сборник: *%s*\n"+
+									"Источник: *%s*",
+								hID,
+								storage.GetCategoryTitle(state.hadithCat),
+								storage.GetCollectionTitle(state.hadithCol),
+								escapeMarkdown(text),
+							))
+						}
+						b.handleAdminHadithsMenu(chatID, fromID, 0)
+					} else if state.action == pendingActionHadithTime {
+						normTime, errNorm := storage.NormalizeBroadcastTime(text)
+						if errNorm != nil {
+							b.setUserState(fromID, state)
+							b.sendMessage(chatID, "❌ Некорректный формат времени. Введите время в формате `ЧЧ:ММ` (например: `09:00`):")
+							continue
+						}
+						_ = b.storage.SetSetting(state.settingKey, normTime)
+						b.sendMessage(chatID, fmt.Sprintf("✅ Время рассылки успешно установлено: *%s*", normTime))
+						b.handleAdminHadithsConfig(chatID, fromID, 0)
 					}
 				}
 				continue
@@ -336,6 +388,8 @@ func (b *Bot) Start() {
 				continue
 			}
 			b.handleUnsubscribe(chatID)
+		case cmd == "/hadith" || text == "📖 Хадис дня" || text == "📖 Хадис":
+			b.handleRandomHadith(chatID)
 		case cmd == "/admin":
 			b.handleAdmin(chatID, fromID, 0)
 		case strings.HasPrefix(text, "/addadmin"):
@@ -347,7 +401,7 @@ func (b *Bot) Start() {
 		default:
 			// Для личных чатов выводим подсказку
 			if chatID > 0 {
-				b.sendMessage(chatID, "Используйте меню или команды:\n/today — Расписание на сегодня\n/city — Выбрать город или район РБ\n/settings — Настройки уведомлений\n/channels — Мои каналы и группы\n/channel — Подключить Telegram-канал\n/subscribe — Подписаться на рассылку\n/unsubscribe — Отписаться\n/admin — Панель администратора")
+				b.sendMessage(chatID, "Используйте меню или команды:\n/today — Расписание на сегодня\n/city — Выбрать город или район РБ\n/hadith — Случайный хадис дня\n/settings — Настройки уведомлений\n/channels — Мои каналы и группы\n/channel — Подключить Telegram-канал\n/subscribe — Подписаться на рассылку\n/unsubscribe — Отписаться\n/admin — Панель администратора")
 			}
 		}
 	}
@@ -576,9 +630,24 @@ func (b *Bot) handleSettings(chatID int64, messageID int) {
 		labelAtTime = "🔔 В намаз: [✓]"
 	}
 
+	labelHadithDaily := "📖 Хадис дня: [ ]"
+	if u != nil && u.HadithDailyEnabled {
+		labelHadithDaily = "📖 Хадис дня: [✓]"
+	}
+
+	labelHadithPrayer := "📖 Хадисы к намазам: [ ]"
+	if u != nil && u.HadithPrayerEnabled {
+		labelHadithPrayer = "📖 Хадисы к намазам: [✓]"
+	}
+
 	keyboardRows = append(keyboardRows, []tgbotapi.InlineKeyboardButton{
 		tgbotapi.NewInlineKeyboardButtonData(label15, "toggle_15min"),
 		tgbotapi.NewInlineKeyboardButtonData(labelAtTime, "toggle_attime"),
+	})
+
+	keyboardRows = append(keyboardRows, []tgbotapi.InlineKeyboardButton{
+		tgbotapi.NewInlineKeyboardButtonData(labelHadithDaily, "toggle_hadith_daily"),
+		tgbotapi.NewInlineKeyboardButtonData(labelHadithPrayer, "toggle_hadith_prayer"),
 	})
 
 	keyboard := tgbotapi.NewInlineKeyboardMarkup(keyboardRows...)
@@ -756,6 +825,14 @@ func (b *Bot) handleCallback(cb *tgbotapi.CallbackQuery) {
 		_ = b.storage.ToggleNotifyAtTime(chatID)
 		b.answerCallback(cb.ID, "Настройка напоминания в момент намаза изменена")
 		b.handleSettings(chatID, messageID)
+	case "toggle_hadith_daily":
+		_ = b.storage.ToggleHadithDaily(chatID)
+		b.answerCallback(cb.ID, "Настройка рассылки хадиса дня изменена")
+		b.handleSettings(chatID, messageID)
+	case "toggle_hadith_prayer":
+		_ = b.storage.ToggleHadithPrayer(chatID)
+		b.answerCallback(cb.ID, "Настройка хадисов к намазам изменена")
+		b.handleSettings(chatID, messageID)
 	}
 }
 
@@ -883,6 +960,9 @@ func (b *Bot) sendMessageWithKeyboard(chatID int64, text string) {
 		tgbotapi.NewKeyboardButtonRow(
 			tgbotapi.NewKeyboardButton("🏙 Город"),
 			tgbotapi.NewKeyboardButton("⚙️ Настройки"),
+			tgbotapi.NewKeyboardButton("📖 Хадис"),
+		),
+		tgbotapi.NewKeyboardButtonRow(
 			tgbotapi.NewKeyboardButton("📢 Мои каналы"),
 		),
 	)
@@ -892,6 +972,17 @@ func (b *Bot) sendMessageWithKeyboard(chatID int64, text string) {
 	if _, err := b.api.Send(msg); err != nil {
 		log.Printf("Ошибка отправки сообщения с клавиатурой: %v", err)
 	}
+}
+
+// handleRandomHadith отправляет пользователю случайный достоверный хадис с кнопками "Поделиться"
+func (b *Bot) handleRandomHadith(chatID int64) {
+	h, err := b.storage.GetRandomHadithAny()
+	if err != nil || h == nil {
+		b.sendMessage(chatID, "📖 В данный момент хадисы недоступны.")
+		return
+	}
+	msg := fmt.Sprintf("📖 *Хадис дня*\n\n«%s»\n\n📚 *Источник:* %s", h.Text, h.Source)
+	b.sendMessageWithShare(chatID, msg)
 }
 
 // handleDigest отправляет расписание для всех выбранных в дайджест городов с кнопками WhatsApp и MAX
