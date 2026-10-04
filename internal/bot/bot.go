@@ -3,7 +3,6 @@ package bot
 import (
 	"fmt"
 	"log"
-	"net/url"
 	"strconv"
 	"strings"
 	"sync"
@@ -18,17 +17,23 @@ import (
 type pendingActionType string
 
 const (
-	pendingActionNone          pendingActionType = ""
-	pendingActionHeader        pendingActionType = "header"
-	pendingActionFooter        pendingActionType = "footer"
-	pendingActionPrayer        pendingActionType = "prayer"
-	pendingActionBroadcastTime pendingActionType = "broadcast_time"
-	pendingActionFixedTime     pendingActionType = "fixed_time"
-	pendingActionHijriDay      pendingActionType = "hijri_day"
-	pendingActionHadithText    pendingActionType = "hadith_text"
-	pendingActionHadithSource  pendingActionType = "hadith_source"
-	pendingActionHadithTime    pendingActionType = "hadith_time"
+	pendingActionNone           pendingActionType = ""
+	pendingActionHeader         pendingActionType = "header"
+	pendingActionFooter         pendingActionType = "footer"
+	pendingActionPrayer         pendingActionType = "prayer"
+	pendingActionBroadcastTime  pendingActionType = "broadcast_time"
+	pendingActionFixedTime      pendingActionType = "fixed_time"
+	pendingActionHijriDay       pendingActionType = "hijri_day"
+	pendingActionHadithText     pendingActionType = "hadith_text"
+	pendingActionHadithSource   pendingActionType = "hadith_source"
+	pendingActionHadithTime     pendingActionType = "hadith_time"
+	pendingActionWelcomeMessage pendingActionType = "welcome_message"
 )
+
+const DefaultWelcomeMessageTemplate = "Ассаляму алейкум! 🖐\n\n" +
+	"Этот бот показывает расписание намаза (ДУМ РБ) и точное время восхода солнца (voshod-solnca.ru) для населенных пунктов Республики Башкортостан.\n\n" +
+	"📍 Ваш текущий выбор: *{city}*\n\n" +
+	"Выберите действие в меню ниже:"
 
 type userState struct {
 	action        pendingActionType
@@ -65,7 +70,7 @@ func New(token, defaultCity string, configAdminIDs []int64, client *api.Client, 
 	commandsConfig := tgbotapi.NewSetMyCommands(
 		tgbotapi.BotCommand{Command: "start", Description: "Главное меню бота"},
 		tgbotapi.BotCommand{Command: "today", Description: "Расписание на сегодня"},
-		tgbotapi.BotCommand{Command: "digest", Description: "Дайджест городов для WhatsApp/MAX"},
+		tgbotapi.BotCommand{Command: "digest", Description: "Дайджест выбранных городов"},
 		tgbotapi.BotCommand{Command: "city", Description: "Выбрать город или район"},
 		tgbotapi.BotCommand{Command: "settings", Description: "Настройки рассылки и оформления"},
 		tgbotapi.BotCommand{Command: "hadith", Description: "Хадис дня (Бухари, Муслим, Сады праведных)"},
@@ -222,6 +227,9 @@ func (b *Bot) Start() {
 					} else if state.action == pendingActionHadithTime {
 						b.sendMessage(chatID, "❌ Изменение времени рассылки отменено.")
 						b.handleAdminHadithsConfig(chatID, fromID, 0)
+					} else if state.action == pendingActionWelcomeMessage {
+						b.sendMessage(chatID, "❌ Изменение приветственного сообщения отменено.")
+						b.handleAdminWelcome(chatID, fromID, 0)
 					}
 				} else {
 					if state.action == pendingActionHeader {
@@ -334,6 +342,10 @@ func (b *Bot) Start() {
 						_ = b.storage.SetSetting(state.settingKey, normTime)
 						b.sendMessage(chatID, fmt.Sprintf("✅ Время рассылки успешно установлено: *%s*", normTime))
 						b.handleAdminHadithsConfig(chatID, fromID, 0)
+					} else if state.action == pendingActionWelcomeMessage {
+						_ = b.storage.SetWelcomeMessage(text)
+						b.sendMessage(chatID, "✅ Приветственное сообщение успешно обновлено!")
+						b.handleAdminWelcome(chatID, fromID, 0)
 					}
 				}
 				continue
@@ -403,7 +415,7 @@ func (b *Bot) Start() {
 		default:
 			// Для личных чатов выводим подсказку
 			if chatID > 0 {
-				b.sendMessage(chatID, "Используйте меню или команды:\n/start — Главное меню\n/today — Расписание на сегодня\n/digest — Дайджест городов (WA/MAX)\n/city — Выбрать город или район РБ\n/hadith — Случайный хадис дня\n/settings — Настройки уведомлений\n/channels — Мои каналы и группы\n/channel — Подключить Telegram-канал\n/subscribe — Подписаться на рассылку\n/unsubscribe — Отписаться\n/admin — Панель администратора")
+				b.sendMessage(chatID, "Используйте меню или команды:\n/start — Главное меню\n/today — Расписание на сегодня\n/digest — Дайджест городов\n/city — Выбрать город или район РБ\n/hadith — Случайный хадис дня\n/settings — Настройки уведомлений\n/channels — Мои каналы и группы\n/channel — Подключить Telegram-канал\n/subscribe — Подписаться на рассылку\n/unsubscribe — Отписаться\n/admin — Панель администратора")
 			}
 		}
 	}
@@ -869,14 +881,21 @@ func (b *Bot) handleStart(chatID int64, fromID int64, parts []string) {
 	}
 
 	city, _ := b.storage.GetUserCity(chatID, b.defaultCity)
-	msgText := fmt.Sprintf(
-		"Ассаляму алейкум! 🖐\n\n"+
-			"Этот бот показывает расписание намаза (ДУМ РБ) и точное время восхода солнца (voshod-solnca.ru) для населенных пунктов Республики Башкортостан.\n\n"+
-			"📍 Ваш текущий выбор: *%s*\n\n"+
-			"Выберите действие в меню ниже:",
-		city,
-	)
+	msgText := b.getWelcomeMessage(city)
 	b.sendMessageWithKeyboard(chatID, msgText)
+}
+
+func (b *Bot) getWelcomeMessage(city string) string {
+	custom := strings.TrimSpace(b.storage.GetWelcomeMessage())
+	if custom != "" {
+		text := strings.ReplaceAll(custom, "{city}", city)
+		text = strings.ReplaceAll(text, "{город}", city)
+		if !strings.Contains(custom, "{city}") && !strings.Contains(custom, "{город}") {
+			text += fmt.Sprintf("\n\n📍 Ваш текущий выбор: *%s*\n\nВыберите действие в меню ниже:", city)
+		}
+		return text
+	}
+	return strings.ReplaceAll(DefaultWelcomeMessageTemplate, "{city}", city)
 }
 
 func (b *Bot) handleToday(chatID int64) {
@@ -916,20 +935,6 @@ func (b *Bot) handleUnsubscribe(chatID int64) {
 	b.sendMessage(chatID, "🔕 Вы отписались от ежедневной рассылки.")
 }
 
-// CreateShareInlineKeyboard создает кнопки «Поделиться» для WhatsApp и MAX
-func CreateShareInlineKeyboard(text string) tgbotapi.InlineKeyboardMarkup {
-	encodedText := url.QueryEscape(text)
-	waURL := "https://wa.me/?text=" + encodedText
-	maxURL := "https://max.ru/share?text=" + encodedText
-
-	return tgbotapi.NewInlineKeyboardMarkup(
-		tgbotapi.NewInlineKeyboardRow(
-			tgbotapi.NewInlineKeyboardButtonURL("WhatsApp", waURL),
-			tgbotapi.NewInlineKeyboardButtonURL("MAX", maxURL),
-		),
-	)
-}
-
 func (b *Bot) sendMessage(chatID int64, text string) {
 	msg := tgbotapi.NewMessage(chatID, text)
 	msg.ParseMode = "Markdown"
@@ -940,13 +945,7 @@ func (b *Bot) sendMessage(chatID int64, text string) {
 }
 
 func (b *Bot) sendMessageWithShare(chatID int64, text string) {
-	msg := tgbotapi.NewMessage(chatID, text)
-	msg.ParseMode = "Markdown"
-	msg.DisableWebPagePreview = true
-	msg.ReplyMarkup = CreateShareInlineKeyboard(text)
-	if _, err := b.api.Send(msg); err != nil {
-		log.Printf("Ошибка отправки сообщения с кнопками 'Поделиться': %v", err)
-	}
+	b.sendMessage(chatID, text)
 }
 
 func (b *Bot) sendMessageWithKeyboard(chatID int64, text string) {
@@ -976,7 +975,7 @@ func (b *Bot) sendMessageWithKeyboard(chatID int64, text string) {
 	}
 }
 
-// handleRandomHadith отправляет пользователю случайный достоверный хадис с кнопками "Поделиться"
+// handleRandomHadith отправляет пользователю случайный достоверный хадис
 func (b *Bot) handleRandomHadith(chatID int64) {
 	h, err := b.storage.GetRandomHadithAny()
 	if err != nil || h == nil {
@@ -987,7 +986,7 @@ func (b *Bot) handleRandomHadith(chatID int64) {
 	b.sendMessageWithShare(chatID, msg)
 }
 
-// handleDigest отправляет расписание для всех выбранных в дайджест городов с кнопками WhatsApp и MAX
+// handleDigest отправляет расписание для всех выбранных в дайджест городов
 func (b *Bot) handleDigest(chatID int64, messageID int) {
 	cities, err := b.storage.GetFavoriteCities(chatID)
 	if err != nil || len(cities) == 0 {
@@ -997,8 +996,7 @@ func (b *Bot) handleDigest(chatID int64, messageID int) {
 
 	now := time.Now()
 	headerText := fmt.Sprintf("📋 *Дайджест расписания намазов (%s)*\n\n"+
-		"Ниже выведены карточки расписания для ваших городов.\n"+
-		"Нажмите *«WhatsApp»* или *«MAX»* под нужным городом для быстрой отправки в соответствующий чат:", now.Format("02.01.2006"))
+		"Ниже выведены карточки расписания для ваших городов:", now.Format("02.01.2006"))
 	b.sendMessage(chatID, headerText)
 
 	for _, city := range cities {

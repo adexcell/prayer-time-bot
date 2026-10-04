@@ -917,3 +917,11 @@ func (s *Storage) GetHijriOffset() int {
 func (s *Storage) SetHijriOffset(offset int) error {
 	return s.SetSetting("hijri_offset", strconv.Itoa(offset))
 }
+
+func (s *Storage) GetWelcomeMessage() string {
+	return s.GetSetting("welcome_message", "")
+}
+
+func (s *Storage) SetWelcomeMessage(msg string) error {
+	return s.SetSetting("welcome_message", msg)
+}

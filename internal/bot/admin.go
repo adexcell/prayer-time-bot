@@ -37,6 +37,9 @@ func (b *Bot) handleAdmin(chatID int64, fromID int64, messageID int) {
 			tgbotapi.NewInlineKeyboardButtonData("📖 Управление хадисами", "adm_hadiths"),
 		),
 		tgbotapi.NewInlineKeyboardRow(
+			tgbotapi.NewInlineKeyboardButtonData("👋 Приветственное сообщение", "adm_welcome"),
+		),
+		tgbotapi.NewInlineKeyboardRow(
 			tgbotapi.NewInlineKeyboardButtonData("👥 Администраторы", "adm_admins"),
 			tgbotapi.NewInlineKeyboardButtonData("📊 Статистика", "adm_stats"),
 		),
@@ -977,6 +980,29 @@ func (b *Bot) handleAdminCallbacks(cb *tgbotapi.CallbackQuery) bool {
 		b.sendMessage(chatID, prompt)
 		b.answerCallback(cb.ID, "")
 
+	case data == "adm_welcome":
+		b.handleAdminWelcome(chatID, fromID, messageID)
+		b.answerCallback(cb.ID, "")
+
+	case data == "adm_welcome_edit":
+		b.setUserState(fromID, userState{
+			action: pendingActionWelcomeMessage,
+		})
+		prompt := "✏️ *Изменение приветственного сообщения*\n\n" +
+			"Отправьте в чат новый текст приветственного сообщения.\n\n" +
+			"💡 *Полезная информация:*\n" +
+			"• Используйте `{city}` или `{город}` там, где должен отображаться выбранный город (например: `Уфа`).\n" +
+			"• Если тег города не указан, блок с текущим городом и подсказкой меню будет автоматически добавлен в конце сообщения.\n" +
+			"• Поддерживается форматирование Markdown (например: `*жирный текст*`, `_курсив_`).\n\n" +
+			"Отправьте `-` или `отмена` для отмены."
+		b.sendMessage(chatID, prompt)
+		b.answerCallback(cb.ID, "")
+
+	case data == "adm_welcome_reset":
+		_ = b.storage.SetWelcomeMessage("")
+		b.answerCallback(cb.ID, "Приветственное сообщение сброшено к стандартному")
+		b.handleAdminWelcome(chatID, fromID, messageID)
+
 	case data == "adm_admins":
 		b.handleAdminAdminsList(chatID, messageID)
 		b.answerCallback(cb.ID, "")
@@ -1085,4 +1111,53 @@ func (b *Bot) handleAdminCallbacks(cb *tgbotapi.CallbackQuery) bool {
 	}
 
 	return true
+}
+
+// handleAdminWelcome отображает меню управления приветственным сообщением бота
+func (b *Bot) handleAdminWelcome(chatID int64, fromID int64, messageID int) {
+	if !b.storage.IsAdmin(fromID, b.configAdminIDs) {
+		b.sendMessage(chatID, "⛔️ У вас нет прав администратора.")
+		return
+	}
+
+	custom := strings.TrimSpace(b.storage.GetWelcomeMessage())
+	var text string
+	if custom != "" {
+		text = fmt.Sprintf(
+			"👋 *Приветственное сообщение бота*\n\n"+
+				"Текущий статус: *Используется своё сообщение*\n\n"+
+				"Текст приветствия:\n"+
+				"──────────────────\n"+
+				"%s\n"+
+				"──────────────────\n\n"+
+				"💡 _Теги: `{city}` или `{город}` автоматически заменяются на текущий город пользователя._",
+			custom,
+		)
+	} else {
+		text = fmt.Sprintf(
+			"👋 *Приветственное сообщение бота*\n\n"+
+				"Текущий статус: *Стандартное (по умолчанию)*\n\n"+
+				"Текст приветствия:\n"+
+				"──────────────────\n"+
+				"%s\n"+
+				"──────────────────\n\n"+
+				"💡 _Теги: `{city}` или `{город}` автоматически заменяются на текущий город пользователя._",
+			DefaultWelcomeMessageTemplate,
+		)
+	}
+
+	var rows [][]tgbotapi.InlineKeyboardButton
+	btnRow := []tgbotapi.InlineKeyboardButton{
+		tgbotapi.NewInlineKeyboardButtonData("✏️ Изменить текст", "adm_welcome_edit"),
+	}
+	if custom != "" {
+		btnRow = append(btnRow, tgbotapi.NewInlineKeyboardButtonData("🔄 Сбросить", "adm_welcome_reset"))
+	}
+	rows = append(rows, btnRow)
+	rows = append(rows, []tgbotapi.InlineKeyboardButton{
+		tgbotapi.NewInlineKeyboardButtonData("🔙 Назад в меню", "adm_main"),
+	})
+
+	keyboard := tgbotapi.NewInlineKeyboardMarkup(rows...)
+	b.sendOrEditMessage(chatID, messageID, text, &keyboard)
 }

@@ -168,7 +168,7 @@ func (b *Bot) handleMyChannelsList(userChatID int64, fromID int64, page int, mes
 	b.sendOrEditMessage(userChatID, messageID, text, &keyboard)
 }
 
-// handleChannelsDigest собирает уникальные города подконтрольных каналов и отправляет расписания с кнопками WhatsApp и MAX
+// handleChannelsDigest собирает уникальные города подконтрольных каналов и отправляет расписания
 func (b *Bot) handleChannelsDigest(userChatID int64, fromID int64) {
 	isSuper := b.storage.IsAdmin(fromID, b.configAdminIDs)
 	chats, err := b.storage.GetManagedChats(fromID, isSuper)
@@ -197,8 +197,7 @@ func (b *Bot) handleChannelsDigest(userChatID int64, fromID int64) {
 
 	now := time.Now()
 	headerText := fmt.Sprintf("📋 *Дайджест расписания для городов ваших каналов (%s)*\n\n"+
-		"Ниже выведены карточки расписания для всех городов (%d шт.), привязанных к вашим подконтрольным каналам и группам.\n"+
-		"Нажмите *«WhatsApp»* или *«MAX»* под нужным городом для быстрой отправки в соответствующий чат:",
+		"Ниже выведены карточки расписания для всех городов (%d шт.), привязанных к вашим подконтрольным каналам и группам:",
 		now.Format("02.01.2006"), len(cities))
 	b.sendMessage(userChatID, headerText)
 

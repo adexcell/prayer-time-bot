@@ -840,7 +840,6 @@ func (b *Bot) handleGroupCallbacks(cb *tgbotapi.CallbackQuery) bool {
 			msg := tgbotapi.NewMessage(targetGroupID, msgText)
 			msg.ParseMode = "Markdown"
 			msg.DisableWebPagePreview = true
-			msg.ReplyMarkup = CreateShareInlineKeyboard(msgText)
 			if _, sendErr := b.api.Send(msg); sendErr != nil {
 				log.Printf("Ошибка публикации в канал/группу %d: %v", targetGroupID, sendErr)
 				b.api.Send(tgbotapi.NewCallbackWithAlert(cb.ID, "❌ Ошибка публикации. Проверьте, что бот назначен администратором канала с правом публикации сообщений."))

@@ -438,3 +438,35 @@ func TestStorage_HijriOffset(t *testing.T) {
 	}
 }
 
+func TestStorage_WelcomeMessage(t *testing.T) {
+	dbPath := "test_welcome_setting.db"
+	defer os.Remove(dbPath)
+
+	store, err := New(dbPath)
+	if err != nil {
+		t.Fatalf("Failed to create storage: %v", err)
+	}
+	defer store.Close()
+
+	// Default should be empty string
+	if msg := store.GetWelcomeMessage(); msg != "" {
+		t.Errorf("Expected empty default welcome message, got %q", msg)
+	}
+
+	customMsg := "Ассаляму алейкум! Добро пожаловать. Ваш город: {city}"
+	if err := store.SetWelcomeMessage(customMsg); err != nil {
+		t.Fatalf("SetWelcomeMessage failed: %v", err)
+	}
+	if msg := store.GetWelcomeMessage(); msg != customMsg {
+		t.Errorf("Expected %q, got %q", customMsg, msg)
+	}
+
+	// Reset
+	if err := store.SetWelcomeMessage(""); err != nil {
+		t.Fatalf("SetWelcomeMessage reset failed: %v", err)
+	}
+	if msg := store.GetWelcomeMessage(); msg != "" {
+		t.Errorf("Expected empty after reset, got %q", msg)
+	}
+}
+
