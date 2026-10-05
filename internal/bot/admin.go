@@ -855,6 +855,9 @@ func (b *Bot) handleHijriCommand(chatID int64, fromID int64, text string) {
 
 // sendOrEditMessage вспомогательная функция для редактирования или отправки сообщений
 func (b *Bot) sendOrEditMessage(chatID int64, messageID int, text string, keyboard *tgbotapi.InlineKeyboardMarkup) {
+	if b.api == nil {
+		return
+	}
 	if messageID > 0 {
 		editMsg := tgbotapi.NewEditMessageText(chatID, messageID, text)
 		editMsg.ParseMode = "Markdown"

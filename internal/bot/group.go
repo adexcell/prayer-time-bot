@@ -41,6 +41,9 @@ func (b *Bot) isGroupAdmin(groupID int64, userID int64) bool {
 
 // getGroupTitle возвращает название группы или дефолтное имя
 func (b *Bot) getGroupTitle(groupID int64) string {
+	if b.api == nil {
+		return fmt.Sprintf("Группа %d", groupID)
+	}
 	chatConfig := tgbotapi.ChatInfoConfig{
 		ChatConfig: tgbotapi.ChatConfig{
 			ChatID: groupID,
@@ -100,6 +103,8 @@ func (b *Bot) handleGroupSettings(userChatID int64, targetGroupID int64, groupTi
 
 	notify15min := true
 	notifyAtTime := true
+	hadithDaily := true
+	hadithPrayer := true
 	isSubscribed := false
 	preset := "ru"
 	customFooter := ""
@@ -113,6 +118,8 @@ func (b *Bot) handleGroupSettings(userChatID int64, targetGroupID int64, groupTi
 		}
 		notify15min = u.Notify15Min
 		notifyAtTime = u.NotifyAtTime
+		hadithDaily = u.HadithDailyEnabled
+		hadithPrayer = u.HadithPrayerEnabled
 		if u.PrayerNamesPreset != "" {
 			preset = u.PrayerNamesPreset
 		}
@@ -208,18 +215,18 @@ func (b *Bot) handleGroupSettings(userChatID int64, targetGroupID int64, groupTi
 		labelAtTime = "🔔 В намаз: [✓]"
 	}
 
-	labelSub := "📢 Рассылка: [Вкл]"
+	labelSub := "📢 Рассылка: [ ]"
 	if isSubscribed {
 		labelSub = "📢 Рассылка: [✓]"
 	}
 
 	labelHadithDaily := "📖 Хадис дня: [ ]"
-	if u != nil && u.HadithDailyEnabled {
+	if hadithDaily {
 		labelHadithDaily = "📖 Хадис дня: [✓]"
 	}
 
 	labelHadithPrayer := "📖 Хадис к намазу: [ ]"
-	if u != nil && u.HadithPrayerEnabled {
+	if hadithPrayer {
 		labelHadithPrayer = "📖 Хадис к намазу: [✓]"
 	}
 
@@ -247,6 +254,10 @@ func (b *Bot) handleGroupSettings(userChatID int64, targetGroupID int64, groupTi
 	})
 
 	keyboard := tgbotapi.NewInlineKeyboardMarkup(keyboardRows...)
+
+	if b.api == nil {
+		return
+	}
 
 	if messageID > 0 {
 		editMsg := tgbotapi.NewEditMessageText(userChatID, messageID, text)
@@ -637,6 +648,8 @@ func (b *Bot) handleGroupCallbacks(cb *tgbotapi.CallbackQuery) bool {
 		!strings.HasPrefix(data, "gcleartimes:") &&
 		!strings.HasPrefix(data, "gtog15:") &&
 		!strings.HasPrefix(data, "gtogat:") &&
+		!strings.HasPrefix(data, "gtog_h_daily:") &&
+		!strings.HasPrefix(data, "gtog_h_pray:") &&
 		!strings.HasPrefix(data, "gtogsub:") &&
 		!strings.HasPrefix(data, "gtoday:") &&
 		!strings.HasPrefix(data, "gpost:") &&
@@ -759,11 +772,15 @@ func (b *Bot) handleGroupCallbacks(cb *tgbotapi.CallbackQuery) bool {
 		u, _ := b.storage.GetUser(targetGroupID)
 		if u != nil && len(u.GetParsedBroadcastTimes()) > 0 {
 			_ = b.storage.Unsubscribe(targetGroupID)
-			b.api.Send(tgbotapi.NewCallbackWithAlert(cb.ID, "🔕 Рассылка отключена"))
+			if b.api != nil {
+				b.api.Send(tgbotapi.NewCallbackWithAlert(cb.ID, "🔕 Рассылка отключена"))
+			}
 		} else {
 			city, _ := b.storage.GetUserCity(targetGroupID, b.defaultCity)
 			_ = b.storage.Subscribe(targetGroupID, city)
-			b.api.Send(tgbotapi.NewCallbackWithAlert(cb.ID, fmt.Sprintf("🔔 Рассылка включена (%s)", city)))
+			if b.api != nil {
+				b.api.Send(tgbotapi.NewCallbackWithAlert(cb.ID, fmt.Sprintf("🔔 Рассылка включена (%s)", city)))
+			}
 		}
 		b.handleGroupSettings(userChatID, targetGroupID, groupTitle, messageID)
 

@@ -448,7 +448,7 @@ func (s *Storage) ToggleNotify15min(chatID int64) error {
 	query := `
 	INSERT INTO users (chat_id, city, subscribed_at, daily_schedule_time, evening_schedule_time, broadcast_times, notify_15min, notify_at_time)
 	VALUES (?, 'Уфа', ?, '06:00', '', '["06:00"]', 0, 1)
-	ON CONFLICT(chat_id) DO UPDATE SET notify_15min = CASE WHEN notify_15min = 1 THEN 0 ELSE 1 END;
+	ON CONFLICT(chat_id) DO UPDATE SET notify_15min = CASE WHEN COALESCE(notify_15min, 1) = 1 THEN 0 ELSE 1 END;
 	`
 	_, err := s.db.Exec(query, chatID, time.Now())
 	return err
@@ -458,7 +458,7 @@ func (s *Storage) ToggleNotifyAtTime(chatID int64) error {
 	query := `
 	INSERT INTO users (chat_id, city, subscribed_at, daily_schedule_time, evening_schedule_time, broadcast_times, notify_15min, notify_at_time)
 	VALUES (?, 'Уфа', ?, '06:00', '', '["06:00"]', 1, 0)
-	ON CONFLICT(chat_id) DO UPDATE SET notify_at_time = CASE WHEN notify_at_time = 1 THEN 0 ELSE 1 END;
+	ON CONFLICT(chat_id) DO UPDATE SET notify_at_time = CASE WHEN COALESCE(notify_at_time, 1) = 1 THEN 0 ELSE 1 END;
 	`
 	_, err := s.db.Exec(query, chatID, time.Now())
 	return err

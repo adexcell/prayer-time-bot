@@ -582,12 +582,16 @@ func (b *Bot) handleSettings(chatID int64, messageID int) {
 
 	notify15min := true
 	notifyAtTime := true
+	hadithDaily := true
+	hadithPrayer := true
 	var broadcastTimes []string
 
 	if u != nil {
 		broadcastTimes = u.GetParsedBroadcastTimes()
 		notify15min = u.Notify15Min
 		notifyAtTime = u.NotifyAtTime
+		hadithDaily = u.HadithDailyEnabled
+		hadithPrayer = u.HadithPrayerEnabled
 	}
 
 	timesDisplay := "🔕 Отключена"
@@ -645,12 +649,12 @@ func (b *Bot) handleSettings(chatID int64, messageID int) {
 	}
 
 	labelHadithDaily := "📖 Хадис дня: [ ]"
-	if u != nil && u.HadithDailyEnabled {
+	if hadithDaily {
 		labelHadithDaily = "📖 Хадис дня: [✓]"
 	}
 
 	labelHadithPrayer := "📖 Хадисы к намазам: [ ]"
-	if u != nil && u.HadithPrayerEnabled {
+	if hadithPrayer {
 		labelHadithPrayer = "📖 Хадисы к намазам: [✓]"
 	}
 
@@ -665,6 +669,10 @@ func (b *Bot) handleSettings(chatID int64, messageID int) {
 	})
 
 	keyboard := tgbotapi.NewInlineKeyboardMarkup(keyboardRows...)
+
+	if b.api == nil {
+		return
+	}
 
 	if messageID > 0 {
 		editMsg := tgbotapi.NewEditMessageText(chatID, messageID, text)
@@ -782,17 +790,55 @@ func (b *Bot) handleCallback(cb *tgbotapi.CallbackQuery) {
 	}
 
 	if strings.HasPrefix(data, "fav_add_city:") {
-		val := strings.TrimPrefix(data, "fav_add_city:")
-		cityName := val
+		rest := strings.TrimPrefix(data, "fav_add_city:")
+		parts := strings.Split(rest, ":")
 		var cityID int
-		if _, err := fmt.Sscanf(val, "%d", &cityID); err == nil && cityID > 0 {
+		isCityTab := true
+		page := 1
+
+		if len(parts) == 3 {
+			if parts[0] == "d" {
+				isCityTab = false
+			}
+			_, _ = fmt.Sscanf(parts[1], "%d", &page)
+			_, _ = fmt.Sscanf(parts[2], "%d", &cityID)
+		} else if len(parts) == 1 {
+			_, _ = fmt.Sscanf(parts[0], "%d", &cityID)
+		}
+
+		cityName := ""
+		if cityID > 0 {
 			if cityInfo, ok := api.GetCityByID(cityID); ok {
 				cityName = cityInfo.DisplayName
 			}
 		}
-		_ = b.storage.AddFavoriteCity(chatID, cityName)
-		b.answerCallback(cb.ID, "Добавлено в дайджест: "+cityName)
+		if cityName == "" {
+			cityName = rest
+		}
+
+		favCities, _ := b.storage.GetFavoriteCities(chatID)
+		isFav := false
+		for _, c := range favCities {
+			if c == cityName {
+				isFav = true
+				break
+			}
+		}
+
+		if isFav {
+			_ = b.storage.RemoveFavoriteCity(chatID, cityName)
+			b.answerCallback(cb.ID, "Удалено из дайджеста: "+cityName)
+		} else {
+			_ = b.storage.AddFavoriteCity(chatID, cityName)
+			b.answerCallback(cb.ID, "Добавлено в дайджест: "+cityName)
+		}
+		b.handleChooseFavLocation(chatID, isCityTab, page, messageID)
+		return
+	}
+
+	if data == "fav_back_manage" {
 		b.handleDigestManagePanel(chatID, messageID)
+		b.answerCallback(cb.ID, "")
 		return
 	}
 
@@ -851,6 +897,9 @@ func (b *Bot) handleCallback(cb *tgbotapi.CallbackQuery) {
 }
 
 func (b *Bot) answerCallback(callbackID, text string) {
+	if b.api == nil {
+		return
+	}
 	callback := tgbotapi.NewCallback(callbackID, text)
 	b.api.Request(callback)
 }
@@ -936,6 +985,9 @@ func (b *Bot) handleUnsubscribe(chatID int64) {
 }
 
 func (b *Bot) sendMessage(chatID int64, text string) {
+	if b.api == nil {
+		return
+	}
 	msg := tgbotapi.NewMessage(chatID, text)
 	msg.ParseMode = "Markdown"
 	msg.DisableWebPagePreview = true
@@ -1122,12 +1174,17 @@ func (b *Bot) handleChooseFavLocation(chatID int64, isCityTab bool, page int, me
 	pageItems := items[startIdx:endIdx]
 	var currentRow []tgbotapi.InlineKeyboardButton
 
+	tabCode := "c"
+	if !isCityTab {
+		tabCode = "d"
+	}
+
 	for _, item := range pageItems {
 		btnText := item.DisplayName
 		if favMap[item.DisplayName] || favMap[item.CleanName] {
 			btnText = "✓ " + item.DisplayName
 		}
-		btn := tgbotapi.NewInlineKeyboardButtonData(btnText, fmt.Sprintf("fav_add_city:%d", item.ID))
+		btn := tgbotapi.NewInlineKeyboardButtonData(btnText, fmt.Sprintf("fav_add_city:%s:%d:%d", tabCode, page, item.ID))
 		currentRow = append(currentRow, btn)
 
 		if len(currentRow) == 2 {
@@ -1162,7 +1219,16 @@ func (b *Bot) handleChooseFavLocation(chatID int64, isCityTab bool, page int, me
 
 	rows = append(rows, navRow)
 
+	// 4. Кнопка возврата к управлению дайджестом
+	rows = append(rows, []tgbotapi.InlineKeyboardButton{
+		tgbotapi.NewInlineKeyboardButtonData("🔙 Назад к дайджесту", "fav_back_manage"),
+	})
+
 	keyboard := tgbotapi.NewInlineKeyboardMarkup(rows...)
+
+	if b.api == nil {
+		return
+	}
 
 	if messageID > 0 {
 		editMsg := tgbotapi.NewEditMessageText(chatID, messageID, text)

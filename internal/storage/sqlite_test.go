@@ -470,3 +470,84 @@ func TestStorage_WelcomeMessage(t *testing.T) {
 	}
 }
 
+func TestStorage_Toggles(t *testing.T) {
+	dbPath := "test_toggles.db"
+	defer os.Remove(dbPath)
+
+	store, err := New(dbPath)
+	if err != nil {
+		t.Fatalf("Failed to create storage: %v", err)
+	}
+	defer store.Close()
+
+	chatID := int64(999999)
+
+	// 1. Toggling on a fresh non-existent user should turn default ON (1) to OFF (0)
+	if err := store.ToggleNotify15min(chatID); err != nil {
+		t.Fatalf("ToggleNotify15min failed: %v", err)
+	}
+	u, err := store.GetUser(chatID)
+	if err != nil || u == nil {
+		t.Fatalf("GetUser failed: %v", err)
+	}
+	if u.Notify15Min != false {
+		t.Errorf("Expected Notify15Min to be false after first toggle, got %v", u.Notify15Min)
+	}
+	// Toggle back ON (1)
+	if err := store.ToggleNotify15min(chatID); err != nil {
+		t.Fatalf("ToggleNotify15min second toggle failed: %v", err)
+	}
+	u, _ = store.GetUser(chatID)
+	if u.Notify15Min != true {
+		t.Errorf("Expected Notify15Min to be true after second toggle, got %v", u.Notify15Min)
+	}
+
+	// 2. Toggle NotifyAtTime
+	if err := store.ToggleNotifyAtTime(chatID); err != nil {
+		t.Fatalf("ToggleNotifyAtTime failed: %v", err)
+	}
+	u, _ = store.GetUser(chatID)
+	if u.NotifyAtTime != false {
+		t.Errorf("Expected NotifyAtTime to be false after first toggle, got %v", u.NotifyAtTime)
+	}
+	if err := store.ToggleNotifyAtTime(chatID); err != nil {
+		t.Fatalf("ToggleNotifyAtTime second toggle failed: %v", err)
+	}
+	u, _ = store.GetUser(chatID)
+	if u.NotifyAtTime != true {
+		t.Errorf("Expected NotifyAtTime to be true after second toggle, got %v", u.NotifyAtTime)
+	}
+
+	// 3. Toggle HadithDaily
+	if err := store.ToggleHadithDaily(chatID); err != nil {
+		t.Fatalf("ToggleHadithDaily failed: %v", err)
+	}
+	u, _ = store.GetUser(chatID)
+	if u.HadithDailyEnabled != false {
+		t.Errorf("Expected HadithDailyEnabled to be false after first toggle, got %v", u.HadithDailyEnabled)
+	}
+	if err := store.ToggleHadithDaily(chatID); err != nil {
+		t.Fatalf("ToggleHadithDaily second toggle failed: %v", err)
+	}
+	u, _ = store.GetUser(chatID)
+	if u.HadithDailyEnabled != true {
+		t.Errorf("Expected HadithDailyEnabled to be true after second toggle, got %v", u.HadithDailyEnabled)
+	}
+
+	// 4. Toggle HadithPrayer
+	if err := store.ToggleHadithPrayer(chatID); err != nil {
+		t.Fatalf("ToggleHadithPrayer failed: %v", err)
+	}
+	u, _ = store.GetUser(chatID)
+	if u.HadithPrayerEnabled != false {
+		t.Errorf("Expected HadithPrayerEnabled to be false after first toggle, got %v", u.HadithPrayerEnabled)
+	}
+	if err := store.ToggleHadithPrayer(chatID); err != nil {
+		t.Fatalf("ToggleHadithPrayer second toggle failed: %v", err)
+	}
+	u, _ = store.GetUser(chatID)
+	if u.HadithPrayerEnabled != true {
+		t.Errorf("Expected HadithPrayerEnabled to be true after second toggle, got %v", u.HadithPrayerEnabled)
+	}
+}
+
