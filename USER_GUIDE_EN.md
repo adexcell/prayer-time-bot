@@ -86,6 +86,10 @@ Open the settings menu by sending `/settings` or tapping **"⚙️ Settings"**.
 4. **Hadith Attachments**:
    - Optionally attaches an authentic hadith about the virtue of that specific prayer to your notification.
 
+5. **Sunnah Fasting Reminders (🌕)**:
+   - Reminders with hadiths on Mondays, Thursdays, and the "White Days" (13th, 14th, 15th of Hijri month).
+   - Can be turned on or off independently via `/settings`.
+
 ---
 
 ## 📋 Multi-City Schedule Digest

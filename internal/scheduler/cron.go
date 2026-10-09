@@ -3,6 +3,7 @@ package scheduler
 import (
 	"fmt"
 	"log"
+	"strconv"
 	"time"
 
 	"github.com/robfig/cron/v3"
@@ -73,6 +74,9 @@ func (s *Scheduler) checkAndSendReminders() {
 
 	// 3. Проверка хадисов о наступающих лунных месяцах (за 1-2 дня до месяца)
 	s.checkAndSendLunarMonthHadith(now, currentTimeStr, subscribers)
+
+	// 4. Проверка ежедневной рассылки прекрасных имён Аллаха
+	s.checkAndSendDailyAsma(now, currentTimeStr, subscribers)
 
 	cityCache := make(map[string]*api.DUMRBItem)
 	tomorrowCache := make(map[string]*api.DUMRBItem)
@@ -203,6 +207,39 @@ func (s *Scheduler) checkAndSendDailyHadith(now time.Time, currentTimeStr string
 	}
 }
 
+// checkAndSendDailyAsma отправляет ежедневное имя Аллаха
+func (s *Scheduler) checkAndSendDailyAsma(now time.Time, currentTimeStr string, subscribers []storage.User) {
+	if s.storage.GetSetting("asma_daily_enabled", "1") != "1" {
+		return
+	}
+	targetTime := s.storage.GetSetting("asma_daily_time", "10:00")
+	if currentTimeStr != targetTime {
+		return
+	}
+
+	todayStr := now.Format("2006-01-02")
+	if s.storage.GetSetting("last_daily_asma_date", "") == todayStr {
+		return
+	}
+	_ = s.storage.SetSetting("last_daily_asma_date", todayStr)
+
+	lastID, _ := strconv.Atoi(s.storage.GetSetting("last_asma_id", "0"))
+	nextID := (lastID % 100) + 1
+	_ = s.storage.SetSetting("last_asma_id", strconv.Itoa(nextID))
+
+	item, err := storage.GetAsmaName(nextID)
+	if err != nil || item == nil {
+		return
+	}
+
+	for _, user := range subscribers {
+		if user.AsmaDailyEnabled {
+			s.bot.SendDailyAsma(user.ChatID, item)
+			time.Sleep(20 * time.Millisecond)
+		}
+	}
+}
+
 // checkAndSendFastingHadith проверяет дни поста (Пн/Чт и Белые дни 13, 14, 15) и отправляет хадис
 func (s *Scheduler) checkAndSendFastingHadith(now time.Time, currentTimeStr string, subscribers []storage.User) {
 	if s.storage.GetSetting("hadith_fasting_enabled", "1") != "1" {
@@ -235,7 +272,7 @@ func (s *Scheduler) checkAndSendFastingHadith(now time.Time, currentTimeStr stri
 				monthName, hd.Day, monthName, h.Text, h.Source,
 			)
 			for _, user := range subscribers {
-				if user.HadithDailyEnabled {
+				if user.HadithFastingEnabled {
 					s.bot.SendToChatWithShare(user.ChatID, msg)
 					time.Sleep(20 * time.Millisecond)
 				}
@@ -263,7 +300,7 @@ func (s *Scheduler) checkAndSendFastingHadith(now time.Time, currentTimeStr stri
 				dayName, dayName, h.Text, h.Source,
 			)
 			for _, user := range subscribers {
-				if user.HadithDailyEnabled {
+				if user.HadithFastingEnabled {
 					s.bot.SendToChatWithShare(user.ChatID, msg)
 					time.Sleep(20 * time.Millisecond)
 				}

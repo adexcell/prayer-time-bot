@@ -98,6 +98,32 @@ func TestUserSettings_Checkmarks(t *testing.T) {
 	if u.HadithPrayerEnabled != true {
 		t.Errorf("Expected HadithPrayerEnabled true after 2nd toggle, got %v", u.HadithPrayerEnabled)
 	}
+
+	// 5. toggle_hadith_fasting
+	cb = makeCallback(userID, userID, "toggle_hadith_fasting")
+	b.handleCallback(cb)
+	u, _ = store.GetUser(userID)
+	if u.HadithFastingEnabled != false {
+		t.Errorf("Expected HadithFastingEnabled false after toggle, got %v", u.HadithFastingEnabled)
+	}
+	b.handleCallback(cb)
+	u, _ = store.GetUser(userID)
+	if u.HadithFastingEnabled != true {
+		t.Errorf("Expected HadithFastingEnabled true after 2nd toggle, got %v", u.HadithFastingEnabled)
+	}
+
+	// 6. toggle_asma_daily
+	cb = makeCallback(userID, userID, "toggle_asma_daily")
+	b.handleCallback(cb)
+	u, _ = store.GetUser(userID)
+	if u.AsmaDailyEnabled != false {
+		t.Errorf("Expected AsmaDailyEnabled false after toggle, got %v", u.AsmaDailyEnabled)
+	}
+	b.handleCallback(cb)
+	u, _ = store.GetUser(userID)
+	if u.AsmaDailyEnabled != true {
+		t.Errorf("Expected AsmaDailyEnabled true after 2nd toggle, got %v", u.AsmaDailyEnabled)
+	}
 }
 
 // TestGroupSettings_Checkmarks проверяет переключение галочек в настройках группы
@@ -160,6 +186,32 @@ func TestGroupSettings_Checkmarks(t *testing.T) {
 	u, _ = store.GetUser(groupID)
 	if u.HadithPrayerEnabled != true {
 		t.Errorf("Expected group HadithPrayerEnabled true after 2nd toggle, got %v", u.HadithPrayerEnabled)
+	}
+
+	// 5. gtog_h_fast
+	cb = makeCallback(adminID, adminID, "gtog_h_fast:"+string("-100999"))
+	b.handleCallback(cb)
+	u, _ = store.GetUser(groupID)
+	if u.HadithFastingEnabled != false {
+		t.Errorf("Expected group HadithFastingEnabled false after toggle, got %v", u.HadithFastingEnabled)
+	}
+	b.handleCallback(cb)
+	u, _ = store.GetUser(groupID)
+	if u.HadithFastingEnabled != true {
+		t.Errorf("Expected group HadithFastingEnabled true after 2nd toggle, got %v", u.HadithFastingEnabled)
+	}
+
+	// 6. gtog_asma
+	cb = makeCallback(adminID, adminID, "gtog_asma:"+string("-100999"))
+	b.handleCallback(cb)
+	u, _ = store.GetUser(groupID)
+	if u.AsmaDailyEnabled != false {
+		t.Errorf("Expected group AsmaDailyEnabled false after toggle, got %v", u.AsmaDailyEnabled)
+	}
+	b.handleCallback(cb)
+	u, _ = store.GetUser(groupID)
+	if u.AsmaDailyEnabled != true {
+		t.Errorf("Expected group AsmaDailyEnabled true after 2nd toggle, got %v", u.AsmaDailyEnabled)
 	}
 
 	// 5. gtogsub

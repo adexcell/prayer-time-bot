@@ -3,6 +3,8 @@ package bot
 import (
 	"fmt"
 	"log"
+	"os"
+	"path/filepath"
 	"strconv"
 	"strings"
 	"sync"
@@ -74,6 +76,7 @@ func New(token, defaultCity string, configAdminIDs []int64, client *api.Client, 
 		tgbotapi.BotCommand{Command: "city", Description: "Выбрать город или район"},
 		tgbotapi.BotCommand{Command: "settings", Description: "Настройки рассылки и оформления"},
 		tgbotapi.BotCommand{Command: "hadith", Description: "Хадис дня (Бухари, Муслим, Сады праведных)"},
+		tgbotapi.BotCommand{Command: "asma", Description: "Прекрасные имена Аллаха (1-100)"},
 		tgbotapi.BotCommand{Command: "channels", Description: "Мои подконтрольные каналы и группы"},
 		tgbotapi.BotCommand{Command: "subscribe", Description: "Включить ежедневную рассылку"},
 		tgbotapi.BotCommand{Command: "unsubscribe", Description: "Отключить рассылку"},
@@ -404,6 +407,8 @@ func (b *Bot) Start() {
 			b.handleUnsubscribe(chatID)
 		case cmd == "/hadith" || text == "📖 Хадис дня" || text == "📖 Хадис":
 			b.handleRandomHadith(chatID)
+		case cmd == "/asma" || strings.HasPrefix(cmd, "/asma"):
+			b.handleAsmaCommand(chatID, parts)
 		case cmd == "/admin":
 			b.handleAdmin(chatID, fromID, 0)
 		case strings.HasPrefix(text, "/addadmin"):
@@ -584,6 +589,8 @@ func (b *Bot) handleSettings(chatID int64, messageID int) {
 	notifyAtTime := true
 	hadithDaily := true
 	hadithPrayer := true
+	hadithFasting := true
+	asmaDaily := true
 	var broadcastTimes []string
 
 	if u != nil {
@@ -592,6 +599,8 @@ func (b *Bot) handleSettings(chatID int64, messageID int) {
 		notifyAtTime = u.NotifyAtTime
 		hadithDaily = u.HadithDailyEnabled
 		hadithPrayer = u.HadithPrayerEnabled
+		hadithFasting = u.HadithFastingEnabled
+		asmaDaily = u.AsmaDailyEnabled
 	}
 
 	timesDisplay := "🔕 Отключена"
@@ -658,6 +667,16 @@ func (b *Bot) handleSettings(chatID int64, messageID int) {
 		labelHadithPrayer = "📖 Хадисы к намазам: [✓]"
 	}
 
+	labelHadithFasting := "🌕 О посте (Пн/Чт, 13-15): [ ]"
+	if hadithFasting {
+		labelHadithFasting = "🌕 О посте (Пн/Чт, 13-15): [✓]"
+	}
+
+	labelAsmaDaily := "✨ Имена Аллаха: [ ]"
+	if asmaDaily {
+		labelAsmaDaily = "✨ Имена Аллаха: [✓]"
+	}
+
 	keyboardRows = append(keyboardRows, []tgbotapi.InlineKeyboardButton{
 		tgbotapi.NewInlineKeyboardButtonData(label15, "toggle_15min"),
 		tgbotapi.NewInlineKeyboardButtonData(labelAtTime, "toggle_attime"),
@@ -666,6 +685,11 @@ func (b *Bot) handleSettings(chatID int64, messageID int) {
 	keyboardRows = append(keyboardRows, []tgbotapi.InlineKeyboardButton{
 		tgbotapi.NewInlineKeyboardButtonData(labelHadithDaily, "toggle_hadith_daily"),
 		tgbotapi.NewInlineKeyboardButtonData(labelHadithPrayer, "toggle_hadith_prayer"),
+	})
+
+	keyboardRows = append(keyboardRows, []tgbotapi.InlineKeyboardButton{
+		tgbotapi.NewInlineKeyboardButtonData(labelHadithFasting, "toggle_hadith_fasting"),
+		tgbotapi.NewInlineKeyboardButtonData(labelAsmaDaily, "toggle_asma_daily"),
 	})
 
 	keyboard := tgbotapi.NewInlineKeyboardMarkup(keyboardRows...)
@@ -893,6 +917,38 @@ func (b *Bot) handleCallback(cb *tgbotapi.CallbackQuery) {
 		_ = b.storage.ToggleHadithPrayer(chatID)
 		b.answerCallback(cb.ID, "Настройка хадисов к намазам изменена")
 		b.handleSettings(chatID, messageID)
+	case "toggle_hadith_fasting":
+		_ = b.storage.ToggleHadithFasting(chatID)
+		b.answerCallback(cb.ID, "Настройка напоминаний о посте изменена")
+		b.handleSettings(chatID, messageID)
+	case "toggle_asma_daily":
+		_ = b.storage.ToggleAsmaDaily(chatID)
+		b.answerCallback(cb.ID, "Настройка рассылки имён Аллаха изменена")
+		b.handleSettings(chatID, messageID)
+	}
+
+	if strings.HasPrefix(data, "asma_det:") {
+		idStr := strings.TrimPrefix(data, "asma_det:")
+		if id, err := strconv.Atoi(idStr); err == nil {
+			if item, err := storage.GetAsmaName(id); err == nil {
+				b.handleAsmaDetails(cb, item, true)
+				return
+			}
+		}
+		b.answerCallback(cb.ID, "")
+		return
+	}
+
+	if strings.HasPrefix(data, "asma_min:") {
+		idStr := strings.TrimPrefix(data, "asma_min:")
+		if id, err := strconv.Atoi(idStr); err == nil {
+			if item, err := storage.GetAsmaName(id); err == nil {
+				b.handleAsmaDetails(cb, item, false)
+				return
+			}
+		}
+		b.answerCallback(cb.ID, "")
+		return
 	}
 }
 
@@ -1253,5 +1309,185 @@ func (b *Bot) SendToChat(chatID int64, text string) {
 // SendToChatWithShare используется планировщиком для рассылки расписания с кнопками «Поделиться»
 func (b *Bot) SendToChatWithShare(chatID int64, text string) {
 	b.sendMessageWithShare(chatID, text)
+}
+
+func (b *Bot) handleAsmaCommand(chatID int64, parts []string) {
+	targetID := 1
+	if len(parts) > 1 {
+		if id, err := strconv.Atoi(parts[1]); err == nil && id >= 1 && id <= 100 {
+			targetID = id
+		}
+	} else {
+		lastID, _ := strconv.Atoi(b.storage.GetSetting("last_asma_id", "0"))
+		targetID = (lastID % 100) + 1
+	}
+
+	item, err := storage.GetAsmaName(targetID)
+	if err != nil || item == nil {
+		b.sendMessage(chatID, "❌ Ошибка: имя Аллаха не найдено.")
+		return
+	}
+
+	b.SendDailyAsma(chatID, item)
+}
+
+// SendDailyAsma отправляет ежедневное имя Аллаха с фото каллиграфии или текстом
+func (b *Bot) SendDailyAsma(chatID int64, item *storage.AsmaName) {
+	if item == nil {
+		return
+	}
+
+	shortMeaning := item.Meaning
+	if len([]rune(shortMeaning)) > 250 {
+		shortMeaning = string([]rune(shortMeaning)[:250]) + "..."
+	}
+
+	text := fmt.Sprintf(
+		"✨ *Прекрасные имена Аллаха (Имя дня)*\n\n"+
+			"*%d. %s* (%s) — *%s*\n\n"+
+			"«%s»\n\n"+
+			"📖 *Упоминаний в Коране:* %d",
+		item.ID,
+		escapeMarkdown(item.Name),
+		item.Arabic,
+		escapeMarkdown(item.Translation),
+		escapeMarkdown(shortMeaning),
+		item.Quran.MentionsCount,
+	)
+
+	keyboard := tgbotapi.NewInlineKeyboardMarkup(
+		tgbotapi.NewInlineKeyboardRow(
+			tgbotapi.NewInlineKeyboardButtonData("📖 Полное толкование", fmt.Sprintf("asma_det:%d", item.ID)),
+		),
+	)
+
+	var photoPath string
+	if item.Image.LocalCalligraphyPNG != "" {
+		p := filepath.Join("data/asmaul_husna", item.Image.LocalCalligraphyPNG)
+		if _, err := os.Stat(p); err == nil {
+			photoPath = p
+		}
+	}
+
+	if photoPath != "" {
+		photoMsg := tgbotapi.NewPhoto(chatID, tgbotapi.FilePath(photoPath))
+		photoMsg.Caption = text
+		photoMsg.ParseMode = "Markdown"
+		photoMsg.ReplyMarkup = keyboard
+		if _, err := b.api.Send(photoMsg); err == nil {
+			return
+		}
+	} else if item.Image.CalligraphyPNGURL != nil && *item.Image.CalligraphyPNGURL != "" {
+		photoMsg := tgbotapi.NewPhoto(chatID, tgbotapi.FileURL(*item.Image.CalligraphyPNGURL))
+		photoMsg.Caption = text
+		photoMsg.ParseMode = "Markdown"
+		photoMsg.ReplyMarkup = keyboard
+		if _, err := b.api.Send(photoMsg); err == nil {
+			return
+		}
+	}
+
+	msg := tgbotapi.NewMessage(chatID, text)
+	msg.ParseMode = "Markdown"
+	msg.DisableWebPagePreview = true
+	msg.ReplyMarkup = keyboard
+	_, _ = b.api.Send(msg)
+}
+
+func (b *Bot) handleAsmaDetails(cb *tgbotapi.CallbackQuery, item *storage.AsmaName, expand bool) {
+	if cb == nil || cb.Message == nil || item == nil {
+		return
+	}
+
+	chatID := cb.Message.Chat.ID
+	messageID := cb.Message.MessageID
+
+	var text string
+	var keyboard tgbotapi.InlineKeyboardMarkup
+
+	if expand {
+		var quotesText string
+		if len(item.Quran.Quotes) > 0 {
+			quotesText = "\n\n📖 *Цитата из Корана:*\n"
+			for _, q := range item.Quran.Quotes {
+				quotesText += fmt.Sprintf("«%s» _(Сура %d:%d)_\n", escapeMarkdown(q.Text), q.Surah, q.Ayah)
+			}
+		}
+
+		var hadithsText string
+		if len(item.HadithReferences) > 0 {
+			hadithsText = fmt.Sprintf("\n\n📚 *Хадисы:* %s", escapeMarkdown(strings.Join(item.HadithReferences, "; ")))
+		}
+
+		var relatedText string
+		if len(item.RelatedNames) > 0 {
+			relatedText = "\n\n🔗 *Связанные имена:*\n"
+			var rNames []string
+			for _, r := range item.RelatedNames {
+				rNames = append(rNames, fmt.Sprintf("• *%s* (%s — %s)", escapeMarkdown(r.Transliteration), r.Arabic, escapeMarkdown(r.Translation)))
+			}
+			relatedText += strings.Join(rNames, "\n")
+		}
+
+		text = fmt.Sprintf(
+			"✨ *%d. %s* (%s) — *%s*\n\n"+
+				"%s%s%s%s",
+			item.ID,
+			escapeMarkdown(item.Name),
+			item.Arabic,
+			escapeMarkdown(item.Translation),
+			escapeMarkdown(item.Meaning),
+			quotesText,
+			hadithsText,
+			relatedText,
+		)
+
+		keyboard = tgbotapi.NewInlineKeyboardMarkup(
+			tgbotapi.NewInlineKeyboardRow(
+				tgbotapi.NewInlineKeyboardButtonData("◀️ Свернуть", fmt.Sprintf("asma_min:%d", item.ID)),
+			),
+		)
+	} else {
+		shortMeaning := item.Meaning
+		if len([]rune(shortMeaning)) > 250 {
+			shortMeaning = string([]rune(shortMeaning)[:250]) + "..."
+		}
+		text = fmt.Sprintf(
+			"✨ *Прекрасные имена Аллаха (Имя дня)*\n\n"+
+				"*%d. %s* (%s) — *%s*\n\n"+
+				"«%s»\n\n"+
+				"📖 *Упоминаний в Коране:* %d",
+			item.ID,
+			escapeMarkdown(item.Name),
+			item.Arabic,
+			escapeMarkdown(item.Translation),
+			escapeMarkdown(shortMeaning),
+			item.Quran.MentionsCount,
+		)
+
+		keyboard = tgbotapi.NewInlineKeyboardMarkup(
+			tgbotapi.NewInlineKeyboardRow(
+				tgbotapi.NewInlineKeyboardButtonData("📖 Полное толкование", fmt.Sprintf("asma_det:%d", item.ID)),
+			),
+		)
+	}
+
+	if len(cb.Message.Photo) > 0 {
+		editCaption := tgbotapi.NewEditMessageCaption(chatID, messageID, text)
+		editCaption.ParseMode = "Markdown"
+		editCaption.ReplyMarkup = &keyboard
+		if _, err := b.api.Request(editCaption); err != nil && !strings.Contains(err.Error(), "message is not modified") {
+			log.Printf("Ошибка редактирования подписи фото asma: %v", err)
+		}
+	} else {
+		editMsg := tgbotapi.NewEditMessageText(chatID, messageID, text)
+		editMsg.ParseMode = "Markdown"
+		editMsg.DisableWebPagePreview = true
+		editMsg.ReplyMarkup = &keyboard
+		if _, err := b.api.Request(editMsg); err != nil && !strings.Contains(err.Error(), "message is not modified") {
+			log.Printf("Ошибка редактирования текста asma: %v", err)
+		}
+	}
+	b.answerCallback(cb.ID, "")
 }
 

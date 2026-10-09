@@ -549,5 +549,38 @@ func TestStorage_Toggles(t *testing.T) {
 	if u.HadithPrayerEnabled != true {
 		t.Errorf("Expected HadithPrayerEnabled to be true after second toggle, got %v", u.HadithPrayerEnabled)
 	}
+
+	// 5. Toggle HadithFasting
+	if err := store.ToggleHadithFasting(chatID); err != nil {
+		t.Fatalf("ToggleHadithFasting failed: %v", err)
+	}
+	u, _ = store.GetUser(chatID)
+	if u.HadithFastingEnabled != false {
+		t.Errorf("Expected HadithFastingEnabled to be false after first toggle, got %v", u.HadithFastingEnabled)
+	}
+	if err := store.ToggleHadithFasting(chatID); err != nil {
+		t.Fatalf("ToggleHadithFasting second toggle failed: %v", err)
+	}
+	u, _ = store.GetUser(chatID)
+	if u.HadithFastingEnabled != true {
+		t.Errorf("Expected HadithFastingEnabled to be true after second toggle, got %v", u.HadithFastingEnabled)
+	}
+
+	// 6. Toggle AsmaDaily
+	if err := store.ToggleAsmaDaily(chatID); err != nil {
+		t.Fatalf("ToggleAsmaDaily failed: %v", err)
+	}
+	u, _ = store.GetUser(chatID)
+	if u.AsmaDailyEnabled != false {
+		t.Errorf("Expected AsmaDailyEnabled to be false after first toggle, got %v", u.AsmaDailyEnabled)
+	}
+	if err := store.ToggleAsmaDaily(chatID); err != nil {
+		t.Fatalf("ToggleAsmaDaily second toggle failed: %v", err)
+	}
+	u, _ = store.GetUser(chatID)
+	if u.AsmaDailyEnabled != true {
+		t.Errorf("Expected AsmaDailyEnabled to be true after second toggle, got %v", u.AsmaDailyEnabled)
+	}
 }
+
 

@@ -105,6 +105,8 @@ func (b *Bot) handleGroupSettings(userChatID int64, targetGroupID int64, groupTi
 	notifyAtTime := true
 	hadithDaily := true
 	hadithPrayer := true
+	hadithFasting := true
+	asmaDaily := true
 	isSubscribed := false
 	preset := "ru"
 	customFooter := ""
@@ -120,6 +122,8 @@ func (b *Bot) handleGroupSettings(userChatID int64, targetGroupID int64, groupTi
 		notifyAtTime = u.NotifyAtTime
 		hadithDaily = u.HadithDailyEnabled
 		hadithPrayer = u.HadithPrayerEnabled
+		hadithFasting = u.HadithFastingEnabled
+		asmaDaily = u.AsmaDailyEnabled
 		if u.PrayerNamesPreset != "" {
 			preset = u.PrayerNamesPreset
 		}
@@ -230,6 +234,16 @@ func (b *Bot) handleGroupSettings(userChatID int64, targetGroupID int64, groupTi
 		labelHadithPrayer = "📖 Хадис к намазу: [✓]"
 	}
 
+	labelHadithFasting := "🌕 О посте (Пн/Чт, 13-15): [ ]"
+	if hadithFasting {
+		labelHadithFasting = "🌕 О посте (Пн/Чт, 13-15): [✓]"
+	}
+
+	labelAsmaDaily := "✨ Имена Аллаха: [ ]"
+	if asmaDaily {
+		labelAsmaDaily = "✨ Имена Аллаха: [✓]"
+	}
+
 	keyboardRows = append(keyboardRows, []tgbotapi.InlineKeyboardButton{
 		tgbotapi.NewInlineKeyboardButtonData(label15, fmt.Sprintf("gtog15:%d", targetGroupID)),
 		tgbotapi.NewInlineKeyboardButtonData(labelAtTime, fmt.Sprintf("gtogat:%d", targetGroupID)),
@@ -237,6 +251,10 @@ func (b *Bot) handleGroupSettings(userChatID int64, targetGroupID int64, groupTi
 	keyboardRows = append(keyboardRows, []tgbotapi.InlineKeyboardButton{
 		tgbotapi.NewInlineKeyboardButtonData(labelHadithDaily, fmt.Sprintf("gtog_h_daily:%d", targetGroupID)),
 		tgbotapi.NewInlineKeyboardButtonData(labelHadithPrayer, fmt.Sprintf("gtog_h_pray:%d", targetGroupID)),
+	})
+	keyboardRows = append(keyboardRows, []tgbotapi.InlineKeyboardButton{
+		tgbotapi.NewInlineKeyboardButtonData(labelHadithFasting, fmt.Sprintf("gtog_h_fast:%d", targetGroupID)),
+		tgbotapi.NewInlineKeyboardButtonData(labelAsmaDaily, fmt.Sprintf("gtog_asma:%d", targetGroupID)),
 	})
 	keyboardRows = append(keyboardRows, []tgbotapi.InlineKeyboardButton{
 		tgbotapi.NewInlineKeyboardButtonData(labelSub, fmt.Sprintf("gtogsub:%d", targetGroupID)),
@@ -650,6 +668,8 @@ func (b *Bot) handleGroupCallbacks(cb *tgbotapi.CallbackQuery) bool {
 		!strings.HasPrefix(data, "gtogat:") &&
 		!strings.HasPrefix(data, "gtog_h_daily:") &&
 		!strings.HasPrefix(data, "gtog_h_pray:") &&
+		!strings.HasPrefix(data, "gtog_h_fast:") &&
+		!strings.HasPrefix(data, "gtog_asma:") &&
 		!strings.HasPrefix(data, "gtogsub:") &&
 		!strings.HasPrefix(data, "gtoday:") &&
 		!strings.HasPrefix(data, "gpost:") &&
@@ -766,6 +786,16 @@ func (b *Bot) handleGroupCallbacks(cb *tgbotapi.CallbackQuery) bool {
 	case "gtog_h_pray":
 		_ = b.storage.ToggleHadithPrayer(targetGroupID)
 		b.answerCallback(cb.ID, "Настройка хадисов к намазам обновлена")
+		b.handleGroupSettings(userChatID, targetGroupID, groupTitle, messageID)
+
+	case "gtog_h_fast":
+		_ = b.storage.ToggleHadithFasting(targetGroupID)
+		b.answerCallback(cb.ID, "Настройка напоминаний о посте обновлена")
+		b.handleGroupSettings(userChatID, targetGroupID, groupTitle, messageID)
+
+	case "gtog_asma":
+		_ = b.storage.ToggleAsmaDaily(targetGroupID)
+		b.answerCallback(cb.ID, "Настройка рассылки имён Аллаха обновлена")
 		b.handleGroupSettings(userChatID, targetGroupID, groupTitle, messageID)
 
 	case "gtogsub":

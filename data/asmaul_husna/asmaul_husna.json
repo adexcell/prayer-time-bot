@@ -1,0 +1,5491 @@
+[
+  {
+    "id": 1,
+    "name": "Аллах",
+    "arabic": "اللَّهُ",
+    "translation": "Аллах",
+    "transliteration_en": "Allah",
+    "english_meaning": "Allah",
+    "image": {
+      "svg_card_path": "images/01_allah.svg",
+      "calligraphy_svg_url": "https://upload.wikimedia.org/wikipedia/commons/2/22/Allah.svg",
+      "calligraphy_png_url": null
+    },
+    "meaning": "Аллах — это имя собственное Бога, единственного истинно Сущего, Творца и Властелина мира, Который обладает самыми совершенными качествами и существует благодаря Себе, вне сотворённого Им мира и независимо от него. Никто другой не может называться этим именем ни в прямом, ни в переносном смысле, также как и никто другой не может быть богом и не заслуживает поклонения. Всевышний сказал: 1965«Знаешь ли ты другого с таким именем» ().",
+    "related_names": [
+      {
+        "id": 6,
+        "arabic": "الأَحَدُ",
+        "transliteration": "Аль-Ахад",
+        "translation": "Единственный"
+      },
+      {
+        "id": 7,
+        "arabic": "الصَّمَدُ",
+        "transliteration": "Ас-Самад",
+        "translation": "Самодостаточный"
+      },
+      {
+        "id": 8,
+        "arabic": "الحَيُّ",
+        "transliteration": "Аль-Хайй",
+        "translation": "Живой"
+      },
+      {
+        "id": 9,
+        "arabic": "القَيُّومُ",
+        "transliteration": "Аль-Кайюм",
+        "translation": "Вседержитель"
+      },
+      {
+        "id": 10,
+        "arabic": "المُتَعَالِي",
+        "transliteration": "Аль-Мутаали",
+        "translation": "Всевышний"
+      },
+      {
+        "id": 11,
+        "arabic": "الأَعْلَيٰ",
+        "transliteration": "Аль-А‘ля",
+        "translation": "Всевышний, Высочайший"
+      },
+      {
+        "id": 12,
+        "arabic": "العَلِيُّ",
+        "transliteration": "Аль-‘Али",
+        "translation": "Высокий"
+      }
+    ],
+    "quran": {
+      "mentions_count": 2699,
+      "references": [
+        "1:1",
+        "2:255",
+        "3:18",
+        "59:22",
+        "112:1"
+      ],
+      "inline_references": [
+        "19:65"
+      ],
+      "quotes": [
+        {
+          "surah": 19,
+          "ayah": 65,
+          "text": "«Знаешь ли ты другого с таким именем»"
+        }
+      ]
+    },
+    "hadith_references": [],
+    "source_url": "https://koran.center/asmaul-husna/1"
+  },
+  {
+    "id": 2,
+    "name": "Ар-Рахман",
+    "arabic": "الرَّحْمَٰنُ",
+    "translation": "Милостивый",
+    "transliteration_en": "Ar-Rahman",
+    "english_meaning": "The All-Compassionate",
+    "image": {
+      "svg_card_path": "images/02_ar-rahman.svg",
+      "calligraphy_svg_url": "https://raw.githubusercontent.com/Suleeyman/api-esmaul-husna/main/assets/static/images/rahman/rahman.svg",
+      "calligraphy_png_url": "https://raw.githubusercontent.com/Suleeyman/api-esmaul-husna/main/assets/static/images/rahman/rahman-256x256.png",
+      "local_calligraphy_png": "images/calligraphy_png/02_rahman-256x256.png"
+    },
+    "meaning": "Ар-Рахман (Милостивый) — одно из величайших имён Аллаха, указывающее на обладание Им милости, совершенной и безграничной, не сравнимой с милосердием людей или других творений. От милости Аллаха происходят любые проявления любви, доброты, щедрости, милосердия и сострадания, и все наши лучшие качества — это следствие Его безграничной милости.",
+    "related_names": [
+      {
+        "id": 3,
+        "arabic": "الرَّحِيمُ",
+        "transliteration": "Ар-Рахим",
+        "translation": "Милующий"
+      },
+      {
+        "id": 59,
+        "arabic": "الوَدُودُ",
+        "transliteration": "Аль-Вадуд",
+        "translation": "Любящий, Любимый"
+      },
+      {
+        "id": 64,
+        "arabic": "الرَّؤُوفُ",
+        "transliteration": "Ар-Рауф",
+        "translation": "Добрый, Сострадательный"
+      },
+      {
+        "id": 67,
+        "arabic": "الحَلِيمُ",
+        "transliteration": "Аль-Халим",
+        "translation": "Незлобивый, Сдержанный"
+      }
+    ],
+    "quran": {
+      "mentions_count": 57,
+      "references": [
+        "1:1",
+        "1:3",
+        "19:1",
+        "55:1",
+        "59:22"
+      ],
+      "inline_references": [],
+      "quotes": []
+    },
+    "hadith_references": [],
+    "source_url": "https://koran.center/asmaul-husna/2"
+  },
+  {
+    "id": 3,
+    "name": "Ар-Рахим",
+    "arabic": "الرَّحِيمُ",
+    "translation": "Милующий",
+    "transliteration_en": "Ar-Rahim",
+    "english_meaning": "The Most Merciful",
+    "image": {
+      "svg_card_path": "images/03_ar-rahim.svg",
+      "calligraphy_svg_url": "https://raw.githubusercontent.com/Suleeyman/api-esmaul-husna/main/assets/static/images/raheem/raheem.svg",
+      "calligraphy_png_url": "https://raw.githubusercontent.com/Suleeyman/api-esmaul-husna/main/assets/static/images/raheem/raheem-256x256.png",
+      "local_calligraphy_png": "images/calligraphy_png/03_raheem-256x256.png"
+    },
+    "meaning": "Ар-Рахим (Милующий) — это Тот, Кто оказывает милость Своим творениям, одаряет их благами, наделяет их пропитанием, оберегает их от зла и вознаграждает их за благодеяния намного большим, чем они заслужили. Имя Ар-Рахман указывает на то, что милость присуща Аллаху, а имя Ар-Рахим — это атрибут действия. Абд-ар-Рахман ибн Яхья сказал: «Имя Ар-Рахман относится только к Аллаху, но в действии этим качеством обладают и творения, а имя Ар-Рахим может относиться и к творениям, но в действии этим качеством обладает только Аллах».3953«Не отчаивайтесь в милости Аллаха. Поистине, Аллах прощает грехи полностью, ибо Он — Прощающий, Милующий» ()",
+    "related_names": [
+      {
+        "id": 2,
+        "arabic": "الرَّحْمَٰنُ",
+        "transliteration": "Ар-Рахман",
+        "translation": "Милостивый"
+      },
+      {
+        "id": 55,
+        "arabic": "الغَفُورُ",
+        "transliteration": "Аль-Гафур",
+        "translation": "Прощающий"
+      },
+      {
+        "id": 56,
+        "arabic": "الغَفَّارُ",
+        "transliteration": "Аль-Гаффар",
+        "translation": "Всепрощающий"
+      },
+      {
+        "id": 57,
+        "arabic": "العَفُوُّ",
+        "transliteration": "Аль-‘Афувв",
+        "translation": "Отпускающий вину, Прощающий"
+      },
+      {
+        "id": 58,
+        "arabic": "التَّوَّابُ",
+        "transliteration": "Ат-Тавваб",
+        "translation": "Принимающий покаяния"
+      },
+      {
+        "id": 64,
+        "arabic": "الرَّؤُوفُ",
+        "transliteration": "Ар-Рауф",
+        "translation": "Добрый, Сострадательный"
+      }
+    ],
+    "quran": {
+      "mentions_count": 115,
+      "references": [
+        "1:1",
+        "1:3",
+        "2:37",
+        "9:117",
+        "59:22"
+      ],
+      "inline_references": [
+        "39:53"
+      ],
+      "quotes": [
+        {
+          "surah": 39,
+          "ayah": 53,
+          "text": "«Не отчаивайтесь в милости Аллаха. Поистине, Аллах прощает грехи полностью, ибо Он — Прощающий, Милующий»"
+        }
+      ]
+    },
+    "hadith_references": [],
+    "source_url": "https://koran.center/asmaul-husna/3"
+  },
+  {
+    "id": 4,
+    "name": "Ар-Рабб",
+    "arabic": "الرَّبُّ",
+    "translation": "Господь",
+    "transliteration_en": "Ar-Rabb",
+    "english_meaning": "Lord",
+    "image": {
+      "svg_card_path": "images/04_ar-rabb.svg",
+      "calligraphy_svg_url": null,
+      "calligraphy_png_url": null
+    },
+    "meaning": "Ар-Рабб (Господь) — это Тот, Кто владычествует над всем и не имеет Себе равных, Кто создал творения, заботится о них и управляет их делами. Этими качествами не обладает никто, кроме Аллаха, и признание Его исключительного господства над всем сущим является неотъемлемой частью мусульманской веры. Аллах — это единственный Господь, и никто из ангелов, пророков или других творений не может называться так. 1032«Таков Аллах, ваш Истинный Господь!». ()",
+    "related_names": [
+      {
+        "id": 9,
+        "arabic": "القَيُّومُ",
+        "transliteration": "Аль-Кайюм",
+        "translation": "Вседержитель"
+      },
+      {
+        "id": 18,
+        "arabic": "المَلِكُ",
+        "transliteration": "Аль-Малик",
+        "translation": "Царь, Владыка"
+      },
+      {
+        "id": 34,
+        "arabic": "المَلِيكُ",
+        "transliteration": "Аль-Малӣк",
+        "translation": "Властелин"
+      },
+      {
+        "id": 68,
+        "arabic": "الوَلِيُّ",
+        "transliteration": "Аль-Вали",
+        "translation": "Покровитель"
+      },
+      {
+        "id": 69,
+        "arabic": "المَولَى",
+        "transliteration": "Аль-Мауля",
+        "translation": "Покровитель, Властелин"
+      }
+    ],
+    "quran": {
+      "mentions_count": 969,
+      "references": [
+        "1:2",
+        "6:45",
+        "18:110",
+        "114:1"
+      ],
+      "inline_references": [
+        "10:32"
+      ],
+      "quotes": [
+        {
+          "surah": 10,
+          "ayah": 32,
+          "text": "«Таков Аллах, ваш Истинный Господь!»."
+        }
+      ]
+    },
+    "hadith_references": [],
+    "source_url": "https://koran.center/asmaul-husna/4"
+  },
+  {
+    "id": 5,
+    "name": "Аль-Илях",
+    "arabic": "الإِلهُ",
+    "translation": "Бог",
+    "transliteration_en": "Al-Ilah",
+    "english_meaning": "The True God",
+    "image": {
+      "svg_card_path": "images/05_al-ilah.svg",
+      "calligraphy_svg_url": null,
+      "calligraphy_png_url": null
+    },
+    "meaning": "Аль-Илях (Бог) — это Тот, Кто заслуживает поклонения и обожествления благодаря Своим совершенным качествам и деяниям. Словом илях можно назвать любой объект поклонения, но только Аллах заслуживает поклонения потому, что обладает абсолютным могуществом и властью, безграничным знанием и мудростью, всепроникающим слухом и зрением, всеобъемлющей милостью и благостью.",
+    "related_names": [
+      {
+        "id": 1,
+        "arabic": "اللَّهُ",
+        "transliteration": "Аллах",
+        "translation": "Аллах"
+      },
+      {
+        "id": 6,
+        "arabic": "الأَحَدُ",
+        "transliteration": "Аль-Ахад",
+        "translation": "Единственный"
+      },
+      {
+        "id": 37,
+        "arabic": "الوَاحِدُ",
+        "transliteration": "Аль-Вахид",
+        "translation": "Единственный"
+      },
+      {
+        "id": 39,
+        "arabic": "الحَقُّ",
+        "transliteration": "Аль-Хакк",
+        "translation": "Истинный"
+      },
+      {
+        "id": 89,
+        "arabic": "الوِتْرُ",
+        "transliteration": "Аль-Витр",
+        "translation": "Один, Единственный"
+      }
+    ],
+    "quran": {
+      "mentions_count": 147,
+      "references": [
+        "2:163",
+        "21:25",
+        "37:4",
+        "112:1"
+      ],
+      "inline_references": [],
+      "quotes": []
+    },
+    "hadith_references": [],
+    "source_url": "https://koran.center/asmaul-husna/5"
+  },
+  {
+    "id": 6,
+    "name": "Аль-Ахад",
+    "arabic": "الأَحَدُ",
+    "translation": "Единственный",
+    "transliteration_en": "Al-Ahad",
+    "english_meaning": "The One",
+    "image": {
+      "svg_card_path": "images/06_al-ahad.svg",
+      "calligraphy_svg_url": null,
+      "calligraphy_png_url": null
+    },
+    "meaning": "Аль-Ахад (Единственный) — это Тот, Кто всегда был, есть и будет один в Своём божественном совершенстве. Слово ахад обычно употребляется с отрицанием и указывает на отсутствие лица или предмета. В утвердительных предложениях это слово не применимо ни к кому, кроме Всевышнего Аллаха. Поэтому Аль-Ахад — это особый атрибут, которым нельзя называть или характеризовать никого из творений.",
+    "related_names": [
+      {
+        "id": 5,
+        "arabic": "الإِلهُ",
+        "transliteration": "Аль-Илях",
+        "translation": "Бог"
+      },
+      {
+        "id": 37,
+        "arabic": "الوَاحِدُ",
+        "transliteration": "Аль-Вахид",
+        "translation": "Единственный"
+      },
+      {
+        "id": 89,
+        "arabic": "الوِتْرُ",
+        "transliteration": "Аль-Витр",
+        "translation": "Один, Единственный"
+      },
+      {
+        "id": 7,
+        "arabic": "الصَّمَدُ",
+        "transliteration": "Ас-Самад",
+        "translation": "Самодостаточный"
+      }
+    ],
+    "quran": {
+      "mentions_count": 1,
+      "references": [
+        "112:1"
+      ],
+      "inline_references": [],
+      "quotes": []
+    },
+    "hadith_references": [],
+    "source_url": "https://koran.center/asmaul-husna/6"
+  },
+  {
+    "id": 7,
+    "name": "Ас-Самад",
+    "arabic": "الصَّمَدُ",
+    "translation": "Самодостаточный",
+    "transliteration_en": "As-Samad",
+    "english_meaning": "The Eternal Sustainer",
+    "image": {
+      "svg_card_path": "images/07_as-samad.svg",
+      "calligraphy_svg_url": "https://raw.githubusercontent.com/Suleeyman/api-esmaul-husna/main/assets/static/images/samad/samad.svg",
+      "calligraphy_png_url": "https://raw.githubusercontent.com/Suleeyman/api-esmaul-husna/main/assets/static/images/samad/samad-256x256.png",
+      "local_calligraphy_png": "images/calligraphy_png/07_samad-256x256.png"
+    },
+    "meaning": "Ас-Самад (Самодостаточный) — это Тот, Кто обладает абсолютным совершенством, которое не подвержено изменениям, Кто ни в ком и ни в чём не нуждается и в Ком нуждается всё живое и неживое, Чья Божественная сущность вечна и неделима. Это прекраснейшее имя подчёркивает всестороннее совершенство Его сущности, неизменной, но бесконечно проявляющейся в Его велениях и творениях.",
+    "related_names": [
+      {
+        "id": 6,
+        "arabic": "الأَحَدُ",
+        "transliteration": "Аль-Ахад",
+        "translation": "Единственный"
+      },
+      {
+        "id": 8,
+        "arabic": "الحَيُّ",
+        "transliteration": "Аль-Хайй",
+        "translation": "Живой"
+      },
+      {
+        "id": 9,
+        "arabic": "القَيُّومُ",
+        "transliteration": "Аль-Кайюм",
+        "translation": "Вседержитель"
+      },
+      {
+        "id": 32,
+        "arabic": "الرَّزَّاقُ",
+        "transliteration": "Ар-Раззак",
+        "translation": "Наделяющий щедро"
+      }
+    ],
+    "quran": {
+      "mentions_count": 1,
+      "references": [
+        "112:2"
+      ],
+      "inline_references": [],
+      "quotes": []
+    },
+    "hadith_references": [],
+    "source_url": "https://koran.center/asmaul-husna/7"
+  },
+  {
+    "id": 8,
+    "name": "Аль-Хайй",
+    "arabic": "الحَيُّ",
+    "translation": "Живой",
+    "transliteration_en": "Al-Hayy",
+    "english_meaning": "The Ever Living One",
+    "image": {
+      "svg_card_path": "images/08_al-hayy.svg",
+      "calligraphy_svg_url": null,
+      "calligraphy_png_url": null
+    },
+    "meaning": "Аль-Хайй (Живой) — это Тот, Кто живёт самой совершенной и полной жизнью, Чьё бытие не зависит от каких бы то ни было причин и условий и не имеет ни начала, ни конца. Совершенство Его жизни в том, что Он никогда не теряет бдительности, не устаёт, не дремлет и не спит. Его возможности не иссякают со временем, и Он не нуждается в отдыхе для того, чтобы восстановить силы. Полнота Его жизни в том, что Он обладает абсолютным могуществом, слухом, зрением, знанием и другими божественными качествами и может делать всё, что пожелает.",
+    "related_names": [
+      {
+        "id": 9,
+        "arabic": "القَيُّومُ",
+        "transliteration": "Аль-Кайюм",
+        "translation": "Вседержитель"
+      },
+      {
+        "id": 7,
+        "arabic": "الصَّمَدُ",
+        "transliteration": "Ас-Самад",
+        "translation": "Самодостаточный"
+      },
+      {
+        "id": 31,
+        "arabic": "القَدِيرُ",
+        "transliteration": "Аль-Кадӣр",
+        "translation": "Всемогущий"
+      }
+    ],
+    "quran": {
+      "mentions_count": 5,
+      "references": [
+        "2:255",
+        "3:2",
+        "20:111",
+        "25:58",
+        "40:65"
+      ],
+      "inline_references": [],
+      "quotes": []
+    },
+    "hadith_references": [],
+    "source_url": "https://koran.center/asmaul-husna/8"
+  },
+  {
+    "id": 9,
+    "name": "Аль-Кайюм",
+    "arabic": "القَيُّومُ",
+    "translation": "Вседержитель",
+    "transliteration_en": "Al-Qayyum",
+    "english_meaning": "The Self-Existing One",
+    "image": {
+      "svg_card_path": "images/09_al-qayyum.svg",
+      "calligraphy_svg_url": null,
+      "calligraphy_png_url": null
+    },
+    "meaning": "Аль-Кайюм (Вседержитель) — это Тот, Кто самодостаточен и имеет бытие в Себе Самом, Чьё совершенство не изменяется с течением времени и под влиянием каких-либо причин и условий, Кто создаёт жизнь и поддерживает её, и ничто невозможно без Его соизволения. Это имя объединяет в себе свойства, связанные с Божественными деяниями. Он господствует над всеми и управляет всем, принимает решения и осуществляет Свою владычную волю. Ничто живое или неживое не может существовать без Его поддержки, и покой и движение существуют только с Его ведома и позволения.",
+    "related_names": [
+      {
+        "id": 8,
+        "arabic": "الحَيُّ",
+        "transliteration": "Аль-Хайй",
+        "translation": "Живой"
+      },
+      {
+        "id": 7,
+        "arabic": "الصَّمَدُ",
+        "transliteration": "Ас-Самад",
+        "translation": "Самодостаточный"
+      },
+      {
+        "id": 32,
+        "arabic": "الرَّزَّاقُ",
+        "transliteration": "Ар-Раззак",
+        "translation": "Наделяющий щедро"
+      },
+      {
+        "id": 76,
+        "arabic": "المُحِيطُ",
+        "transliteration": "Аль-Мухит",
+        "translation": "Всеобъемлющий"
+      }
+    ],
+    "quran": {
+      "mentions_count": 3,
+      "references": [
+        "2:255",
+        "3:2",
+        "20:111"
+      ],
+      "inline_references": [],
+      "quotes": []
+    },
+    "hadith_references": [],
+    "source_url": "https://koran.center/asmaul-husna/9"
+  },
+  {
+    "id": 10,
+    "name": "Аль-Мутаали",
+    "arabic": "المُتَعَالِي",
+    "translation": "Всевышний",
+    "transliteration_en": "Al-Mutaali",
+    "english_meaning": "The Supreme One",
+    "image": {
+      "svg_card_path": "images/10_al-mutaali.svg",
+      "calligraphy_svg_url": null,
+      "calligraphy_png_url": null
+    },
+    "meaning": "Аль-Мута‘али (Всевышний) — это Тот, Кто превозносится над творением и превосходит всё сущее силой, мощью и могуществом. Из трёх имён, указывающих на высокие качества Господа, имя аль-‘Али обладает наиболее полным смыслом, потому что этот атрибут характеризует божественную сущность, тогда как имена Аль-А‘ля и аль-Мута‘али указывают на бесконечное превосходство Творца над творением.",
+    "related_names": [
+      {
+        "id": 11,
+        "arabic": "الأَعْلَيٰ",
+        "transliteration": "Аль-А‘ля",
+        "translation": "Всевышний, Высочайший"
+      },
+      {
+        "id": 12,
+        "arabic": "العَلِيُّ",
+        "transliteration": "Аль-‘Али",
+        "translation": "Высокий"
+      },
+      {
+        "id": 13,
+        "arabic": "العَظِيمُ",
+        "transliteration": "Аль-‘Азым",
+        "translation": "Великий"
+      },
+      {
+        "id": 23,
+        "arabic": "العَزِيزُ",
+        "transliteration": "Аль-‘Азиз",
+        "translation": "Могущественный, Великий"
+      }
+    ],
+    "quran": {
+      "mentions_count": 1,
+      "references": [
+        "13:9"
+      ],
+      "inline_references": [],
+      "quotes": []
+    },
+    "hadith_references": [],
+    "source_url": "https://koran.center/asmaul-husna/10"
+  },
+  {
+    "id": 11,
+    "name": "Аль-А‘ля",
+    "arabic": "الأَعْلَيٰ",
+    "translation": "Всевышний, Высочайший",
+    "transliteration_en": "Al-A'la",
+    "english_meaning": "The Highest",
+    "image": {
+      "svg_card_path": "images/11_al-ala.svg",
+      "calligraphy_svg_url": null,
+      "calligraphy_png_url": null
+    },
+    "meaning": "Аль-А‘ля (Всевышний, Высочайший) — это Тот, Кто выше всего существующего, Кто бесконечно возвышен над творением и вместе с тем обладает абсолютной и всепроникающей властью. Среди творений тоже есть такие, которые возвышаются над другими и обладают властью, силой и знанием, но их превосходные качества не идут ни в какое сравнение с Божественными атрибутами Господа. Он превыше любых сравнений, и Его величие, могущество, силу невозможно ни представить, ни описать словами, ни объять знанием.",
+    "related_names": [
+      {
+        "id": 10,
+        "arabic": "المُتَعَالِي",
+        "transliteration": "Аль-Мутаали",
+        "translation": "Всевышний"
+      },
+      {
+        "id": 12,
+        "arabic": "العَلِيُّ",
+        "transliteration": "Аль-‘Али",
+        "translation": "Высокий"
+      },
+      {
+        "id": 13,
+        "arabic": "العَظِيمُ",
+        "transliteration": "Аль-‘Азым",
+        "translation": "Великий"
+      },
+      {
+        "id": 25,
+        "arabic": "المُتَكَبِّرُ",
+        "transliteration": "Аль-Мутака́ббир",
+        "translation": "Величавый, Горделивый"
+      }
+    ],
+    "quran": {
+      "mentions_count": 4,
+      "references": [
+        "79:24",
+        "87:1",
+        "92:20",
+        "20:68"
+      ],
+      "inline_references": [],
+      "quotes": []
+    },
+    "hadith_references": [],
+    "source_url": "https://koran.center/asmaul-husna/11"
+  },
+  {
+    "id": 12,
+    "name": "Аль-‘Али",
+    "arabic": "العَلِيُّ",
+    "translation": "Высокий",
+    "transliteration_en": "Al-Ali",
+    "english_meaning": "The Most High",
+    "image": {
+      "svg_card_path": "images/12_al-ali.svg",
+      "calligraphy_svg_url": "https://raw.githubusercontent.com/Suleeyman/api-esmaul-husna/main/assets/static/images/ali/ali.svg",
+      "calligraphy_png_url": "https://raw.githubusercontent.com/Suleeyman/api-esmaul-husna/main/assets/static/images/ali/ali-256x256.png",
+      "local_calligraphy_png": "images/calligraphy_png/12_ali-256x256.png"
+    },
+    "meaning": "Аль-‘Али (Высокий) — это Тот, Кто обладает самыми высокими качествами и превыше любых недостатков, Кто возвышается над Своим творением и над самой возможностью объять Его. Сущность и качества Аллаха возвышены потому, что Он поистине велик и достославен. Ничто не угрожает Его могуществу и власти, и никто не может соперничать с Ним в величии, и только Он вправе превозноситься над творениями, хвалиться Своей величавостью и гордиться Своим превосходством. Он возвышает тех, кто проявляет смирение, и унижает тех, кто тщеславится и поступает несправедливо.",
+    "related_names": [
+      {
+        "id": 10,
+        "arabic": "المُتَعَالِي",
+        "transliteration": "Аль-Мутаали",
+        "translation": "Всевышний"
+      },
+      {
+        "id": 11,
+        "arabic": "الأَعْلَيٰ",
+        "transliteration": "Аль-А‘ля",
+        "translation": "Всевышний, Высочайший"
+      },
+      {
+        "id": 13,
+        "arabic": "العَظِيمُ",
+        "transliteration": "Аль-‘Азым",
+        "translation": "Великий"
+      },
+      {
+        "id": 23,
+        "arabic": "العَزِيزُ",
+        "transliteration": "Аль-‘Азиз",
+        "translation": "Могущественный, Великий"
+      }
+    ],
+    "quran": {
+      "mentions_count": 8,
+      "references": [
+        "2:255",
+        "4:34",
+        "22:62",
+        "31:30",
+        "42:4",
+        "42:51"
+      ],
+      "inline_references": [],
+      "quotes": []
+    },
+    "hadith_references": [],
+    "source_url": "https://koran.center/asmaul-husna/12"
+  },
+  {
+    "id": 13,
+    "name": "Аль-‘Азым",
+    "arabic": "العَظِيمُ",
+    "translation": "Великий",
+    "transliteration_en": "Al-Azim",
+    "english_meaning": "The Magnificent",
+    "image": {
+      "svg_card_path": "images/13_al-azim.svg",
+      "calligraphy_svg_url": "https://raw.githubusercontent.com/Suleeyman/api-esmaul-husna/main/assets/static/images/azeem/azeem.svg",
+      "calligraphy_png_url": "https://raw.githubusercontent.com/Suleeyman/api-esmaul-husna/main/assets/static/images/azeem/azeem-256x256.png",
+      "local_calligraphy_png": "images/calligraphy_png/13_azeem-256x256.png"
+    },
+    "meaning": "Аль-‘Азым (Великий) — это Тот, Кто обладает подлинным и беспредельным величием, для Кого нет абсолютно ничего невозможного, Чьи атрибуты и деяния величественны и заслуживают того, чтобы их возносили и величали. Они непостижимы в своём величии и величественны в своей непостижимости, и как бы человек ни представил их себе, они всё равно превыше его представлений и нах",
+    "related_names": [
+      {
+        "id": 14,
+        "arabic": "الكَبِيرُ",
+        "transliteration": "Аль-Кабир",
+        "translation": "Великий, Величайший"
+      },
+      {
+        "id": 12,
+        "arabic": "العَلِيُّ",
+        "transliteration": "Аль-‘Али",
+        "translation": "Высокий"
+      },
+      {
+        "id": 15,
+        "arabic": "الحَمِيدُ",
+        "transliteration": "Аль-Хамид",
+        "translation": "Достохвальный, Достославный"
+      },
+      {
+        "id": 16,
+        "arabic": "المَجِيدُ",
+        "transliteration": "Аль-Маджид",
+        "translation": "Славный, Величественный"
+      }
+    ],
+    "quran": {
+      "mentions_count": 9,
+      "references": [
+        "2:255",
+        "42:4",
+        "56:74",
+        "56:96",
+        "69:33"
+      ],
+      "inline_references": [],
+      "quotes": []
+    },
+    "hadith_references": [],
+    "source_url": "https://koran.center/asmaul-husna/13"
+  },
+  {
+    "id": 14,
+    "name": "Аль-Кабир",
+    "arabic": "الكَبِيرُ",
+    "translation": "Великий, Величайший",
+    "transliteration_en": "Al-Kabir",
+    "english_meaning": "The Greatest",
+    "image": {
+      "svg_card_path": "images/14_al-kabir.svg",
+      "calligraphy_svg_url": "https://raw.githubusercontent.com/Suleeyman/api-esmaul-husna/main/assets/static/images/kabir/kabir.svg",
+      "calligraphy_png_url": "https://raw.githubusercontent.com/Suleeyman/api-esmaul-husna/main/assets/static/images/kabir/kabir-256x256.png",
+      "local_calligraphy_png": "images/calligraphy_png/14_kabir-256x256.png"
+    },
+    "meaning": "Аль-Кабир (Великий, Величайший) — это Тот, Кто велик своей сущностью, атрибутами, деяниями и положением и своим величием превосходит абсолютно всё. Имена Аль-‘Азым и Аль-Кабир близки по значению, но если первое выражает величественность Господа и Его атрибутов и Его высокое положение, то в имени Аль-Кабир ударение делается на то, что никто не может соперничать с Аллахом в величии.",
+    "related_names": [
+      {
+        "id": 13,
+        "arabic": "العَظِيمُ",
+        "transliteration": "Аль-‘Азым",
+        "translation": "Великий"
+      },
+      {
+        "id": 12,
+        "arabic": "العَلِيُّ",
+        "transliteration": "Аль-‘Али",
+        "translation": "Высокий"
+      },
+      {
+        "id": 11,
+        "arabic": "الأَعْلَيٰ",
+        "transliteration": "Аль-А‘ля",
+        "translation": "Всевышний, Высочайший"
+      },
+      {
+        "id": 25,
+        "arabic": "المُتَكَبِّرُ",
+        "transliteration": "Аль-Мутака́ббир",
+        "translation": "Величавый, Горделивый"
+      }
+    ],
+    "quran": {
+      "mentions_count": 6,
+      "references": [
+        "4:34",
+        "13:9",
+        "22:62",
+        "31:30",
+        "34:23",
+        "40:12"
+      ],
+      "inline_references": [],
+      "quotes": []
+    },
+    "hadith_references": [],
+    "source_url": "https://koran.center/asmaul-husna/14"
+  },
+  {
+    "id": 15,
+    "name": "Аль-Хамид",
+    "arabic": "الحَمِيدُ",
+    "translation": "Достохвальный, Достославный",
+    "transliteration_en": "Al-Hameed",
+    "english_meaning": "The Praiseworthy",
+    "image": {
+      "svg_card_path": "images/15_al-hameed.svg",
+      "calligraphy_svg_url": null,
+      "calligraphy_png_url": null
+    },
+    "meaning": "Аль-Хамид (Достохвальный, Достославный) — это Тот, Кто достоин всех похвал по причине совершенства Его сущности, атрибутов и деяний, Чья слава заполняет небеса, землю и всё, что между ними, и Кого восхваляет всё живое и неживое. Аль-Хаттаби сказал: «Аль-Хамид — это Тот, Кого восхваляют и Кто заслуживает похвалы за Свои деяния. Его надлежит хвалить в радости и горе, нужде и благоденствии, потому что Он мудр, не совершает ошибок и не делает упущений. И хвалить Его нужно в любом положении».",
+    "related_names": [
+      {
+        "id": 16,
+        "arabic": "المَجِيدُ",
+        "transliteration": "Аль-Маджид",
+        "translation": "Славный, Величественный"
+      },
+      {
+        "id": 61,
+        "arabic": "الكَرِيمُ",
+        "transliteration": "Аль-Карим",
+        "translation": "Щедрый"
+      },
+      {
+        "id": 65,
+        "arabic": "الشّاكِرُ",
+        "transliteration": "Аш-Шакир",
+        "translation": "Благодарящий"
+      },
+      {
+        "id": 66,
+        "arabic": "الشَّكُورُ",
+        "transliteration": "Аш-Шакур",
+        "translation": "Благодарный, Заслуживающий благодарности"
+      },
+      {
+        "id": 17,
+        "arabic": "الغَنِيُّ",
+        "transliteration": "Аль-Гани",
+        "translation": "Богатый"
+      }
+    ],
+    "quran": {
+      "mentions_count": 17,
+      "references": [
+        "2:267",
+        "11:73",
+        "14:8",
+        "22:64",
+        "31:12",
+        "41:42",
+        "57:24",
+        "60:6"
+      ],
+      "inline_references": [],
+      "quotes": []
+    },
+    "hadith_references": [],
+    "source_url": "https://koran.center/asmaul-husna/15"
+  },
+  {
+    "id": 16,
+    "name": "Аль-Маджид",
+    "arabic": "المَجِيدُ",
+    "translation": "Славный, Величественный",
+    "transliteration_en": "Al-Majeed",
+    "english_meaning": "The All-Glorious",
+    "image": {
+      "svg_card_path": "images/16_al-majeed.svg",
+      "calligraphy_svg_url": "https://raw.githubusercontent.com/Suleeyman/api-esmaul-husna/main/assets/static/images/majeed/majeed.svg",
+      "calligraphy_png_url": "https://raw.githubusercontent.com/Suleeyman/api-esmaul-husna/main/assets/static/images/majeed/majeed-256x256.png",
+      "local_calligraphy_png": "images/calligraphy_png/16_majeed-256x256.png"
+    },
+    "meaning": "Аль-Маджид (Славный, Величественный) — это Тот, Кто имеет высочайшую славу, непреходящую и всепроникающую, Кто обладает множеством совершеннейших атрибутов, Чья слава открывается в Его щедрости, величии, именах и деяниях. Как пишет аль-Халими, арабы называют маджид того, кто обладает славой и неуязвим для тех, кто хочет посягнуть на него.",
+    "related_names": [
+      {
+        "id": 15,
+        "arabic": "الحَمِيدُ",
+        "transliteration": "Аль-Хамид",
+        "translation": "Достохвальный, Достославный"
+      },
+      {
+        "id": 13,
+        "arabic": "العَظِيمُ",
+        "transliteration": "Аль-‘Азым",
+        "translation": "Великий"
+      },
+      {
+        "id": 61,
+        "arabic": "الكَرِيمُ",
+        "transliteration": "Аль-Карим",
+        "translation": "Щедрый"
+      },
+      {
+        "id": 17,
+        "arabic": "الغَنِيُّ",
+        "transliteration": "Аль-Гани",
+        "translation": "Богатый"
+      }
+    ],
+    "quran": {
+      "mentions_count": 4,
+      "references": [
+        "11:73",
+        "85:15",
+        "85:21"
+      ],
+      "inline_references": [],
+      "quotes": []
+    },
+    "hadith_references": [],
+    "source_url": "https://koran.center/asmaul-husna/16"
+  },
+  {
+    "id": 17,
+    "name": "Аль-Гани",
+    "arabic": "الغَنِيُّ",
+    "translation": "Богатый",
+    "transliteration_en": "Al-Ghaniyy",
+    "english_meaning": "The Rich One",
+    "image": {
+      "svg_card_path": "images/17_al-ghaniyy.svg",
+      "calligraphy_svg_url": null,
+      "calligraphy_png_url": null
+    },
+    "meaning": "Аль-Гани (Богатый) — это Тот, Кто не нуждается ни в ком и ни в чём и в Ком нуждаются все творения, Кто одаряет Своих рабов благами и избавляет от нужды того, кого пожелает, Кто осуществляет Свою волю так, как пожелает, не испытывая затруднений.",
+    "related_names": [
+      {
+        "id": 15,
+        "arabic": "الحَمِيدُ",
+        "transliteration": "Аль-Хамид",
+        "translation": "Достохвальный, Достославный"
+      },
+      {
+        "id": 61,
+        "arabic": "الكَرِيمُ",
+        "transliteration": "Аль-Карим",
+        "translation": "Щедрый"
+      },
+      {
+        "id": 62,
+        "arabic": "الأَكْرَمُ",
+        "transliteration": "Аль-Акрам",
+        "translation": "Наищедрейший"
+      },
+      {
+        "id": 60,
+        "arabic": "الوَهَّابُ",
+        "transliteration": "Аль-Ваххаб",
+        "translation": "Дарующий"
+      },
+      {
+        "id": 17,
+        "arabic": "الغَنِيُّ",
+        "transliteration": "Аль-Гани",
+        "translation": "Богатый"
+      }
+    ],
+    "quran": {
+      "mentions_count": 18,
+      "references": [
+        "2:267",
+        "3:97",
+        "10:68",
+        "27:40",
+        "29:6",
+        "31:12",
+        "35:15",
+        "47:38",
+        "57:24",
+        "64:6"
+      ],
+      "inline_references": [],
+      "quotes": []
+    },
+    "hadith_references": [],
+    "source_url": "https://koran.center/asmaul-husna/17"
+  },
+  {
+    "id": 18,
+    "name": "Аль-Малик",
+    "arabic": "المَلِكُ",
+    "translation": "Царь, Владыка",
+    "transliteration_en": "Al-Malik",
+    "english_meaning": "The Absolute Ruler",
+    "image": {
+      "svg_card_path": "images/18_al-malik.svg",
+      "calligraphy_svg_url": "https://raw.githubusercontent.com/Suleeyman/api-esmaul-husna/main/assets/static/images/malik/malik.svg",
+      "calligraphy_png_url": "https://raw.githubusercontent.com/Suleeyman/api-esmaul-husna/main/assets/static/images/malik/malik-256x256.png",
+      "local_calligraphy_png": "images/calligraphy_png/18_malik-256x256.png"
+    },
+    "meaning": "Аль-Малик (Царь, Владыка) — Тот, Кто обладает полнейшей властью на небесах и на земле и не нуждается в помощниках для осуществления Своей власти, Чьи приказы не оспариваются и Чьей воле невозможно воспротивиться. Он обладает бесконечной властью над Своими творениями и требует от них покорности и смирения. Он вершит их судьбами, как пожелает, и возвышает тех, кого пожелает, и унижает тех, кого пожелает. Он не нуждается в Своих творениях, и их возвышение не прибавляет Ему величия, и их унижение не уменьшает Его славу и могущество.",
+    "related_names": [
+      {
+        "id": 34,
+        "arabic": "المَلِيكُ",
+        "transliteration": "Аль-Малӣк",
+        "translation": "Властелин"
+      },
+      {
+        "id": 24,
+        "arabic": "الجَبَّارُ",
+        "transliteration": "Аль-Джаббар",
+        "translation": "Могучий"
+      },
+      {
+        "id": 25,
+        "arabic": "المُتَكَبِّرُ",
+        "transliteration": "Аль-Мутака́ббир",
+        "translation": "Величавый, Горделивый"
+      },
+      {
+        "id": 96,
+        "arabic": "السَّيِّدُ",
+        "transliteration": "Ас-Саййид",
+        "translation": "Господин"
+      }
+    ],
+    "quran": {
+      "mentions_count": 5,
+      "references": [
+        "20:114",
+        "23:116",
+        "59:23",
+        "62:1",
+        "114:2"
+      ],
+      "inline_references": [],
+      "quotes": []
+    },
+    "hadith_references": [],
+    "source_url": "https://koran.center/asmaul-husna/18"
+  },
+  {
+    "id": 19,
+    "name": "Аль-Куддус",
+    "arabic": "القُدُّوسُ",
+    "translation": "Святой",
+    "transliteration_en": "Al-Quddus",
+    "english_meaning": "The Pure One",
+    "image": {
+      "svg_card_path": "images/19_al-quddus.svg",
+      "calligraphy_svg_url": "https://raw.githubusercontent.com/Suleeyman/api-esmaul-husna/main/assets/static/images/quddus/quddus.svg",
+      "calligraphy_png_url": "https://raw.githubusercontent.com/Suleeyman/api-esmaul-husna/main/assets/static/images/quddus/quddus-256x256.png",
+      "local_calligraphy_png": "images/calligraphy_png/19_quddus-256x256.png"
+    },
+    "meaning": "Аль-Куддус (Святой) — это Тот, Кому нет равных и подобных в Его совершенстве, Кто не имеет недостатков и обладает самыми совершенными, величественными и прекрасными качествами, заслуживающими величания и прославления. Аль-Газали пишет: «Аль-Куддус — это Тот, Кто не обладает такими качествами, которые можно воспринять чувствами, представить воображением или постичь разумом, которые могут возникнуть в сознании или быть результатом размышлений».",
+    "related_names": [
+      {
+        "id": 20,
+        "arabic": "السَّلاَمُ",
+        "transliteration": "Ас-Салям",
+        "translation": "Пречистый"
+      },
+      {
+        "id": 94,
+        "arabic": "السُّبُّوحُ",
+        "transliteration": "Ас-Суббух",
+        "translation": "Святой"
+      },
+      {
+        "id": 98,
+        "arabic": "الطَّيِّبُ",
+        "transliteration": "Ат-Таййиб",
+        "translation": "Благой"
+      },
+      {
+        "id": 57,
+        "arabic": "العَفُوُّ",
+        "transliteration": "Аль-‘Афувв",
+        "translation": "Отпускающий вину, Прощающий"
+      }
+    ],
+    "quran": {
+      "mentions_count": 2,
+      "references": [
+        "59:23",
+        "62:1"
+      ],
+      "inline_references": [],
+      "quotes": []
+    },
+    "hadith_references": [],
+    "source_url": "https://koran.center/asmaul-husna/19"
+  },
+  {
+    "id": 20,
+    "name": "Ас-Салям",
+    "arabic": "السَّلاَمُ",
+    "translation": "Пречистый",
+    "transliteration_en": "As-Salam",
+    "english_meaning": "The Source of Peace",
+    "image": {
+      "svg_card_path": "images/20_as-salam.svg",
+      "calligraphy_svg_url": "https://raw.githubusercontent.com/Suleeyman/api-esmaul-husna/main/assets/static/images/salam/salam.svg",
+      "calligraphy_png_url": "https://raw.githubusercontent.com/Suleeyman/api-esmaul-husna/main/assets/static/images/salam/salam-256x256.png",
+      "local_calligraphy_png": "images/calligraphy_png/20_salam-256x256.png"
+    },
+    "meaning": "Ас-Салям (Пречистый) — это Тот, Кто лишён любых изъянов, пороков и недостатков, Чья божественная сущность, деяния и атрибуты в высшей степени превосходны и совершенны. Имя Ас-Салям близко по значению с прекраснейшим именем Аль-Куддус, и если они употребляются вместе, то Аль-Куддус указывает на совершенство Аллаха в прошлом и настоящем, а Ас-Салям — на безупречность Его атрибутов и деяний в настоящем и будущем.",
+    "related_names": [
+      {
+        "id": 19,
+        "arabic": "القُدُّوسُ",
+        "transliteration": "Аль-Куддус",
+        "translation": "Святой"
+      },
+      {
+        "id": 21,
+        "arabic": "المُؤْمِنُ",
+        "transliteration": "Аль-Му‘мин",
+        "translation": "Оберегающий, Дарующий безопасность"
+      },
+      {
+        "id": 22,
+        "arabic": "المُهَيْمِنُ",
+        "transliteration": "Аль-Мухаймин",
+        "translation": "Хранитель"
+      },
+      {
+        "id": 55,
+        "arabic": "الغَفُورُ",
+        "transliteration": "Аль-Гафур",
+        "translation": "Прощающий"
+      }
+    ],
+    "quran": {
+      "mentions_count": 1,
+      "references": [
+        "59:23"
+      ],
+      "inline_references": [],
+      "quotes": []
+    },
+    "hadith_references": [],
+    "source_url": "https://koran.center/asmaul-husna/20"
+  },
+  {
+    "id": 21,
+    "name": "Аль-Му‘мин",
+    "arabic": "المُؤْمِنُ",
+    "translation": "Оберегающий, Дарующий безопасность",
+    "transliteration_en": "Al-Mumin",
+    "english_meaning": "The Inspirer of Faith",
+    "image": {
+      "svg_card_path": "images/21_al-mumin.svg",
+      "calligraphy_svg_url": "https://raw.githubusercontent.com/Suleeyman/api-esmaul-husna/main/assets/static/images/mumin/mumin.svg",
+      "calligraphy_png_url": "https://raw.githubusercontent.com/Suleeyman/api-esmaul-husna/main/assets/static/images/mumin/mumin-256x256.png",
+      "local_calligraphy_png": "images/calligraphy_png/21_mumin-256x256.png"
+    },
+    "meaning": "Аль-Му‘мин (Оберегающий, Дарующий безопасность) — это Тот, Кто говорит Истину и обещает только то, что обязательно исполнится, Кто оправдывает надежды и ожидания Своих верующих рабов, оберегает их от искушений в этом мире и от мучений в жизни вечной.5923Он — Аллах, кроме Которого нет иного божества, Царь, Святой, Пречистый, Оберегающий, Хранитель, Могущественный, Могучий, Величавый. Свят Аллах и далёк от того, что они приобщают в сотоварищи! ()",
+    "related_names": [
+      {
+        "id": 20,
+        "arabic": "السَّلاَمُ",
+        "transliteration": "Ас-Салям",
+        "translation": "Пречистый"
+      },
+      {
+        "id": 22,
+        "arabic": "المُهَيْمِنُ",
+        "transliteration": "Аль-Мухаймин",
+        "translation": "Хранитель"
+      },
+      {
+        "id": 68,
+        "arabic": "الوَلِيُّ",
+        "transliteration": "Аль-Вали",
+        "translation": "Покровитель"
+      },
+      {
+        "id": 73,
+        "arabic": "الشَّهِيدُ",
+        "transliteration": "Аш-Шахид",
+        "translation": "Свидетель, Наблюдающий"
+      }
+    ],
+    "quran": {
+      "mentions_count": 1,
+      "references": [
+        "59:23"
+      ],
+      "inline_references": [
+        "59:23"
+      ],
+      "quotes": [
+        {
+          "surah": 59,
+          "ayah": 23,
+          "text": "Он — Аллах, кроме Которого нет иного божества, Царь, Святой, Пречистый, Оберегающий, Хранитель, Могущественный, Могучий, Величавый. Свят Аллах и далёк от того, что они приобщают в сотоварищи!"
+        }
+      ]
+    },
+    "hadith_references": [],
+    "source_url": "https://koran.center/asmaul-husna/21"
+  },
+  {
+    "id": 22,
+    "name": "Аль-Мухаймин",
+    "arabic": "المُهَيْمِنُ",
+    "translation": "Хранитель",
+    "transliteration_en": "Al-Muhaymin",
+    "english_meaning": "The Guardian",
+    "image": {
+      "svg_card_path": "images/22_al-muhaymin.svg",
+      "calligraphy_svg_url": "https://raw.githubusercontent.com/Suleeyman/api-esmaul-husna/main/assets/static/images/muhaymin/muhaymin.svg",
+      "calligraphy_png_url": "https://raw.githubusercontent.com/Suleeyman/api-esmaul-husna/main/assets/static/images/muhaymin/muhaymin-256x256.png",
+      "local_calligraphy_png": "images/calligraphy_png/22_muhaymin-256x256.png"
+    },
+    "meaning": "Аль-Мухаймин (Хранитель) — это Тот, Кто наблюдает за творениями, оберегает их и сохраняет их деяния, Кто заслуживает доверия и подтверждает правдивость Своих посланников. Это имя указывает на то, что Аллах обладает абсолютной властью и совершенным знанием и непрерывно заботится о Своих творениях, и ничто не может помешать Ему осуществить задуманное и предопределённое.5923“Он — Аллах, кроме Которого нет иного божества, Царь, Святой, Пречистый, Оберегающий, Хранитель,…” ()",
+    "related_names": [
+      {
+        "id": 21,
+        "arabic": "المُؤْمِنُ",
+        "transliteration": "Аль-Му‘мин",
+        "translation": "Оберегающий, Дарующий безопасность"
+      },
+      {
+        "id": 68,
+        "arabic": "الوَلِيُّ",
+        "transliteration": "Аль-Вали",
+        "translation": "Покровитель"
+      },
+      {
+        "id": 69,
+        "arabic": "المَولَى",
+        "transliteration": "Аль-Мауля",
+        "translation": "Покровитель, Властелин"
+      },
+      {
+        "id": 74,
+        "arabic": "الرَّقِيبُ",
+        "transliteration": "Ар-Ракиб",
+        "translation": "Наблюдающий"
+      },
+      {
+        "id": 77,
+        "arabic": "الحَفِيظُ",
+        "transliteration": "Аль-Хафиз",
+        "translation": "Хранитель"
+      }
+    ],
+    "quran": {
+      "mentions_count": 1,
+      "references": [
+        "59:23"
+      ],
+      "inline_references": [
+        "59:23"
+      ],
+      "quotes": [
+        {
+          "surah": 59,
+          "ayah": 23,
+          "text": "“Он — Аллах, кроме Которого нет иного божества, Царь, Святой, Пречистый, Оберегающий, Хранитель,…”"
+        }
+      ]
+    },
+    "hadith_references": [],
+    "source_url": "https://koran.center/asmaul-husna/22"
+  },
+  {
+    "id": 23,
+    "name": "Аль-‘Азиз",
+    "arabic": "العَزِيزُ",
+    "translation": "Могущественный, Великий",
+    "transliteration_en": "Al-Azeez",
+    "english_meaning": "The All-Mighty",
+    "image": {
+      "svg_card_path": "images/23_al-azeez.svg",
+      "calligraphy_svg_url": "https://raw.githubusercontent.com/Suleeyman/api-esmaul-husna/main/assets/static/images/aziz/aziz.svg",
+      "calligraphy_png_url": "https://raw.githubusercontent.com/Suleeyman/api-esmaul-husna/main/assets/static/images/aziz/aziz-256x256.png",
+      "local_calligraphy_png": "images/calligraphy_png/23_aziz-256x256.png"
+    },
+    "meaning": "Аль-‘Азиз (Могущественный, Великий) — это Тот, Кому нет равных в силе и могуществе, Чьей воле невозможно противиться, Кого невозможно одолеть или пересилить, Кто обладает величием и славой. Люди и другие творения могут быть сильными и могущественными, но только Аллаху эти качества присущи неизменно и в самой совершенной форме.",
+    "related_names": [
+      {
+        "id": 24,
+        "arabic": "الجَبَّارُ",
+        "transliteration": "Аль-Джаббар",
+        "translation": "Могучий"
+      },
+      {
+        "id": 12,
+        "arabic": "العَلِيُّ",
+        "transliteration": "Аль-‘Али",
+        "translation": "Высокий"
+      },
+      {
+        "id": 31,
+        "arabic": "القَدِيرُ",
+        "transliteration": "Аль-Кадӣр",
+        "translation": "Всемогущий"
+      },
+      {
+        "id": 36,
+        "arabic": "القَوِيُّ",
+        "transliteration": "Аль-Кави",
+        "translation": "Всесильный"
+      },
+      {
+        "id": 38,
+        "arabic": "القَهَّارُ",
+        "transliteration": "Аль-Каххар",
+        "translation": "Всевластный"
+      }
+    ],
+    "quran": {
+      "mentions_count": 92,
+      "references": [
+        "2:129",
+        "3:6",
+        "3:62",
+        "9:40",
+        "36:5",
+        "39:1",
+        "59:23"
+      ],
+      "inline_references": [],
+      "quotes": []
+    },
+    "hadith_references": [],
+    "source_url": "https://koran.center/asmaul-husna/23"
+  },
+  {
+    "id": 24,
+    "name": "Аль-Джаббар",
+    "arabic": "الجَبَّارُ",
+    "translation": "Могучий",
+    "transliteration_en": "Al-Jabbar",
+    "english_meaning": "The Compeller",
+    "image": {
+      "svg_card_path": "images/24_al-jabbar.svg",
+      "calligraphy_svg_url": "https://raw.githubusercontent.com/Suleeyman/api-esmaul-husna/main/assets/static/images/jabbar/jabbar.svg",
+      "calligraphy_png_url": "https://raw.githubusercontent.com/Suleeyman/api-esmaul-husna/main/assets/static/images/jabbar/jabbar-256x256.png",
+      "local_calligraphy_png": "images/calligraphy_png/24_jabbar-256x256.png"
+    },
+    "meaning": "Аль-Джаббар (Могучий) — это Тот, Кто подчиняет все творения Своей воле, Кто превосходит их силой и мощью, но проявляет к ним сострадание и милость. Это имя вбирает в себя три совершенных атрибута Аллаха: могущество, благодаря которому Аллах сокрушает любого непокорного и подчиняет Себе всё сущее, милость, в которой находит спасение каждый обиженный и страждущий, и высокое положение над творениями в том смысле, что Его божественная сущность отделена от тварных миров, а Его атрибуты превосходят качества творений.",
+    "related_names": [
+      {
+        "id": 23,
+        "arabic": "العَزِيزُ",
+        "transliteration": "Аль-‘Азиз",
+        "translation": "Могущественный, Великий"
+      },
+      {
+        "id": 25,
+        "arabic": "المُتَكَبِّرُ",
+        "transliteration": "Аль-Мутака́ббир",
+        "translation": "Величавый, Горделивый"
+      },
+      {
+        "id": 38,
+        "arabic": "القَهَّارُ",
+        "transliteration": "Аль-Каххар",
+        "translation": "Всевластный"
+      },
+      {
+        "id": 18,
+        "arabic": "المَلِكُ",
+        "transliteration": "Аль-Малик",
+        "translation": "Царь, Владыка"
+      }
+    ],
+    "quran": {
+      "mentions_count": 1,
+      "references": [
+        "59:23"
+      ],
+      "inline_references": [],
+      "quotes": []
+    },
+    "hadith_references": [],
+    "source_url": "https://koran.center/asmaul-husna/24"
+  },
+  {
+    "id": 25,
+    "name": "Аль-Мутака́ббир",
+    "arabic": "المُتَكَبِّرُ",
+    "translation": "Величавый, Горделивый",
+    "transliteration_en": "Al-Mutakabbir",
+    "english_meaning": "The Supremely Proud",
+    "image": {
+      "svg_card_path": "images/25_al-mutakabbir.svg",
+      "calligraphy_svg_url": "https://raw.githubusercontent.com/Suleeyman/api-esmaul-husna/main/assets/static/images/mutakabbir/mutakabbir.svg",
+      "calligraphy_png_url": "https://raw.githubusercontent.com/Suleeyman/api-esmaul-husna/main/assets/static/images/mutakabbir/mutakabbir-256x256.png",
+      "local_calligraphy_png": "images/calligraphy_png/25_mutakabbir-256x256.png"
+    },
+    "meaning": "Аль-Мутакаббир (Величавый, Горделивый) — это Тот, Кто величавее всех творений и превыше любых недостатков и любого сходства с творениями, Чьё величие проявляется во всех Его качествах, деяниях и велениях, Кто горделиво возвышается над сотворённым миром и унижает любого, кто пытается возвыситься в нём.",
+    "related_names": [
+      {
+        "id": 24,
+        "arabic": "الجَبَّارُ",
+        "transliteration": "Аль-Джаббар",
+        "translation": "Могучий"
+      },
+      {
+        "id": 14,
+        "arabic": "الكَبِيرُ",
+        "transliteration": "Аль-Кабир",
+        "translation": "Великий, Величайший"
+      },
+      {
+        "id": 11,
+        "arabic": "الأَعْلَيٰ",
+        "transliteration": "Аль-А‘ля",
+        "translation": "Всевышний, Высочайший"
+      },
+      {
+        "id": 12,
+        "arabic": "العَلِيُّ",
+        "transliteration": "Аль-‘Али",
+        "translation": "Высокий"
+      }
+    ],
+    "quran": {
+      "mentions_count": 1,
+      "references": [
+        "59:23"
+      ],
+      "inline_references": [],
+      "quotes": []
+    },
+    "hadith_references": [],
+    "source_url": "https://koran.center/asmaul-husna/25"
+  },
+  {
+    "id": 26,
+    "name": "Аль-Халик",
+    "arabic": "الخَالِقُ",
+    "translation": "Творец",
+    "transliteration_en": "Al-Khaaliq",
+    "english_meaning": "The Creator",
+    "image": {
+      "svg_card_path": "images/26_al-khaaliq.svg",
+      "calligraphy_svg_url": "https://raw.githubusercontent.com/Suleeyman/api-esmaul-husna/main/assets/static/images/khaliq/khaliq.svg",
+      "calligraphy_png_url": "https://raw.githubusercontent.com/Suleeyman/api-esmaul-husna/main/assets/static/images/khaliq/khaliq-256x256.png",
+      "local_calligraphy_png": "images/calligraphy_png/26_khaliq-256x256.png"
+    },
+    "meaning": "Аль-Халик (Творец) — это Тот, Кто творит принципиально новое, отличное от того, что уже существует. Это имя указывает на то, что сотворению предшествует предопределение, то есть Аллах сперва определяет всему меру, руководствуясь Своим совершенным знанием и мудростью, а потом уже творит, воплощая в жизнь Свой безупречный замысел.",
+    "related_names": [
+      {
+        "id": 27,
+        "arabic": "البَارِئُ",
+        "transliteration": "Аль-Бари",
+        "translation": "Создатель"
+      },
+      {
+        "id": 28,
+        "arabic": "المُصَوِّرُ",
+        "transliteration": "Аль-Мусаввир",
+        "translation": "Дарующий облик"
+      },
+      {
+        "id": 29,
+        "arabic": "الخَلّاقُ",
+        "transliteration": "Аль-Халляк",
+        "translation": "Созидатель"
+      },
+      {
+        "id": 85,
+        "arabic": "المُقَدِّمُ",
+        "transliteration": "Аль-Мукаддим",
+        "translation": "Приближающий"
+      }
+    ],
+    "quran": {
+      "mentions_count": 8,
+      "references": [
+        "6:102",
+        "13:16",
+        "15:86",
+        "35:3",
+        "36:81",
+        "39:62",
+        "40:62",
+        "59:24"
+      ],
+      "inline_references": [],
+      "quotes": []
+    },
+    "hadith_references": [],
+    "source_url": "https://koran.center/asmaul-husna/26"
+  },
+  {
+    "id": 27,
+    "name": "Аль-Бари",
+    "arabic": "البَارِئُ",
+    "translation": "Создатель",
+    "transliteration_en": "Al-Baari",
+    "english_meaning": "The Originator",
+    "image": {
+      "svg_card_path": "images/27_al-baari.svg",
+      "calligraphy_svg_url": "https://raw.githubusercontent.com/Suleeyman/api-esmaul-husna/main/assets/static/images/bari/bari.svg",
+      "calligraphy_png_url": "https://raw.githubusercontent.com/Suleeyman/api-esmaul-husna/main/assets/static/images/bari/bari-256x256.png",
+      "local_calligraphy_png": "images/calligraphy_png/27_bari-256x256.png"
+    },
+    "meaning": "Аль-Бари (Создатель) — это Тот, Кто создаёт из небытия в соответствии с задуманным, и эта способность присуща только Всевышнему Аллаху. Никто, кроме Аллаха, не может осуществить свой замысел в точности так, как было задумано, и если Он задумал создать что-либо, то Он не нуждается в опытах и экспериментах. Он создаёт в точности то, что Он задумал и пожелал, и всё созданное Им имеет смысл и предназначение.",
+    "related_names": [
+      {
+        "id": 26,
+        "arabic": "الخَالِقُ",
+        "transliteration": "Аль-Халик",
+        "translation": "Творец"
+      },
+      {
+        "id": 28,
+        "arabic": "المُصَوِّرُ",
+        "transliteration": "Аль-Мусаввир",
+        "translation": "Дарующий облик"
+      },
+      {
+        "id": 29,
+        "arabic": "الخَلّاقُ",
+        "transliteration": "Аль-Халляк",
+        "translation": "Созидатель"
+      }
+    ],
+    "quran": {
+      "mentions_count": 2,
+      "references": [
+        "2:54",
+        "59:24"
+      ],
+      "inline_references": [],
+      "quotes": []
+    },
+    "hadith_references": [],
+    "source_url": "https://koran.center/asmaul-husna/27"
+  },
+  {
+    "id": 28,
+    "name": "Аль-Мусаввир",
+    "arabic": "المُصَوِّرُ",
+    "translation": "Дарующий облик",
+    "transliteration_en": "Al-Musawwir",
+    "english_meaning": "The Fashioner",
+    "image": {
+      "svg_card_path": "images/28_al-musawwir.svg",
+      "calligraphy_svg_url": "https://raw.githubusercontent.com/Suleeyman/api-esmaul-husna/main/assets/static/images/musawwir/musawwir.svg",
+      "calligraphy_png_url": "https://raw.githubusercontent.com/Suleeyman/api-esmaul-husna/main/assets/static/images/musawwir/musawwir-256x256.png",
+      "local_calligraphy_png": "images/calligraphy_png/28_musawwir-256x256.png"
+    },
+    "meaning": "Аль-Мусаввир (Дарующий облик) — это Тот, Кто создаёт творения в том облике, в котором пожелает, и наделяет их теми внешними и внутренними качествами, которыми пожелает.",
+    "related_names": [
+      {
+        "id": 26,
+        "arabic": "الخَالِقُ",
+        "transliteration": "Аль-Халик",
+        "translation": "Творец"
+      },
+      {
+        "id": 27,
+        "arabic": "البَارِئُ",
+        "transliteration": "Аль-Бари",
+        "translation": "Создатель"
+      },
+      {
+        "id": 29,
+        "arabic": "الخَلّاقُ",
+        "transliteration": "Аль-Халляк",
+        "translation": "Созидатель"
+      },
+      {
+        "id": 82,
+        "arabic": "الجَمِيلُ",
+        "transliteration": "Аль-Джамиль",
+        "translation": "Прекрасный, Красивый"
+      }
+    ],
+    "quran": {
+      "mentions_count": 1,
+      "references": [
+        "59:24"
+      ],
+      "inline_references": [],
+      "quotes": []
+    },
+    "hadith_references": [],
+    "source_url": "https://koran.center/asmaul-husna/28"
+  },
+  {
+    "id": 29,
+    "name": "Аль-Халляк",
+    "arabic": "الخَلّاقُ",
+    "translation": "Созидатель",
+    "transliteration_en": "Al-Khallaaq",
+    "english_meaning": "The All Creator",
+    "image": {
+      "svg_card_path": "images/29_al-khallaaq.svg",
+      "calligraphy_svg_url": null,
+      "calligraphy_png_url": null
+    },
+    "meaning": "Аль-Халляк (Созидающий) — это Тот, Кто творит много и разнообразно, создавая всё, что пожелает и как пожелает. Всевышний сказал: 1586«Поистине, твой Господь — Созидающий, Знающий» (), то есть ничто не может помешать Ему создать то, что Он пожелает, и Он знает, как это сделать и как осуществить задуманное.",
+    "related_names": [
+      {
+        "id": 26,
+        "arabic": "الخَالِقُ",
+        "transliteration": "Аль-Халик",
+        "translation": "Творец"
+      },
+      {
+        "id": 27,
+        "arabic": "البَارِئُ",
+        "transliteration": "Аль-Бари",
+        "translation": "Создатель"
+      },
+      {
+        "id": 28,
+        "arabic": "المُصَوِّرُ",
+        "transliteration": "Аль-Мусаввир",
+        "translation": "Дарующий облик"
+      }
+    ],
+    "quran": {
+      "mentions_count": 2,
+      "references": [
+        "15:86",
+        "36:81"
+      ],
+      "inline_references": [
+        "15:86"
+      ],
+      "quotes": [
+        {
+          "surah": 15,
+          "ayah": 86,
+          "text": "«Поистине, твой Господь — Созидающий, Знающий»"
+        }
+      ]
+    },
+    "hadith_references": [],
+    "source_url": "https://koran.center/asmaul-husna/29"
+  },
+  {
+    "id": 30,
+    "name": "Аль-‘Алим",
+    "arabic": "العَلِيمُ",
+    "translation": "Всезнающий",
+    "transliteration_en": "Al-Aleem",
+    "english_meaning": "All Knowing",
+    "image": {
+      "svg_card_path": "images/30_al-aleem.svg",
+      "calligraphy_svg_url": "https://raw.githubusercontent.com/Suleeyman/api-esmaul-husna/main/assets/static/images/alim/alim.svg",
+      "calligraphy_png_url": "https://raw.githubusercontent.com/Suleeyman/api-esmaul-husna/main/assets/static/images/alim/alim-256x256.png",
+      "local_calligraphy_png": "images/calligraphy_png/30_alim-256x256.png"
+    },
+    "meaning": "Аль-‘Алим (Всезнающий) — это Тот, Кто совершеннейшим образом знает Самого Себя и Своё творение, Кто знает всё необходимое и случайное, возможное и невозможное. Он знает обо всём, что было, есть и будет, и о том, чего никогда не будет и каким оно могло быть. Божественное знание абсолютно и безупречно, оно есть причина, основа, начало и завершение любого знания, и Господь руководствуется им, создавая творения и принимая решения.",
+    "related_names": [
+      {
+        "id": 44,
+        "arabic": "السَّمِيعُ",
+        "transliteration": "Ас-Сами‘",
+        "translation": "Слышащий"
+      },
+      {
+        "id": 45,
+        "arabic": "البَصِيرُ",
+        "transliteration": "Аль-Басыр",
+        "translation": "Всевидящий"
+      },
+      {
+        "id": 46,
+        "arabic": "اللَّطِيفُ",
+        "transliteration": "Аль-Лятыф",
+        "translation": "Проникновенный, Добрый"
+      },
+      {
+        "id": 47,
+        "arabic": "الخَبِيرُ",
+        "transliteration": "Аль-Хабир",
+        "translation": "Всеведущий"
+      },
+      {
+        "id": 73,
+        "arabic": "الشَّهِيدُ",
+        "transliteration": "Аш-Шахид",
+        "translation": "Свидетель, Наблюдающий"
+      },
+      {
+        "id": 74,
+        "arabic": "الرَّقِيبُ",
+        "transliteration": "Ар-Ракиб",
+        "translation": "Наблюдающий"
+      }
+    ],
+    "quran": {
+      "mentions_count": 157,
+      "references": [
+        "2:29",
+        "2:115",
+        "6:101",
+        "29:62",
+        "34:26",
+        "57:3"
+      ],
+      "inline_references": [],
+      "quotes": []
+    },
+    "hadith_references": [],
+    "source_url": "https://koran.center/asmaul-husna/30"
+  },
+  {
+    "id": 31,
+    "name": "Аль-Кадӣр",
+    "arabic": "القَدِيرُ",
+    "translation": "Всемогущий",
+    "transliteration_en": "Al-Qadeer",
+    "english_meaning": "The All Powerful",
+    "image": {
+      "svg_card_path": "images/31_al-qadeer.svg",
+      "calligraphy_svg_url": null,
+      "calligraphy_png_url": null
+    },
+    "meaning": "Аль-Кадӣр (Всемогущий) — это Тот, Кто обладает абсолютной властью, могуществом и знаниями для того, чтобы делать всё, что пожелает, так, как пожелает. Он может всё, но совершает только то, что не противоречит Его божественной природе и мудрости и что соответствует Его величию. Благодаря Своему могуществу Он всему определил меру и в точности воплощает в жизнь Свой замысел.",
+    "related_names": [
+      {
+        "id": 35,
+        "arabic": "المُقْتَدِرُ",
+        "transliteration": "Аль-Муктадир",
+        "translation": "Всемогущий"
+      },
+      {
+        "id": 36,
+        "arabic": "القَوِيُّ",
+        "transliteration": "Аль-Кави",
+        "translation": "Всесильный"
+      },
+      {
+        "id": 23,
+        "arabic": "العَزِيزُ",
+        "transliteration": "Аль-‘Азиз",
+        "translation": "Могущественный, Великий"
+      },
+      {
+        "id": 38,
+        "arabic": "القَهَّارُ",
+        "transliteration": "Аль-Каххар",
+        "translation": "Всевластный"
+      }
+    ],
+    "quran": {
+      "mentions_count": 45,
+      "references": [
+        "2:20",
+        "2:109",
+        "3:165",
+        "4:149",
+        "5:120",
+        "16:77",
+        "57:2",
+        "64:1"
+      ],
+      "inline_references": [],
+      "quotes": []
+    },
+    "hadith_references": [],
+    "source_url": "https://koran.center/asmaul-husna/31"
+  },
+  {
+    "id": 32,
+    "name": "Ар-Раззак",
+    "arabic": "الرَّزَّاقُ",
+    "translation": "Наделяющий щедро",
+    "transliteration_en": "Ar-Razzaaq",
+    "english_meaning": "The Sustainer",
+    "image": {
+      "svg_card_path": "images/32_ar-razzaaq.svg",
+      "calligraphy_svg_url": "https://raw.githubusercontent.com/Suleeyman/api-esmaul-husna/main/assets/static/images/razzaq/razzaq.svg",
+      "calligraphy_png_url": "https://raw.githubusercontent.com/Suleeyman/api-esmaul-husna/main/assets/static/images/razzaq/razzaq-256x256.png",
+      "local_calligraphy_png": "images/calligraphy_png/32_razzaq-256x256.png"
+    },
+    "meaning": "Ар-Раззак (Наделяющий щедро) — это Тот, Кто создаёт необходимые средства к существованию и распределяет их среди Его творений. Он создаёт блага и распределяет их в соответствии с Его мудрым замыслом и предопределением. Он кормит всех обитателей земли и небес. Он отмерил удел каждому и посылает его строго в установленный срок.",
+    "related_names": [
+      {
+        "id": 80,
+        "arabic": "المُقيِتُ",
+        "transliteration": "Аль-Мукит",
+        "translation": "Наблюдающий, Дарующий пропитание"
+      },
+      {
+        "id": 7,
+        "arabic": "الصَّمَدُ",
+        "transliteration": "Ас-Самад",
+        "translation": "Самодостаточный"
+      },
+      {
+        "id": 9,
+        "arabic": "القَيُّومُ",
+        "transliteration": "Аль-Кайюм",
+        "translation": "Вседержитель"
+      },
+      {
+        "id": 87,
+        "arabic": "المُعْطِي",
+        "transliteration": "Аль-Му‘ты ",
+        "translation": "Даритель"
+      }
+    ],
+    "quran": {
+      "mentions_count": 1,
+      "references": [
+        "51:58"
+      ],
+      "inline_references": [],
+      "quotes": []
+    },
+    "hadith_references": [],
+    "source_url": "https://koran.center/asmaul-husna/32"
+  },
+  {
+    "id": 33,
+    "name": "Аль-Матин",
+    "arabic": "المَتِينُ",
+    "translation": "Крепкий, Несокрушимый",
+    "transliteration_en": "Al-Mateen",
+    "english_meaning": "The Forceful One",
+    "image": {
+      "svg_card_path": "images/33_al-mateen.svg",
+      "calligraphy_svg_url": null,
+      "calligraphy_png_url": null
+    },
+    "meaning": "Аль-Матин (Крепкий, Несокрушимый) — это Тот, Кто обладает могучей силой и не нуждается в помощниках и в средствах для исполнения Своей воли; никто и ничто не мешает Ему осуществлять задуманное и Им никогда не овладевает усталость. Он совершенно не зависит от внешних сил, но всё сущее зависит от Него и подчинено Его воле. Он творит всё, что пожелает, повелевает всё, что пожелает, и отменяет всё, что пожелает.",
+    "related_names": [
+      {
+        "id": 36,
+        "arabic": "القَوِيُّ",
+        "transliteration": "Аль-Кави",
+        "translation": "Всесильный"
+      },
+      {
+        "id": 23,
+        "arabic": "العَزِيزُ",
+        "transliteration": "Аль-‘Азиз",
+        "translation": "Могущественный, Великий"
+      },
+      {
+        "id": 31,
+        "arabic": "القَدِيرُ",
+        "transliteration": "Аль-Кадӣр",
+        "translation": "Всемогущий"
+      },
+      {
+        "id": 7,
+        "arabic": "الصَّمَدُ",
+        "transliteration": "Ас-Самад",
+        "translation": "Самодостаточный"
+      }
+    ],
+    "quran": {
+      "mentions_count": 1,
+      "references": [
+        "51:58"
+      ],
+      "inline_references": [],
+      "quotes": []
+    },
+    "hadith_references": [],
+    "source_url": "https://koran.center/asmaul-husna/33"
+  },
+  {
+    "id": 34,
+    "name": "Аль-Малӣк",
+    "arabic": "المَلِيكُ",
+    "translation": "Властелин",
+    "transliteration_en": "Al-Maleek",
+    "english_meaning": "Ruler",
+    "image": {
+      "svg_card_path": "images/34_al-maleek.svg",
+      "calligraphy_svg_url": null,
+      "calligraphy_png_url": null
+    },
+    "meaning": "Аль-Малӣк (Властелин, Владыка) — это Тот, Кто владеет и повелевает всем, Чья власть распространяется повсюду и подчиняет себе всё сущее. Он распоряжается Своими творениями так, как пожелает, и направляет их к тому, для чего Он создал их. Он владеет и не нуждается, управляет и не утомляется, повелевает и не ошибается. Он господствует над Своим творением, и Его величие проявляется всесторонне и повсеместно.",
+    "related_names": [
+      {
+        "id": 18,
+        "arabic": "المَلِكُ",
+        "transliteration": "Аль-Малик",
+        "translation": "Царь, Владыка"
+      },
+      {
+        "id": 96,
+        "arabic": "السَّيِّدُ",
+        "transliteration": "Ас-Саййид",
+        "translation": "Господин"
+      },
+      {
+        "id": 23,
+        "arabic": "العَزِيزُ",
+        "transliteration": "Аль-‘Азиз",
+        "translation": "Могущественный, Великий"
+      },
+      {
+        "id": 38,
+        "arabic": "القَهَّارُ",
+        "transliteration": "Аль-Каххар",
+        "translation": "Всевластный"
+      }
+    ],
+    "quran": {
+      "mentions_count": 1,
+      "references": [
+        "54:55"
+      ],
+      "inline_references": [],
+      "quotes": []
+    },
+    "hadith_references": [],
+    "source_url": "https://koran.center/asmaul-husna/34"
+  },
+  {
+    "id": 35,
+    "name": "Аль-Муктадир",
+    "arabic": "المُقْتَدِرُ",
+    "translation": "Всемогущий",
+    "transliteration_en": "Al-Muqtadir",
+    "english_meaning": "The Creator of All Power",
+    "image": {
+      "svg_card_path": "images/35_al-muqtadir.svg",
+      "calligraphy_svg_url": null,
+      "calligraphy_png_url": null
+    },
+    "meaning": "Аль-Муктадир (Всемогущий) — это Тот, Кто задумал творение до мельчайших подробностей благодаря Своему знанию и в точности исполняет задуманное благодаря Своему могуществу. Для Него нет ничего невозможного на небесах и на земле, и Он являет Своё могущество, творя удивительные вещи и повелевая мудро и справедливо. Это прекраснейшее имя близко по смыслу с именем Аль-Кадӣр (Всемогущий), но в нём качества Могучего Властителя обнаруживаются сильнее, ибо чем больше букв добавлено к основе арабского глагола, тем сильнее в нём выражаются его смыслы.",
+    "related_names": [
+      {
+        "id": 31,
+        "arabic": "القَدِيرُ",
+        "transliteration": "Аль-Кадӣр",
+        "translation": "Всемогущий"
+      },
+      {
+        "id": 36,
+        "arabic": "القَوِيُّ",
+        "transliteration": "Аль-Кави",
+        "translation": "Всесильный"
+      },
+      {
+        "id": 23,
+        "arabic": "العَزِيزُ",
+        "transliteration": "Аль-‘Азиз",
+        "translation": "Могущественный, Великий"
+      },
+      {
+        "id": 38,
+        "arabic": "القَهَّارُ",
+        "transliteration": "Аль-Каххар",
+        "translation": "Всевластный"
+      }
+    ],
+    "quran": {
+      "mentions_count": 2,
+      "references": [
+        "18:45",
+        "54:55"
+      ],
+      "inline_references": [],
+      "quotes": []
+    },
+    "hadith_references": [],
+    "source_url": "https://koran.center/asmaul-husna/35"
+  },
+  {
+    "id": 36,
+    "name": "Аль-Кави",
+    "arabic": "القَوِيُّ",
+    "translation": "Всесильный",
+    "transliteration_en": "Al-Qawiyy",
+    "english_meaning": "The Possessor of All Strength",
+    "image": {
+      "svg_card_path": "images/36_al-qawiyy.svg",
+      "calligraphy_svg_url": null,
+      "calligraphy_png_url": null
+    },
+    "meaning": "Аль-Кави (Всесильный) — это Тот, Кто обладает могучей силой, Кого невозможно пересилить и от Кого нельзя сбежать. Ему совершенно чужды такие атрибуты, как слабость, бессилие, усталость, вялость, сонливость. Он наделяет силой одних и делает слабыми других. Он совершает то, что пожелает, и никто не может ни помешать Ему, ни отвратить от себя то, что Он решил. Его сила является абсолютной, она ничем не ограничена. Она никогда не уменьшается и проявляется в действии всех Его атрибутов.",
+    "related_names": [
+      {
+        "id": 31,
+        "arabic": "القَدِيرُ",
+        "transliteration": "Аль-Кадӣр",
+        "translation": "Всемогущий"
+      },
+      {
+        "id": 35,
+        "arabic": "المُقْتَدِرُ",
+        "transliteration": "Аль-Муктадир",
+        "translation": "Всемогущий"
+      },
+      {
+        "id": 23,
+        "arabic": "العَزِيزُ",
+        "transliteration": "Аль-‘Азиз",
+        "translation": "Могущественный, Великий"
+      },
+      {
+        "id": 33,
+        "arabic": "المَتِينُ",
+        "transliteration": "Аль-Матин",
+        "translation": "Крепкий, Несокрушимый"
+      }
+    ],
+    "quran": {
+      "mentions_count": 9,
+      "references": [
+        "8:52",
+        "11:66",
+        "22:40",
+        "22:74",
+        "33:25",
+        "42:19",
+        "57:25",
+        "58:21"
+      ],
+      "inline_references": [],
+      "quotes": []
+    },
+    "hadith_references": [],
+    "source_url": "https://koran.center/asmaul-husna/36"
+  },
+  {
+    "id": 37,
+    "name": "Аль-Вахид",
+    "arabic": "الوَاحِدُ",
+    "translation": "Единственный",
+    "transliteration_en": "Al-Wahid",
+    "english_meaning": "The Only One",
+    "image": {
+      "svg_card_path": "images/37_al-wahid.svg",
+      "calligraphy_svg_url": "https://raw.githubusercontent.com/Suleeyman/api-esmaul-husna/main/assets/static/images/wahid/wahid.svg",
+      "calligraphy_png_url": "https://raw.githubusercontent.com/Suleeyman/api-esmaul-husna/main/assets/static/images/wahid/wahid-256x256.png",
+      "local_calligraphy_png": "images/calligraphy_png/37_wahid-256x256.png"
+    },
+    "meaning": "Аль-Вахид (Единственный) — это Тот, Кто существовал, когда не было никого, кроме Него, Кто не имеет Себе равных и подобных, Кто один обладает всеми качествами совершенства и не разделяет их ни с кем другим, Кто один заслуживает обожествления и поклонения. Всевышний сказал: 2163«У вас один Бог. Нет божества, кроме Него, Милостивого, Милующего» ()). Настоящий Бог может быть только один и не может иметь Себе равных и подобных.",
+    "related_names": [
+      {
+        "id": 6,
+        "arabic": "الأَحَدُ",
+        "transliteration": "Аль-Ахад",
+        "translation": "Единственный"
+      },
+      {
+        "id": 89,
+        "arabic": "الوِتْرُ",
+        "transliteration": "Аль-Витр",
+        "translation": "Один, Единственный"
+      },
+      {
+        "id": 5,
+        "arabic": "الإِلهُ",
+        "transliteration": "Аль-Илях",
+        "translation": "Бог"
+      },
+      {
+        "id": 38,
+        "arabic": "القَهَّارُ",
+        "transliteration": "Аль-Каххар",
+        "translation": "Всевластный"
+      }
+    ],
+    "quran": {
+      "mentions_count": 22,
+      "references": [
+        "2:163",
+        "4:171",
+        "5:73",
+        "6:19",
+        "12:39",
+        "13:16",
+        "14:48",
+        "39:4"
+      ],
+      "inline_references": [
+        "2:163"
+      ],
+      "quotes": [
+        {
+          "surah": 2,
+          "ayah": 163,
+          "text": "«У вас один Бог. Нет божества, кроме Него, Милостивого, Милующего»"
+        }
+      ]
+    },
+    "hadith_references": [],
+    "source_url": "https://koran.center/asmaul-husna/37"
+  },
+  {
+    "id": 38,
+    "name": "Аль-Каххар",
+    "arabic": "القَهَّارُ",
+    "translation": "Всевластный",
+    "transliteration_en": "Al-Qahhaar",
+    "english_meaning": "The Subduer",
+    "image": {
+      "svg_card_path": "images/38_al-qahhaar.svg",
+      "calligraphy_svg_url": "https://raw.githubusercontent.com/Suleeyman/api-esmaul-husna/main/assets/static/images/qahhar.svg",
+      "calligraphy_png_url": "https://raw.githubusercontent.com/Suleeyman/api-esmaul-husna/main/assets/static/images/qahhar-256x256.png"
+    },
+    "meaning": "Аль-Каххар (Всевластный) — это Тот, Кто обладает абсолютной властью и заслуживает смирения и покорности, Кто непременно подчиняет других Своей воле и перед Которым бессильны все творения.Аль-Халими сказал: «Он создал творение таким, каким захотел, вместе с тяготами, трудностями, печалями и скорбями, кто-то лишается жизни, а кто-то теряет конечности, и никто не может помешать тому, что Он задумал, или избежать того, что Он предрешил».",
+    "related_names": [
+      {
+        "id": 37,
+        "arabic": "الوَاحِدُ",
+        "transliteration": "Аль-Вахид",
+        "translation": "Единственный"
+      },
+      {
+        "id": 24,
+        "arabic": "الجَبَّارُ",
+        "transliteration": "Аль-Джаббар",
+        "translation": "Могучий"
+      },
+      {
+        "id": 23,
+        "arabic": "العَزِيزُ",
+        "transliteration": "Аль-‘Азиз",
+        "translation": "Могущественный, Великий"
+      },
+      {
+        "id": 31,
+        "arabic": "القَدِيرُ",
+        "transliteration": "Аль-Кадӣр",
+        "translation": "Всемогущий"
+      }
+    ],
+    "quran": {
+      "mentions_count": 6,
+      "references": [
+        "12:39",
+        "13:16",
+        "14:48",
+        "38:65",
+        "39:4",
+        "40:16"
+      ],
+      "inline_references": [],
+      "quotes": []
+    },
+    "hadith_references": [],
+    "source_url": "https://koran.center/asmaul-husna/38"
+  },
+  {
+    "id": 39,
+    "name": "Аль-Хакк",
+    "arabic": "الحَقُّ",
+    "translation": "Истинный",
+    "transliteration_en": "Al-Haqq",
+    "english_meaning": "The Truth",
+    "image": {
+      "svg_card_path": "images/39_al-haqq.svg",
+      "calligraphy_svg_url": "https://raw.githubusercontent.com/Suleeyman/api-esmaul-husna/main/assets/static/images/haqq/haqq.svg",
+      "calligraphy_png_url": "https://raw.githubusercontent.com/Suleeyman/api-esmaul-husna/main/assets/static/images/haqq/haqq-256x256.png",
+      "local_calligraphy_png": "images/calligraphy_png/39_haqq-256x256.png"
+    },
+    "meaning": "Аль-Хакк (Истинный) — это Тот, Кто истинно существует и не зависит от каких-либо условий, Кто говорит и повелевает истину, Кто даёт начало всякому бытию и без Кого ничто невозможно и немыслимо. Аль-Хакк — это Живой и Вечный Бог, необходимо сущий и совершенный. Истинность в собственном смысле принадлежит только Ему. Он есть Истина, и Его атрибуты, деяния и законы — это истина. Он истинно творит и повелевает, и Он есть причина всего сущего и всякой истины.",
+    "related_names": [
+      {
+        "id": 40,
+        "arabic": "المُبِينُ",
+        "transliteration": "Аль-Мубин",
+        "translation": "Явный, Разъясняющий"
+      },
+      {
+        "id": 5,
+        "arabic": "الإِلهُ",
+        "transliteration": "Аль-Илях",
+        "translation": "Бог"
+      },
+      {
+        "id": 43,
+        "arabic": "الحَكَمُ",
+        "transliteration": "Аль-Хакам",
+        "translation": "Праведный Судия"
+      },
+      {
+        "id": 1,
+        "arabic": "اللَّهُ",
+        "transliteration": "Аллах",
+        "translation": "Аллах"
+      }
+    ],
+    "quran": {
+      "mentions_count": 10,
+      "references": [
+        "6:62",
+        "10:30",
+        "22:6",
+        "22:62",
+        "23:116",
+        "31:30"
+      ],
+      "inline_references": [],
+      "quotes": []
+    },
+    "hadith_references": [],
+    "source_url": "https://koran.center/asmaul-husna/39"
+  },
+  {
+    "id": 40,
+    "name": "Аль-Мубин",
+    "arabic": "المُبِينُ",
+    "translation": "Явный, Разъясняющий",
+    "transliteration_en": "Al-Mubeen",
+    "english_meaning": "The Explainer",
+    "image": {
+      "svg_card_path": "images/40_al-mubeen.svg",
+      "calligraphy_svg_url": null,
+      "calligraphy_png_url": null
+    },
+    "meaning": "Аль-Мубин (Явный, Разъясняющий) — это Тот, Чьё существование очевидно и Кто проявляет Себя в творении, Кто разъясняет истину и всё, в чём нуждаются Его рабы, Кто превыше всего и отделён от того, что Он создал. Это имя подчёркивает славу и могущество Аллаха и нашу несказанную нужду в Нём. Он гордится Своим величием и не скрывает его, не стыдится Своих атрибутов и разъясняет их, не скрывает Своих деяний и являет их Своим рабам. Потому что Его имена и атрибуты лишены недостатков, и Он заслуживает наилучшей похвалы, самой полной и совершенной.",
+    "related_names": [
+      {
+        "id": 39,
+        "arabic": "الحَقُّ",
+        "transliteration": "Аль-Хакк",
+        "translation": "Истинный"
+      },
+      {
+        "id": 41,
+        "arabic": "الفَتَّاحُ",
+        "transliteration": "Аль-Фаттах",
+        "translation": "Раскрывающий, Рассуживающий"
+      },
+      {
+        "id": 42,
+        "arabic": "الحَكِيمُ",
+        "transliteration": "Аль-Хаким",
+        "translation": "Мудрый"
+      },
+      {
+        "id": 30,
+        "arabic": "العَلِيمُ",
+        "transliteration": "Аль-‘Алим",
+        "translation": "Всезнающий"
+      }
+    ],
+    "quran": {
+      "mentions_count": 4,
+      "references": [
+        "6:59",
+        "22:6",
+        "24:25",
+        "31:30"
+      ],
+      "inline_references": [],
+      "quotes": []
+    },
+    "hadith_references": [],
+    "source_url": "https://koran.center/asmaul-husna/40"
+  },
+  {
+    "id": 41,
+    "name": "Аль-Фаттах",
+    "arabic": "الفَتَّاحُ",
+    "translation": "Раскрывающий, Рассуживающий",
+    "transliteration_en": "Al-Fattaah",
+    "english_meaning": "The Opener, The Revealer",
+    "image": {
+      "svg_card_path": "images/41_al-fattaah.svg",
+      "calligraphy_svg_url": "https://raw.githubusercontent.com/Suleeyman/api-esmaul-husna/main/assets/static/images/fattah/fattah.svg",
+      "calligraphy_png_url": "https://raw.githubusercontent.com/Suleeyman/api-esmaul-husna/main/assets/static/images/fattah/fattah-256x256.png",
+      "local_calligraphy_png": "images/calligraphy_png/41_fattah-256x256.png"
+    },
+    "meaning": "Аль-Фаттах (Раскрывающий, Рассуживающий) — это Тот, Кто судит справедливо и выносит верные решения, Кто облегчает положение творений и избавляет их от печали, Кто раскрывает перед творениями двери к Его милости или наказанию. Он владеет ключами от всех сокровищниц на небесах и на земле. Он открывает перед людьми двери к успеху, богатству, знаниям, открытиям и другим достижениям, чтобы испытать их и тем самым осуществить Свой замысел.",
+    "related_names": [
+      {
+        "id": 42,
+        "arabic": "الحَكِيمُ",
+        "transliteration": "Аль-Хаким",
+        "translation": "Мудрый"
+      },
+      {
+        "id": 43,
+        "arabic": "الحَكَمُ",
+        "transliteration": "Аль-Хакам",
+        "translation": "Праведный Судия"
+      },
+      {
+        "id": 30,
+        "arabic": "العَلِيمُ",
+        "transliteration": "Аль-‘Алим",
+        "translation": "Всезнающий"
+      },
+      {
+        "id": 39,
+        "arabic": "الحَقُّ",
+        "transliteration": "Аль-Хакк",
+        "translation": "Истинный"
+      }
+    ],
+    "quran": {
+      "mentions_count": 1,
+      "references": [
+        "34:26"
+      ],
+      "inline_references": [],
+      "quotes": []
+    },
+    "hadith_references": [],
+    "source_url": "https://koran.center/asmaul-husna/41"
+  },
+  {
+    "id": 42,
+    "name": "Аль-Хаким",
+    "arabic": "الحَكِيمُ",
+    "translation": "Мудрый",
+    "transliteration_en": "Al-Hakeem",
+    "english_meaning": "The Perfectly Wise",
+    "image": {
+      "svg_card_path": "images/42_al-hakeem.svg",
+      "calligraphy_svg_url": "https://raw.githubusercontent.com/Suleeyman/api-esmaul-husna/main/assets/static/images/hakim/hakim.svg",
+      "calligraphy_png_url": "https://raw.githubusercontent.com/Suleeyman/api-esmaul-husna/main/assets/static/images/hakim/hakim-256x256.png",
+      "local_calligraphy_png": "images/calligraphy_png/42_hakim-256x256.png"
+    },
+    "meaning": "Аль-Хаким (Мудрый) — это Тот, Чьи деяния, повеления и запреты исполнены совершенной мудрости, Кто принимает решения и устанавливает справедливые законы, которые никто не в силах отменить, Кто замышляет, творит и управляет наилучшим образом. Ибн аль-Каййим пишет: «Аль-Хаким — это Тот, Кто повелевает то, что есть благо в себе, и запрещает то, что есть зло в себе, и то, что Он говорит, — правда, и то, что Он совершает, — правильно, и то, что Он желает, лучше, чем что-то другое. И такое совершенство не присуще никому, кроме Аллаха».",
+    "related_names": [
+      {
+        "id": 43,
+        "arabic": "الحَكَمُ",
+        "transliteration": "Аль-Хакам",
+        "translation": "Праведный Судия"
+      },
+      {
+        "id": 30,
+        "arabic": "العَلِيمُ",
+        "transliteration": "Аль-‘Алим",
+        "translation": "Всезнающий"
+      },
+      {
+        "id": 47,
+        "arabic": "الخَبِيرُ",
+        "transliteration": "Аль-Хабир",
+        "translation": "Всеведущий"
+      },
+      {
+        "id": 41,
+        "arabic": "الفَتَّاحُ",
+        "transliteration": "Аль-Фаттах",
+        "translation": "Раскрывающий, Рассуживающий"
+      }
+    ],
+    "quran": {
+      "mentions_count": 97,
+      "references": [
+        "2:129",
+        "3:62",
+        "4:56",
+        "6:18",
+        "9:71",
+        "31:9",
+        "34:1",
+        "59:24"
+      ],
+      "inline_references": [],
+      "quotes": []
+    },
+    "hadith_references": [],
+    "source_url": "https://koran.center/asmaul-husna/42"
+  },
+  {
+    "id": 43,
+    "name": "Аль-Хакам",
+    "arabic": "الحَكَمُ",
+    "translation": "Праведный Судия",
+    "transliteration_en": "Al-Hakam",
+    "english_meaning": "The Judge",
+    "image": {
+      "svg_card_path": "images/43_al-hakam.svg",
+      "calligraphy_svg_url": "https://raw.githubusercontent.com/Suleeyman/api-esmaul-husna/main/assets/static/images/hakam/hakam.svg",
+      "calligraphy_png_url": "https://raw.githubusercontent.com/Suleeyman/api-esmaul-husna/main/assets/static/images/hakam/hakam-256x256.png",
+      "local_calligraphy_png": "images/calligraphy_png/43_hakam-256x256.png"
+    },
+    "meaning": "Аль-Хакам (Праведный Судия) — это Тот, Кто обладает абсолютной властью для осуществления Своей воли, Кто издаёт справедливые законы и вершит праведный суд, Чьи веления исполнены мудрости и не имеют ничего общего с притеснением и несправедливостью. Раскрывая значение этого имени, ас-Са‘ди пишет: «Это — Тот, Кто справедливо и беспристрастно рассуживает рабов в этом мире и будущей жизни; Кто ни с кем не поступает несправедливо даже весом на одну пылинку и не возлагает на людей ответственности за чужие грехи; Кто наказывает рабов только за совершённые ими прегрешения и возвращает права тем, у кого они были отняты, и каждый, чьи права были ущемлены, непременно получит всё, что ему полагалось; Чьи решения и предопределение справедливы».",
+    "related_names": [
+      {
+        "id": 42,
+        "arabic": "الحَكِيمُ",
+        "transliteration": "Аль-Хаким",
+        "translation": "Мудрый"
+      },
+      {
+        "id": 75,
+        "arabic": "الحَسِيبُ",
+        "transliteration": "Аль-Хасиб",
+        "translation": "Рассчитывающий, Довлеющий, Славный"
+      },
+      {
+        "id": 92,
+        "arabic": "الدَّيَّانُ",
+        "transliteration": "Ад-Дайян",
+        "translation": "Судия, Всевластный"
+      },
+      {
+        "id": 39,
+        "arabic": "الحَقُّ",
+        "transliteration": "Аль-Хакк",
+        "translation": "Истинный"
+      }
+    ],
+    "quran": {
+      "mentions_count": 1,
+      "references": [
+        "6:114"
+      ],
+      "inline_references": [],
+      "quotes": []
+    },
+    "hadith_references": [],
+    "source_url": "https://koran.center/asmaul-husna/43"
+  },
+  {
+    "id": 44,
+    "name": "Ас-Сами‘",
+    "arabic": "السَّمِيعُ",
+    "translation": "Слышащий",
+    "transliteration_en": "As-Samee",
+    "english_meaning": "The All Hearing",
+    "image": {
+      "svg_card_path": "images/44_as-samee.svg",
+      "calligraphy_svg_url": "https://raw.githubusercontent.com/Suleeyman/api-esmaul-husna/main/assets/static/images/sami/sami.svg",
+      "calligraphy_png_url": "https://raw.githubusercontent.com/Suleeyman/api-esmaul-husna/main/assets/static/images/sami/sami-256x256.png",
+      "local_calligraphy_png": "images/calligraphy_png/44_sami-256x256.png"
+    },
+    "meaning": "Ас-Сами‘ (Всеслышащий) — это Тот, Кто слышит любые звуки на небесах и на земле, Кто различает голоса всех Своих творений и понимает сказанное ими на любом языке, Кто внимает их молитвам и отвечает на них. Он одинаково слышит то, что сказано громко, шёпотом или про себя, и то, что шумит в глубине океана, и то, что кипит внутри звёзд, и то, что шевелится в душах людей.",
+    "related_names": [
+      {
+        "id": 45,
+        "arabic": "البَصِيرُ",
+        "transliteration": "Аль-Басыр",
+        "translation": "Всевидящий"
+      },
+      {
+        "id": 30,
+        "arabic": "العَلِيمُ",
+        "transliteration": "Аль-‘Алим",
+        "translation": "Всезнающий"
+      },
+      {
+        "id": 47,
+        "arabic": "الخَبِيرُ",
+        "transliteration": "Аль-Хабир",
+        "translation": "Всеведущий"
+      },
+      {
+        "id": 52,
+        "arabic": "القَرِيبُ",
+        "transliteration": "Аль-Кариб",
+        "translation": "Близкий"
+      },
+      {
+        "id": 53,
+        "arabic": "المُجِيبُ",
+        "transliteration": "Аль-Муджиб",
+        "translation": "Отвечающий"
+      }
+    ],
+    "quran": {
+      "mentions_count": 45,
+      "references": [
+        "2:127",
+        "2:137",
+        "3:34",
+        "3:38",
+        "4:134",
+        "5:76",
+        "6:115",
+        "8:17"
+      ],
+      "inline_references": [],
+      "quotes": []
+    },
+    "hadith_references": [],
+    "source_url": "https://koran.center/asmaul-husna/44"
+  },
+  {
+    "id": 45,
+    "name": "Аль-Басыр",
+    "arabic": "البَصِيرُ",
+    "translation": "Всевидящий",
+    "transliteration_en": "Al-Baseer",
+    "english_meaning": "The All Seeing",
+    "image": {
+      "svg_card_path": "images/45_al-baseer.svg",
+      "calligraphy_svg_url": "https://raw.githubusercontent.com/Suleeyman/api-esmaul-husna/main/assets/static/images/basir/basir.svg",
+      "calligraphy_png_url": "https://raw.githubusercontent.com/Suleeyman/api-esmaul-husna/main/assets/static/images/basir/basir-256x256.png",
+      "local_calligraphy_png": "images/calligraphy_png/45_basir-256x256.png"
+    },
+    "meaning": "Аль-Басыр (Всевидящий) — это Тот, Кто видит всё тайное и явное, большое и малое, движущееся и неподвижное, Кто объемлет Своим взором всё сущее и происходящее на небесах и на земле, Кто видит прошлое, настоящее и будущее творений. Зрение Аллаха не похоже на зрение творений, оно совершенно и абсолютно, и нет ничего, что сокрыто от Его взора или недоступно для Него. Ни цвет, ни размер, ни расстояние, ни освещение не имеют никакого значения для Его взора. Он видит форму и сущность всего живого и неживого, и всё, что происходит внутри творений, для Него так же очевидно, как и то, что происходит с ними.",
+    "related_names": [
+      {
+        "id": 44,
+        "arabic": "السَّمِيعُ",
+        "transliteration": "Ас-Сами‘",
+        "translation": "Слышащий"
+      },
+      {
+        "id": 30,
+        "arabic": "العَلِيمُ",
+        "transliteration": "Аль-‘Алим",
+        "translation": "Всезнающий"
+      },
+      {
+        "id": 47,
+        "arabic": "الخَبِيرُ",
+        "transliteration": "Аль-Хабир",
+        "translation": "Всеведущий"
+      },
+      {
+        "id": 74,
+        "arabic": "الرَّقِيبُ",
+        "transliteration": "Ар-Ракиб",
+        "translation": "Наблюдающий"
+      }
+    ],
+    "quran": {
+      "mentions_count": 42,
+      "references": [
+        "2:96",
+        "2:233",
+        "3:15",
+        "4:134",
+        "17:1",
+        "35:31",
+        "40:20",
+        "42:11"
+      ],
+      "inline_references": [],
+      "quotes": []
+    },
+    "hadith_references": [],
+    "source_url": "https://koran.center/asmaul-husna/45"
+  },
+  {
+    "id": 46,
+    "name": "Аль-Лятыф",
+    "arabic": "اللَّطِيفُ",
+    "translation": "Проникновенный, Добрый",
+    "transliteration_en": "Al-Latif",
+    "english_meaning": "The Subtle One",
+    "image": {
+      "svg_card_path": "images/46_al-latif.svg",
+      "calligraphy_svg_url": "https://raw.githubusercontent.com/Suleeyman/api-esmaul-husna/main/assets/static/images/latif/latif.svg",
+      "calligraphy_png_url": "https://raw.githubusercontent.com/Suleeyman/api-esmaul-husna/main/assets/static/images/latif/latif-256x256.png",
+      "local_calligraphy_png": "images/calligraphy_png/46_latif-256x256.png"
+    },
+    "meaning": "Аль-Лятыф (Проникновенный, Добрый) — это Тот, Кто добр и милостив к Своим созданиям, Кто осуществляет Свою волю благодушно и неприметно, Кто знает все тонкости вещей и явлений, а Сам остаётся непостижимым существом и свойствами. Аль-Хаттаби пишет: «Аль-Лятыф — это Тот, Кто добр к Своим рабам, Кто заботится о них так, что они не ощущают этого, и посылает им блага оттуда, откуда они не предполагают».",
+    "related_names": [
+      {
+        "id": 47,
+        "arabic": "الخَبِيرُ",
+        "transliteration": "Аль-Хабир",
+        "translation": "Всеведущий"
+      },
+      {
+        "id": 30,
+        "arabic": "العَلِيمُ",
+        "transliteration": "Аль-‘Алим",
+        "translation": "Всезнающий"
+      },
+      {
+        "id": 64,
+        "arabic": "الرَّؤُوفُ",
+        "transliteration": "Ар-Рауф",
+        "translation": "Добрый, Сострадательный"
+      },
+      {
+        "id": 93,
+        "arabic": "الرَّفِيقُ",
+        "transliteration": "Ар-Рафик",
+        "translation": "Добрый, Неспешащий"
+      }
+    ],
+    "quran": {
+      "mentions_count": 7,
+      "references": [
+        "6:103",
+        "12:100",
+        "22:63",
+        "31:16",
+        "33:34",
+        "42:19",
+        "67:14"
+      ],
+      "inline_references": [],
+      "quotes": []
+    },
+    "hadith_references": [],
+    "source_url": "https://koran.center/asmaul-husna/46"
+  },
+  {
+    "id": 47,
+    "name": "Аль-Хабир",
+    "arabic": "الخَبِيرُ",
+    "translation": "Всеведущий",
+    "transliteration_en": "Al-Khabeer",
+    "english_meaning": "The All-Aware",
+    "image": {
+      "svg_card_path": "images/47_al-khabeer.svg",
+      "calligraphy_svg_url": "https://raw.githubusercontent.com/Suleeyman/api-esmaul-husna/main/assets/static/images/khabir/khabir.svg",
+      "calligraphy_png_url": "https://raw.githubusercontent.com/Suleeyman/api-esmaul-husna/main/assets/static/images/khabir/khabir-256x256.png"
+    },
+    "meaning": "Аль-Хабир (Всеведущий) — это Тот, Кто знает обо всём, что покоится или движется в Его царстве, Кому известны все тайные мысли, намерения и деяния Его рабов, перед Кем одинаково открыто и обнажено всё тайное и явное. Это имя близко по смыслу с прекраснейшим именем Аль-‘Алим (Всезнающий), но если последнее указывает на всезнание Бога вообще, то в имени Аль-Хабир акцент делается на знании сокрытого, сущности вещей и их природы, намерений людей и их внутренних качеств.",
+    "related_names": [
+      {
+        "id": 30,
+        "arabic": "العَلِيمُ",
+        "transliteration": "Аль-‘Алим",
+        "translation": "Всезнающий"
+      },
+      {
+        "id": 46,
+        "arabic": "اللَّطِيفُ",
+        "transliteration": "Аль-Лятыф",
+        "translation": "Проникновенный, Добрый"
+      },
+      {
+        "id": 44,
+        "arabic": "السَّمِيعُ",
+        "transliteration": "Ас-Сами‘",
+        "translation": "Слышащий"
+      },
+      {
+        "id": 45,
+        "arabic": "البَصِيرُ",
+        "transliteration": "Аль-Басыр",
+        "translation": "Всевидящий"
+      },
+      {
+        "id": 74,
+        "arabic": "الرَّقِيبُ",
+        "transliteration": "Ар-Ракиб",
+        "translation": "Наблюдающий"
+      }
+    ],
+    "quran": {
+      "mentions_count": 44,
+      "references": [
+        "4:94",
+        "4:135",
+        "5:8",
+        "6:18",
+        "11:1",
+        "17:17",
+        "25:58",
+        "27:88",
+        "34:1"
+      ],
+      "inline_references": [],
+      "quotes": []
+    },
+    "hadith_references": [],
+    "source_url": "https://koran.center/asmaul-husna/47"
+  },
+  {
+    "id": 48,
+    "name": "Аль-Авваль",
+    "arabic": "الأَوَّلُ",
+    "translation": "Первый",
+    "transliteration_en": "Al-Awwal",
+    "english_meaning": "The First",
+    "image": {
+      "svg_card_path": "images/48_al-awwal.svg",
+      "calligraphy_svg_url": "https://raw.githubusercontent.com/Suleeyman/api-esmaul-husna/main/assets/static/images/awwal/awwal.svg",
+      "calligraphy_png_url": "https://raw.githubusercontent.com/Suleeyman/api-esmaul-husna/main/assets/static/images/awwal/awwal-256x256.png",
+      "local_calligraphy_png": "images/calligraphy_png/48_awwal-256x256.png"
+    },
+    "meaning": "Аль-Авваль (Первый) — это Тот, Кто был, когда не было ничего, кроме Него. На этот смысл указал Пророк Мухаммад, мир ему и благословение Аллаха, когда люди из Йемена спросили его о начале мира. Он сказал: «Сначала был Аллах, и не было ничего, кроме Него, и Трон Его был на воде, и записал Он в Книге всё, и создал Он небеса и землю» [Бухари 3191].",
+    "related_names": [
+      {
+        "id": 49,
+        "arabic": "الآخِرُ",
+        "transliteration": "Аль-Ахир",
+        "translation": "Последний"
+      },
+      {
+        "id": 50,
+        "arabic": "الظَاهِرُ",
+        "transliteration": "Аз-Захир",
+        "translation": "Высочайший, Явный"
+      },
+      {
+        "id": 51,
+        "arabic": "البَاطِنُ",
+        "transliteration": "Аль-Батын",
+        "translation": "Ближайший, Сокрытый"
+      },
+      {
+        "id": 1,
+        "arabic": "اللَّهُ",
+        "transliteration": "Аллах",
+        "translation": "Аллах"
+      }
+    ],
+    "quran": {
+      "mentions_count": 1,
+      "references": [
+        "57:3"
+      ],
+      "inline_references": [],
+      "quotes": []
+    },
+    "hadith_references": [
+      "Бухари 3191"
+    ],
+    "source_url": "https://koran.center/asmaul-husna/48"
+  },
+  {
+    "id": 49,
+    "name": "Аль-Ахир",
+    "arabic": "الآخِرُ",
+    "translation": "Последний",
+    "transliteration_en": "Al-Aakhir",
+    "english_meaning": "The Last",
+    "image": {
+      "svg_card_path": "images/49_al-aakhir.svg",
+      "calligraphy_svg_url": "https://raw.githubusercontent.com/Suleeyman/api-esmaul-husna/main/assets/static/images/akhir/akhir.svg",
+      "calligraphy_png_url": "https://raw.githubusercontent.com/Suleeyman/api-esmaul-husna/main/assets/static/images/akhir/akhir-256x256.png",
+      "local_calligraphy_png": "images/calligraphy_png/49_akhir-256x256.png"
+    },
+    "meaning": "Аль-Ахир (Последний) — это Тот, Чьему существованию нет конца и после Которого не может быть ничего. Прекрасное имя Аль-Авваль указывает на то, что всё сущее задумано и сотворено Аллахом, а имя Аль-Ахир напоминает о том, что всё возвращается к Нему и зависит от Его воли. Как сказано об этом в Коране: 4253«Знайте же, к Аллаху возвращаются дела» ().",
+    "related_names": [
+      {
+        "id": 48,
+        "arabic": "الأَوَّلُ",
+        "transliteration": "Аль-Авваль",
+        "translation": "Первый"
+      },
+      {
+        "id": 50,
+        "arabic": "الظَاهِرُ",
+        "transliteration": "Аз-Захир",
+        "translation": "Высочайший, Явный"
+      },
+      {
+        "id": 51,
+        "arabic": "البَاطِنُ",
+        "transliteration": "Аль-Батын",
+        "translation": "Ближайший, Сокрытый"
+      },
+      {
+        "id": 81,
+        "arabic": "الوَارِثُ",
+        "transliteration": "Аль-Варис",
+        "translation": "Наследующий"
+      }
+    ],
+    "quran": {
+      "mentions_count": 1,
+      "references": [
+        "57:3"
+      ],
+      "inline_references": [
+        "42:53"
+      ],
+      "quotes": [
+        {
+          "surah": 42,
+          "ayah": 53,
+          "text": "«Знайте же, к Аллаху возвращаются дела»"
+        }
+      ]
+    },
+    "hadith_references": [],
+    "source_url": "https://koran.center/asmaul-husna/49"
+  },
+  {
+    "id": 50,
+    "name": "Аз-Захир",
+    "arabic": "الظَاهِرُ",
+    "translation": "Высочайший, Явный",
+    "transliteration_en": "Az-Zaahir",
+    "english_meaning": "The Manifest One",
+    "image": {
+      "svg_card_path": "images/50_az-zaahir.svg",
+      "calligraphy_svg_url": "https://raw.githubusercontent.com/Suleeyman/api-esmaul-husna/main/assets/static/images/zahir/zahir.svg",
+      "calligraphy_png_url": "https://raw.githubusercontent.com/Suleeyman/api-esmaul-husna/main/assets/static/images/zahir/zahir-256x256.png",
+      "local_calligraphy_png": "images/calligraphy_png/50_zahir-256x256.png"
+    },
+    "meaning": "Аз-Захир (Высочайший, Явный) — это Тот, Кто выше всего остального, Кто всегда одерживает верх и обладает самыми превосходными качествами, Чьё существование и совершенство очевидны каждому разумному человеку. Аллах превыше всех творений Своими безупречными качествами и мудрыми деяниями. Мы не способны постичь их природу, но они очевидны и проявляются практически во всём.",
+    "related_names": [
+      {
+        "id": 48,
+        "arabic": "الأَوَّلُ",
+        "transliteration": "Аль-Авваль",
+        "translation": "Первый"
+      },
+      {
+        "id": 49,
+        "arabic": "الآخِرُ",
+        "transliteration": "Аль-Ахир",
+        "translation": "Последний"
+      },
+      {
+        "id": 51,
+        "arabic": "البَاطِنُ",
+        "transliteration": "Аль-Батын",
+        "translation": "Ближайший, Сокрытый"
+      },
+      {
+        "id": 39,
+        "arabic": "الحَقُّ",
+        "transliteration": "Аль-Хакк",
+        "translation": "Истинный"
+      }
+    ],
+    "quran": {
+      "mentions_count": 1,
+      "references": [
+        "57:3"
+      ],
+      "inline_references": [],
+      "quotes": []
+    },
+    "hadith_references": [],
+    "source_url": "https://koran.center/asmaul-husna/50"
+  },
+  {
+    "id": 51,
+    "name": "Аль-Батын",
+    "arabic": "البَاطِنُ",
+    "translation": "Ближайший, Сокрытый",
+    "transliteration_en": "Al-Baatin",
+    "english_meaning": "The Hidden One",
+    "image": {
+      "svg_card_path": "images/51_al-baatin.svg",
+      "calligraphy_svg_url": "https://raw.githubusercontent.com/Suleeyman/api-esmaul-husna/main/assets/static/images/batin/batin.svg",
+      "calligraphy_png_url": "https://raw.githubusercontent.com/Suleeyman/api-esmaul-husna/main/assets/static/images/batin/batin-256x256.png",
+      "local_calligraphy_png": "images/calligraphy_png/51_batin-256x256.png"
+    },
+    "meaning": "Аль-Батын (Ближайший, Сокрытый) — это Тот, Кто скрыт от взоров творений в этом мире и Кого взоры не смогут объять в мире вечном, Кто ближе всех к Своим творениям и знает их самые сокровенные тайны, Кто поддерживает их изнутри и одаривает их благами, о которых они даже не подозревают.",
+    "related_names": [
+      {
+        "id": 48,
+        "arabic": "الأَوَّلُ",
+        "transliteration": "Аль-Авваль",
+        "translation": "Первый"
+      },
+      {
+        "id": 49,
+        "arabic": "الآخِرُ",
+        "transliteration": "Аль-Ахир",
+        "translation": "Последний"
+      },
+      {
+        "id": 50,
+        "arabic": "الظَاهِرُ",
+        "transliteration": "Аз-Захир",
+        "translation": "Высочайший, Явный"
+      },
+      {
+        "id": 30,
+        "arabic": "العَلِيمُ",
+        "transliteration": "Аль-‘Алим",
+        "translation": "Всезнающий"
+      }
+    ],
+    "quran": {
+      "mentions_count": 1,
+      "references": [
+        "57:3"
+      ],
+      "inline_references": [],
+      "quotes": []
+    },
+    "hadith_references": [],
+    "source_url": "https://koran.center/asmaul-husna/51"
+  },
+  {
+    "id": 52,
+    "name": "Аль-Кариб",
+    "arabic": "القَرِيبُ",
+    "translation": "Близкий",
+    "transliteration_en": "Al-Qareeb",
+    "english_meaning": "The Near One",
+    "image": {
+      "svg_card_path": "images/52_al-qareeb.svg",
+      "calligraphy_svg_url": null,
+      "calligraphy_png_url": null
+    },
+    "meaning": "Аль-Кариб (Близкий) — это Тот, Кто близок к Своим рабам и объемлет их знанием и могуществом, Кто слышит и знает их слова и мысли, и нет для Него никакой разницы между тем, что они произносят вслух, шёпотом и про себя.",
+    "related_names": [
+      {
+        "id": 53,
+        "arabic": "المُجِيبُ",
+        "transliteration": "Аль-Муджиб",
+        "translation": "Отвечающий"
+      },
+      {
+        "id": 44,
+        "arabic": "السَّمِيعُ",
+        "transliteration": "Ас-Сами‘",
+        "translation": "Слышащий"
+      },
+      {
+        "id": 45,
+        "arabic": "البَصِيرُ",
+        "transliteration": "Аль-Басыр",
+        "translation": "Всевидящий"
+      },
+      {
+        "id": 46,
+        "arabic": "اللَّطِيفُ",
+        "transliteration": "Аль-Лятыф",
+        "translation": "Проникновенный, Добрый"
+      }
+    ],
+    "quran": {
+      "mentions_count": 3,
+      "references": [
+        "2:186",
+        "11:61",
+        "34:50"
+      ],
+      "inline_references": [],
+      "quotes": []
+    },
+    "hadith_references": [],
+    "source_url": "https://koran.center/asmaul-husna/52"
+  },
+  {
+    "id": 53,
+    "name": "Аль-Муджиб",
+    "arabic": "المُجِيبُ",
+    "translation": "Отвечающий",
+    "transliteration_en": "Al-Mujeeb",
+    "english_meaning": "The Ever Responsive",
+    "image": {
+      "svg_card_path": "images/53_al-mujeeb.svg",
+      "calligraphy_svg_url": "https://raw.githubusercontent.com/Suleeyman/api-esmaul-husna/main/assets/static/images/mujib/mujib.svg",
+      "calligraphy_png_url": "https://raw.githubusercontent.com/Suleeyman/api-esmaul-husna/main/assets/static/images/mujib/mujib-256x256.png",
+      "local_calligraphy_png": "images/calligraphy_png/53_mujib-256x256.png"
+    },
+    "meaning": "Аль-Муджиб (Отвечающий) — это Тот, Кто отвечает на мольбы Своих рабов, когда они взывают к Нему, и принимает их молитвы и приношения, когда они поклоняются Ему, Кто удовлетворяет их желания и облегчает им достижение того, к чему они стремятся.",
+    "related_names": [
+      {
+        "id": 52,
+        "arabic": "القَرِيبُ",
+        "transliteration": "Аль-Кариб",
+        "translation": "Близкий"
+      },
+      {
+        "id": 44,
+        "arabic": "السَّمِيعُ",
+        "transliteration": "Ас-Сами‘",
+        "translation": "Слышащий"
+      },
+      {
+        "id": 45,
+        "arabic": "البَصِيرُ",
+        "transliteration": "Аль-Басыр",
+        "translation": "Всевидящий"
+      },
+      {
+        "id": 58,
+        "arabic": "التَّوَّابُ",
+        "transliteration": "Ат-Тавваб",
+        "translation": "Принимающий покаяния"
+      }
+    ],
+    "quran": {
+      "mentions_count": 1,
+      "references": [
+        "11:61"
+      ],
+      "inline_references": [],
+      "quotes": []
+    },
+    "hadith_references": [],
+    "source_url": "https://koran.center/asmaul-husna/53"
+  },
+  {
+    "id": 54,
+    "name": "Аль-Васи‘",
+    "arabic": "الوَاسِعُ",
+    "translation": "Всеобъемлющий",
+    "transliteration_en": "Al-Waasi",
+    "english_meaning": "The All-Comprehending",
+    "image": {
+      "svg_card_path": "images/54_al-waasi.svg",
+      "calligraphy_svg_url": "https://raw.githubusercontent.com/Suleeyman/api-esmaul-husna/main/assets/static/images/wasi/wasi.svg",
+      "calligraphy_png_url": "https://raw.githubusercontent.com/Suleeyman/api-esmaul-husna/main/assets/static/images/wasi/wasi-256x256.png",
+      "local_calligraphy_png": "images/calligraphy_png/54_wasi-256x256.png"
+    },
+    "meaning": "Аль-Васи‘ (Всеобъемлющий) — это Тот, Кто обладает всеобъемлющими качествами и охватывает всё мироздание знанием, силой, милостью, щедростью, Кто щедро одаряет Своих рабов и не обременяет их тяжёлыми повинностями. Он повелевает днём и ночью без устали, и если все моря и океаны превратятся в чернила, их не хватит для того, чтобы записать все Его веления. Он кормит и одаряет Своих рабов, и для того, чтобы сосчитать все блага, которыми Он наделил человека, не хватит целой жизни. Его знания безграничны, и Его слух проникает всюду, и нет предела Его власти и могуществу, ибо всё исходит от Бога и возвращается к Нему.",
+    "related_names": [
+      {
+        "id": 76,
+        "arabic": "المُحِيطُ",
+        "transliteration": "Аль-Мухит",
+        "translation": "Всеобъемлющий"
+      },
+      {
+        "id": 30,
+        "arabic": "العَلِيمُ",
+        "transliteration": "Аль-‘Алим",
+        "translation": "Всезнающий"
+      },
+      {
+        "id": 17,
+        "arabic": "الغَنِيُّ",
+        "transliteration": "Аль-Гани",
+        "translation": "Богатый"
+      },
+      {
+        "id": 9,
+        "arabic": "القَيُّومُ",
+        "transliteration": "Аль-Кайюм",
+        "translation": "Вседержитель"
+      }
+    ],
+    "quran": {
+      "mentions_count": 9,
+      "references": [
+        "2:115",
+        "2:261",
+        "2:268",
+        "3:73",
+        "4:130",
+        "5:54",
+        "24:32",
+        "53:32"
+      ],
+      "inline_references": [],
+      "quotes": []
+    },
+    "hadith_references": [],
+    "source_url": "https://koran.center/asmaul-husna/54"
+  },
+  {
+    "id": 55,
+    "name": "Аль-Гафур",
+    "arabic": "الغَفُورُ",
+    "translation": "Прощающий",
+    "transliteration_en": "Al-Ghafur",
+    "english_meaning": "The Forgiver and Hider of Faults",
+    "image": {
+      "svg_card_path": "images/55_al-ghafur.svg",
+      "calligraphy_svg_url": "https://raw.githubusercontent.com/Suleeyman/api-esmaul-husna/main/assets/static/images/ghafur/ghafur.svg",
+      "calligraphy_png_url": "https://raw.githubusercontent.com/Suleeyman/api-esmaul-husna/main/assets/static/images/ghafur/ghafur-256x256.png",
+      "local_calligraphy_png": "images/calligraphy_png/55_ghafur-256x256.png"
+    },
+    "meaning": "Аль-Гафур (Прощающий) — это Тот, Кто прощает и покрывает любые грехи, кроме приобщения сотоварищей к Нему. Люди тоже прощают обиды и отказываются от возмездия, но их прощение не идёт ни в какое сравнение с прощением Аллаха. Только Он прощает грехи, и никто другой. В имени Аль-Гафур обозначенное качество выражается явно и отчётливо, и ещё больше оно выражено в прекраснейшем имени Аль-Гаффар.",
+    "related_names": [
+      {
+        "id": 56,
+        "arabic": "الغَفَّارُ",
+        "transliteration": "Аль-Гаффар",
+        "translation": "Всепрощающий"
+      },
+      {
+        "id": 57,
+        "arabic": "العَفُوُّ",
+        "transliteration": "Аль-‘Афувв",
+        "translation": "Отпускающий вину, Прощающий"
+      },
+      {
+        "id": 58,
+        "arabic": "التَّوَّابُ",
+        "transliteration": "Ат-Тавваб",
+        "translation": "Принимающий покаяния"
+      },
+      {
+        "id": 3,
+        "arabic": "الرَّحِيمُ",
+        "transliteration": "Ар-Рахим",
+        "translation": "Милующий"
+      },
+      {
+        "id": 64,
+        "arabic": "الرَّؤُوفُ",
+        "transliteration": "Ар-Рауф",
+        "translation": "Добрый, Сострадательный"
+      }
+    ],
+    "quran": {
+      "mentions_count": 91,
+      "references": [
+        "2:173",
+        "4:23",
+        "4:152",
+        "9:99",
+        "16:18",
+        "35:28",
+        "39:53",
+        "41:32"
+      ],
+      "inline_references": [],
+      "quotes": []
+    },
+    "hadith_references": [],
+    "source_url": "https://koran.center/asmaul-husna/55"
+  },
+  {
+    "id": 56,
+    "name": "Аль-Гаффар",
+    "arabic": "الغَفَّارُ",
+    "translation": "Всепрощающий",
+    "transliteration_en": "Al-Ghaffaar",
+    "english_meaning": "The Forgiving",
+    "image": {
+      "svg_card_path": "images/56_al-ghaffaar.svg",
+      "calligraphy_svg_url": "https://raw.githubusercontent.com/Suleeyman/api-esmaul-husna/main/assets/static/images/ghaffar/ghaffar.svg",
+      "calligraphy_png_url": "https://raw.githubusercontent.com/Suleeyman/api-esmaul-husna/main/assets/static/images/ghaffar/ghaffar-256x256.png",
+      "local_calligraphy_png": "images/calligraphy_png/56_ghaffar-256x256.png"
+    },
+    "meaning": "Аль-Гаффар (Всепрощающий) — это Тот, Кто любит прощать и прощает тем, кто не придавал Ему сотоварищей, не взирая на прочие их деяния. Аль-Халими пишет, что Аль-Гафур часто покрывает Своих грешных рабов и многое отпускает им, а Аль-Гаффар покрывает их грехи совершенным образом, оберегая их от позора как в этом мире, так и в жизни вечной. По мнению аль-Газали, имя Аль-Гаффар указывает на то, что Он часто и раз за разом прощает Своих рабов, а имя Аль-Гафур указывает на совершенство и всеохватность Его прощения.",
+    "related_names": [
+      {
+        "id": 55,
+        "arabic": "الغَفُورُ",
+        "transliteration": "Аль-Гафур",
+        "translation": "Прощающий"
+      },
+      {
+        "id": 57,
+        "arabic": "العَفُوُّ",
+        "transliteration": "Аль-‘Афувв",
+        "translation": "Отпускающий вину, Прощающий"
+      },
+      {
+        "id": 58,
+        "arabic": "التَّوَّابُ",
+        "transliteration": "Ат-Тавваб",
+        "translation": "Принимающий покаяния"
+      },
+      {
+        "id": 3,
+        "arabic": "الرَّحِيمُ",
+        "transliteration": "Ар-Рахим",
+        "translation": "Милующий"
+      }
+    ],
+    "quran": {
+      "mentions_count": 5,
+      "references": [
+        "20:82",
+        "38:66",
+        "39:5",
+        "40:42",
+        "71:10"
+      ],
+      "inline_references": [],
+      "quotes": []
+    },
+    "hadith_references": [],
+    "source_url": "https://koran.center/asmaul-husna/56"
+  },
+  {
+    "id": 57,
+    "name": "Аль-‘Афувв",
+    "arabic": "العَفُوُّ",
+    "translation": "Отпускающий вину, Прощающий",
+    "transliteration_en": "Al-Afuww",
+    "english_meaning": "The Forgiver",
+    "image": {
+      "svg_card_path": "images/57_al-afuww.svg",
+      "calligraphy_svg_url": null,
+      "calligraphy_png_url": null
+    },
+    "meaning": "Аль-‘Афувв (Отпускающий вину, Прощающий) — это Тот, Кто воздерживается от наказания тех, кто провинился перед Ним, Кто стирает грехи бесследно и освобождает от их тяжких последствий. Аль-Газали пишет: «Аль-‘Афувв — это Тот, Кто стирает злодеяния и прощает грехи. Это имя похоже на имя Аль-Гафур, но оно более содержательное, потому что гуфран указывает на покрытие грехов, а ‘афв означает, что грехи стираются. Стереть грех — это больше, чем покрыть его».",
+    "related_names": [
+      {
+        "id": 55,
+        "arabic": "الغَفُورُ",
+        "transliteration": "Аль-Гафур",
+        "translation": "Прощающий"
+      },
+      {
+        "id": 56,
+        "arabic": "الغَفَّارُ",
+        "transliteration": "Аль-Гаффар",
+        "translation": "Всепрощающий"
+      },
+      {
+        "id": 58,
+        "arabic": "التَّوَّابُ",
+        "transliteration": "Ат-Тавваб",
+        "translation": "Принимающий покаяния"
+      },
+      {
+        "id": 3,
+        "arabic": "الرَّحِيمُ",
+        "transliteration": "Ар-Рахим",
+        "translation": "Милующий"
+      }
+    ],
+    "quran": {
+      "mentions_count": 5,
+      "references": [
+        "4:43",
+        "4:99",
+        "4:149",
+        "22:60",
+        "58:2"
+      ],
+      "inline_references": [],
+      "quotes": []
+    },
+    "hadith_references": [],
+    "source_url": "https://koran.center/asmaul-husna/57"
+  },
+  {
+    "id": 58,
+    "name": "Ат-Тавваб",
+    "arabic": "التَّوَّابُ",
+    "translation": "Принимающий покаяния",
+    "transliteration_en": "At-Tawwab",
+    "english_meaning": "The Acceptor of Repentance",
+    "image": {
+      "svg_card_path": "images/58_at-tawwab.svg",
+      "calligraphy_svg_url": null,
+      "calligraphy_png_url": null
+    },
+    "meaning": "Ат-Тавваб (Принимающий покаяния) — это Тот, Кто раз за разом приводит согрешивших рабов к покаянию, а потом прощает их, Кто снова и снова одаряет рабов благами после того, как испытывает их лишениями. Ар-Рази пишет: «Он помогает им после того, как оставляет их без поддержки, и одаряет их после того, как лишает их, и облегчает им после того, как ограничивает их в чём-либо, и прощает им после того, как устрашает их, и избавляет их от разных бед и посылает им разные милости. Он сменяет печаль радостью, принимает покаяния от грешников и избавляет от невзгод удручённых».",
+    "related_names": [
+      {
+        "id": 55,
+        "arabic": "الغَفُورُ",
+        "transliteration": "Аль-Гафур",
+        "translation": "Прощающий"
+      },
+      {
+        "id": 56,
+        "arabic": "الغَفَّارُ",
+        "transliteration": "Аль-Гаффар",
+        "translation": "Всепрощающий"
+      },
+      {
+        "id": 57,
+        "arabic": "العَفُوُّ",
+        "transliteration": "Аль-‘Афувв",
+        "translation": "Отпускающий вину, Прощающий"
+      },
+      {
+        "id": 3,
+        "arabic": "الرَّحِيمُ",
+        "transliteration": "Ар-Рахим",
+        "translation": "Милующий"
+      },
+      {
+        "id": 53,
+        "arabic": "المُجِيبُ",
+        "transliteration": "Аль-Муджиб",
+        "translation": "Отвечающий"
+      }
+    ],
+    "quran": {
+      "mentions_count": 11,
+      "references": [
+        "2:37",
+        "2:54",
+        "2:128",
+        "4:16",
+        "4:64",
+        "9:104",
+        "9:118",
+        "24:10",
+        "49:12",
+        "110:3"
+      ],
+      "inline_references": [],
+      "quotes": []
+    },
+    "hadith_references": [],
+    "source_url": "https://koran.center/asmaul-husna/58"
+  },
+  {
+    "id": 59,
+    "name": "Аль-Вадуд",
+    "arabic": "الوَدُودُ",
+    "translation": "Любящий, Любимый",
+    "transliteration_en": "Al-Wadood",
+    "english_meaning": "The Loving One",
+    "image": {
+      "svg_card_path": "images/59_al-wadood.svg",
+      "calligraphy_svg_url": "https://raw.githubusercontent.com/Suleeyman/api-esmaul-husna/main/assets/static/images/wadud/wadud.svg",
+      "calligraphy_png_url": "https://raw.githubusercontent.com/Suleeyman/api-esmaul-husna/main/assets/static/images/wadud/wadud-256x256.png",
+      "local_calligraphy_png": "images/calligraphy_png/59_wadud-256x256.png"
+    },
+    "meaning": "Аль-Вадуд (Любящий, Любимый) — это Тот, Кто любит Своих покорных рабов и внушает им любовь к Себе, открываясь их сердцам и оказывая им благодеяния. Ас-Са‘ди пишет: «Это — Тот, Кто любит Своих пророков, посланников и их последователей, Кого они любят сильнее всего на свете. Их сердца переполнены любовью к Нему, а их уста постоянно восхваляют Его. Они стремятся и обращаются к Нему всей душой — искренне и с любовью».",
+    "related_names": [
+      {
+        "id": 2,
+        "arabic": "الرَّحْمَٰنُ",
+        "transliteration": "Ар-Рахман",
+        "translation": "Милостивый"
+      },
+      {
+        "id": 3,
+        "arabic": "الرَّحِيمُ",
+        "transliteration": "Ар-Рахим",
+        "translation": "Милующий"
+      },
+      {
+        "id": 64,
+        "arabic": "الرَّؤُوفُ",
+        "transliteration": "Ар-Рауф",
+        "translation": "Добрый, Сострадательный"
+      },
+      {
+        "id": 93,
+        "arabic": "الرَّفِيقُ",
+        "transliteration": "Ар-Рафик",
+        "translation": "Добрый, Неспешащий"
+      }
+    ],
+    "quran": {
+      "mentions_count": 2,
+      "references": [
+        "11:90",
+        "85:14"
+      ],
+      "inline_references": [],
+      "quotes": []
+    },
+    "hadith_references": [],
+    "source_url": "https://koran.center/asmaul-husna/59"
+  },
+  {
+    "id": 60,
+    "name": "Аль-Ваххаб",
+    "arabic": "الوَهَّابُ",
+    "translation": "Дарующий",
+    "transliteration_en": "Al-Wahhab",
+    "english_meaning": "The Ever Giving",
+    "image": {
+      "svg_card_path": "images/60_al-wahhab.svg",
+      "calligraphy_svg_url": "https://raw.githubusercontent.com/Suleeyman/api-esmaul-husna/main/assets/static/images/wahhab/wahhab.svg",
+      "calligraphy_png_url": "https://raw.githubusercontent.com/Suleeyman/api-esmaul-husna/main/assets/static/images/wahhab/wahhab-256x256.png",
+      "local_calligraphy_png": "images/calligraphy_png/60_wahhab-256x256.png"
+    },
+    "meaning": "Аль-Ваххаб (Дарующий) — это Тот, Кто одаряет Свои творения благами без всякого счёта, не нуждаясь в них и не получая от них ничего взамен, Кто одаряет по Своей милости, а не только для вознаграждения, и одаряет намного большим, чем заслуживают Его творения.",
+    "related_names": [
+      {
+        "id": 61,
+        "arabic": "الكَرِيمُ",
+        "transliteration": "Аль-Карим",
+        "translation": "Щедрый"
+      },
+      {
+        "id": 62,
+        "arabic": "الأَكْرَمُ",
+        "transliteration": "Аль-Акрам",
+        "translation": "Наищедрейший"
+      },
+      {
+        "id": 87,
+        "arabic": "المُعْطِي",
+        "transliteration": "Аль-Му‘ты ",
+        "translation": "Даритель"
+      },
+      {
+        "id": 17,
+        "arabic": "الغَنِيُّ",
+        "transliteration": "Аль-Гани",
+        "translation": "Богатый"
+      }
+    ],
+    "quran": {
+      "mentions_count": 3,
+      "references": [
+        "3:8",
+        "38:9",
+        "38:35"
+      ],
+      "inline_references": [],
+      "quotes": []
+    },
+    "hadith_references": [],
+    "source_url": "https://koran.center/asmaul-husna/60"
+  },
+  {
+    "id": 61,
+    "name": "Аль-Карим",
+    "arabic": "الكَرِيمُ",
+    "translation": "Щедрый",
+    "transliteration_en": "Al-Kareem",
+    "english_meaning": "The Generous",
+    "image": {
+      "svg_card_path": "images/61_al-kareem.svg",
+      "calligraphy_svg_url": "https://raw.githubusercontent.com/Suleeyman/api-esmaul-husna/main/assets/static/images/karim/karim.svg",
+      "calligraphy_png_url": "https://raw.githubusercontent.com/Suleeyman/api-esmaul-husna/main/assets/static/images/karim/karim-256x256.png",
+      "local_calligraphy_png": "images/calligraphy_png/61_karim-256x256.png"
+    },
+    "meaning": "Аль-Карим (Щедрый) — это Тот, Кто наделяет бесчисленными благами и любит делать щедрые дары, Кто обладает всеми достоинствами и высокими качествами, и все Его деяния и решения прекрасны и заслуживают похвалы. Ас-Суюты пишет: «Это — Тот, Кто, если может простить, то прощает, и если даёт обещания, то исполняет их, и если одаряет, то одаряет большим, чем то, на что можно надеяться, и Ему безразлично, сколько Он даёт и кому, и Он недоволен, а когда обращаются с просьбами к кому-либо другому, а если Его избегают, то Он упрекает, но не заходит слишком далеко, и Он не даёт пропасть тому, кто ищет у Него защиты и убежища, и избавляет его от нужды в средствах и заступниках».",
+    "related_names": [
+      {
+        "id": 62,
+        "arabic": "الأَكْرَمُ",
+        "transliteration": "Аль-Акрам",
+        "translation": "Наищедрейший"
+      },
+      {
+        "id": 60,
+        "arabic": "الوَهَّابُ",
+        "transliteration": "Аль-Ваххаб",
+        "translation": "Дарующий"
+      },
+      {
+        "id": 88,
+        "arabic": "المَنَّانُ",
+        "transliteration": "Аль-Маннан",
+        "translation": "Милостивый, Щедрый"
+      },
+      {
+        "id": 90,
+        "arabic": "الجَوَّادُ",
+        "transliteration": "Аль-Джаввад",
+        "translation": "Щедрый"
+      },
+      {
+        "id": 15,
+        "arabic": "الحَمِيدُ",
+        "transliteration": "Аль-Хамид",
+        "translation": "Достохвальный, Достославный"
+      }
+    ],
+    "quran": {
+      "mentions_count": 2,
+      "references": [
+        "27:40",
+        "82:6"
+      ],
+      "inline_references": [],
+      "quotes": []
+    },
+    "hadith_references": [],
+    "source_url": "https://koran.center/asmaul-husna/61"
+  },
+  {
+    "id": 62,
+    "name": "Аль-Акрам",
+    "arabic": "الأَكْرَمُ",
+    "translation": "Наищедрейший",
+    "transliteration_en": "Al-Akram",
+    "english_meaning": "The Most Generous",
+    "image": {
+      "svg_card_path": "images/62_al-akram.svg",
+      "calligraphy_svg_url": null,
+      "calligraphy_png_url": null
+    },
+    "meaning": "Аль-Акрам (Наищедрейший) — это Тот, Кто превосходит творения Своими высочайшими качествами и не имеет Себе равных в щедрости и благости. Как и имя Аль-Карим, это прекраснейшее имя указывает на совершенство Божественных атрибутов, но оно образовано по модели прилагательного превосходной степени.",
+    "related_names": [
+      {
+        "id": 61,
+        "arabic": "الكَرِيمُ",
+        "transliteration": "Аль-Карим",
+        "translation": "Щедрый"
+      },
+      {
+        "id": 60,
+        "arabic": "الوَهَّابُ",
+        "transliteration": "Аль-Ваххаб",
+        "translation": "Дарующий"
+      },
+      {
+        "id": 88,
+        "arabic": "المَنَّانُ",
+        "transliteration": "Аль-Маннан",
+        "translation": "Милостивый, Щедрый"
+      },
+      {
+        "id": 15,
+        "arabic": "الحَمِيدُ",
+        "transliteration": "Аль-Хамид",
+        "translation": "Достохвальный, Достославный"
+      }
+    ],
+    "quran": {
+      "mentions_count": 1,
+      "references": [
+        "96:3"
+      ],
+      "inline_references": [],
+      "quotes": []
+    },
+    "hadith_references": [],
+    "source_url": "https://koran.center/asmaul-husna/62"
+  },
+  {
+    "id": 63,
+    "name": "Аль-Барр",
+    "arabic": "البَرُّ",
+    "translation": "Добродетельный, Добрый",
+    "transliteration_en": "Al-Barr",
+    "english_meaning": "The Doer of Good",
+    "image": {
+      "svg_card_path": "images/63_al-barr.svg",
+      "calligraphy_svg_url": null,
+      "calligraphy_png_url": null
+    },
+    "meaning": "Аль-Барр (Добродетельный, Добрый) — это Тот, Кто добр к Своим рабам и желает им добра, Кто любит добро и не перестаёт делать добро, Кто не нарушает и не изменяет Своего обещания. Аль-Хаттаби пишет: «Аль-Барр — это Тот, Кто сострадателен к Своим рабам и делает им добро. Его доброта охватывает все Его создания, и Он не скупится одарять их благами. Он проявляет доброту к Своим приближённым, когда особо выделяет их и выбирает их для поклонения Ему, и к делающим добро, когда увеличивает их награду, и к грешникам, когда не наказывает их и прощает им».",
+    "related_names": [
+      {
+        "id": 64,
+        "arabic": "الرَّؤُوفُ",
+        "transliteration": "Ар-Рауф",
+        "translation": "Добрый, Сострадательный"
+      },
+      {
+        "id": 2,
+        "arabic": "الرَّحْمَٰنُ",
+        "transliteration": "Ар-Рахман",
+        "translation": "Милостивый"
+      },
+      {
+        "id": 3,
+        "arabic": "الرَّحِيمُ",
+        "transliteration": "Ар-Рахим",
+        "translation": "Милующий"
+      },
+      {
+        "id": 99,
+        "arabic": "المُحْسِنُ",
+        "transliteration": "Аль-Мухсин",
+        "translation": "Добродетельный"
+      }
+    ],
+    "quran": {
+      "mentions_count": 1,
+      "references": [
+        "52:28"
+      ],
+      "inline_references": [],
+      "quotes": []
+    },
+    "hadith_references": [],
+    "source_url": "https://koran.center/asmaul-husna/63"
+  },
+  {
+    "id": 64,
+    "name": "Ар-Рауф",
+    "arabic": "الرَّؤُوفُ",
+    "translation": "Добрый, Сострадательный",
+    "transliteration_en": "Ar-Rauf",
+    "english_meaning": "The Clement",
+    "image": {
+      "svg_card_path": "images/64_ar-rauf.svg",
+      "calligraphy_svg_url": null,
+      "calligraphy_png_url": null
+    },
+    "meaning": "Ар-Рауф (Добрый, Сострадательный) — это Тот, Кто проявляет наивысшее милосердие к Своим рабам, жалеет и оберегает их, желает им блага и предостерегает их от того, что может навредить им. Аль-Халими пишет: «Это — Тот, Кто проявляет снисхождение к Своим рабам и даже близко не возлагает на них то, что они не могут осилить. Он требует от них больше, когда они крепки и сильны, и облегчает их обязанности, когда они слабеют и теряют силы. Он требует от того, кто находится на постоянном месте жительства, больше, чем от путника, и требует от здорового больше, чем от больного, и всё это есть сострадание и милосердие».",
+    "related_names": [
+      {
+        "id": 2,
+        "arabic": "الرَّحْمَٰنُ",
+        "transliteration": "Ар-Рахман",
+        "translation": "Милостивый"
+      },
+      {
+        "id": 3,
+        "arabic": "الرَّحِيمُ",
+        "transliteration": "Ар-Рахим",
+        "translation": "Милующий"
+      },
+      {
+        "id": 59,
+        "arabic": "الوَدُودُ",
+        "transliteration": "Аль-Вадуд",
+        "translation": "Любящий, Любимый"
+      },
+      {
+        "id": 63,
+        "arabic": "البَرُّ",
+        "transliteration": "Аль-Барр",
+        "translation": "Добродетельный, Добрый"
+      },
+      {
+        "id": 67,
+        "arabic": "الحَلِيمُ",
+        "transliteration": "Аль-Халим",
+        "translation": "Незлобивый, Сдержанный"
+      }
+    ],
+    "quran": {
+      "mentions_count": 10,
+      "references": [
+        "2:143",
+        "2:207",
+        "3:30",
+        "9:117",
+        "16:7",
+        "22:65",
+        "24:20",
+        "57:9",
+        "59:10"
+      ],
+      "inline_references": [],
+      "quotes": []
+    },
+    "hadith_references": [],
+    "source_url": "https://koran.center/asmaul-husna/64"
+  },
+  {
+    "id": 65,
+    "name": "Аш-Шакир",
+    "arabic": "الشّاكِرُ",
+    "translation": "Благодарящий",
+    "transliteration_en": "Ash-Shaakir",
+    "english_meaning": "The Grateful",
+    "image": {
+      "svg_card_path": "images/65_ash-shaakir.svg",
+      "calligraphy_svg_url": null,
+      "calligraphy_png_url": null
+    },
+    "meaning": "Аш-Шакир (Благодарящий) — Тот, Кто хвалит покорных Ему рабов и благодарит их за послушание, вознаграждая их в этом мире и в жизни вечной, облегчая их дела и оставляя о них добрую память, Кто принимает от Своих рабов благодеяния, в которых Он не нуждается, и щедро рассыпает блага, которыми пользуются все, кроме Него. Когда Он хвалит верующего, то наполняет сердца других творений любовью к нему так, что камни начинают славословить Аллаха вместе с ним, а ангелы и животные просят прощения для него, и Он оберегает его имя и оставляет о нём добрую память. И когда Он благодарит добродетельного, то одаряет богато даже за малое благодеяние и не требует отчёта.",
+    "related_names": [
+      {
+        "id": 66,
+        "arabic": "الشَّكُورُ",
+        "transliteration": "Аш-Шакур",
+        "translation": "Благодарный, Заслуживающий благодарности"
+      },
+      {
+        "id": 15,
+        "arabic": "الحَمِيدُ",
+        "transliteration": "Аль-Хамид",
+        "translation": "Достохвальный, Достославный"
+      },
+      {
+        "id": 47,
+        "arabic": "الخَبِيرُ",
+        "transliteration": "Аль-Хабир",
+        "translation": "Всеведущий"
+      }
+    ],
+    "quran": {
+      "mentions_count": 2,
+      "references": [
+        "2:158",
+        "4:147"
+      ],
+      "inline_references": [],
+      "quotes": []
+    },
+    "hadith_references": [],
+    "source_url": "https://koran.center/asmaul-husna/65"
+  },
+  {
+    "id": 66,
+    "name": "Аш-Шакур",
+    "arabic": "الشَّكُورُ",
+    "translation": "Благодарный, Заслуживающий благодарности",
+    "transliteration_en": "Ash-Shakoor",
+    "english_meaning": "The Appreciative",
+    "image": {
+      "svg_card_path": "images/66_ash-shakoor.svg",
+      "calligraphy_svg_url": "https://raw.githubusercontent.com/Suleeyman/api-esmaul-husna/main/assets/static/images/shakur/shakur.svg",
+      "calligraphy_png_url": "https://raw.githubusercontent.com/Suleeyman/api-esmaul-husna/main/assets/static/images/shakur/shakur-256x256.png",
+      "local_calligraphy_png": "images/calligraphy_png/66_shakur-256x256.png"
+    },
+    "meaning": "Аш-Шакур (Благодарный, Заслуживающий благодарности) — это Тот, Кто принимает благодеяния Своих рабов и благодарит их за них, Кто одаряет щедро и без счёта, довольствуясь даже малой благодарностью, Кто заслуживает бесконечной благодарности творений за все блага, которые есть у них.",
+    "related_names": [
+      {
+        "id": 65,
+        "arabic": "الشّاكِرُ",
+        "transliteration": "Аш-Шакир",
+        "translation": "Благодарящий"
+      },
+      {
+        "id": 15,
+        "arabic": "الحَمِيدُ",
+        "transliteration": "Аль-Хамид",
+        "translation": "Достохвальный, Достославный"
+      },
+      {
+        "id": 47,
+        "arabic": "الخَبِيرُ",
+        "transliteration": "Аль-Хабир",
+        "translation": "Всеведущий"
+      }
+    ],
+    "quran": {
+      "mentions_count": 4,
+      "references": [
+        "35:30",
+        "35:34",
+        "42:23",
+        "64:17"
+      ],
+      "inline_references": [],
+      "quotes": []
+    },
+    "hadith_references": [],
+    "source_url": "https://koran.center/asmaul-husna/66"
+  },
+  {
+    "id": 67,
+    "name": "Аль-Халим",
+    "arabic": "الحَلِيمُ",
+    "translation": "Незлобивый, Сдержанный",
+    "transliteration_en": "Al-Haleem",
+    "english_meaning": "The Forbearing",
+    "image": {
+      "svg_card_path": "images/67_al-haleem.svg",
+      "calligraphy_svg_url": "https://raw.githubusercontent.com/Suleeyman/api-esmaul-husna/main/assets/static/images/halim/halim.svg",
+      "calligraphy_png_url": "https://raw.githubusercontent.com/Suleeyman/api-esmaul-husna/main/assets/static/images/halim/halim-256x256.png",
+      "local_calligraphy_png": "images/calligraphy_png/67_halim-256x256.png"
+    },
+    "meaning": "Аль-Халим (Незлобивый, Сдержанный) — это Тот, Кто не торопится с наказанием грешников и ослушников, имея возможность покарать их, Кто управляет мирами кротко и великодушно, одаряя благами даже грешников и давая им отсрочку, чтобы они могли покаяться и исправиться. Ас-Са‘ди пишет: «Аль-Халим — это Тот, Кто щедро одаряет творения зримыми и незримыми благами, несмотря на их ослушание и многочисленные ошибки. Он не спешит наказывать грешников за ослушание и предоставляет им отсрочку, чтобы они могли раскаяться и вернуться на прямой путь».",
+    "related_names": [
+      {
+        "id": 2,
+        "arabic": "الرَّحْمَٰنُ",
+        "transliteration": "Ар-Рахман",
+        "translation": "Милостивый"
+      },
+      {
+        "id": 3,
+        "arabic": "الرَّحِيمُ",
+        "transliteration": "Ар-Рахим",
+        "translation": "Милующий"
+      },
+      {
+        "id": 57,
+        "arabic": "العَفُوُّ",
+        "transliteration": "Аль-‘Афувв",
+        "translation": "Отпускающий вину, Прощающий"
+      },
+      {
+        "id": 64,
+        "arabic": "الرَّؤُوفُ",
+        "transliteration": "Ар-Рауф",
+        "translation": "Добрый, Сострадательный"
+      },
+      {
+        "id": 55,
+        "arabic": "الغَفُورُ",
+        "transliteration": "Аль-Гафур",
+        "translation": "Прощающий"
+      }
+    ],
+    "quran": {
+      "mentions_count": 11,
+      "references": [
+        "2:225",
+        "2:235",
+        "3:155",
+        "4:12",
+        "5:101",
+        "17:44",
+        "22:59",
+        "33:51",
+        "35:41",
+        "64:17"
+      ],
+      "inline_references": [],
+      "quotes": []
+    },
+    "hadith_references": [],
+    "source_url": "https://koran.center/asmaul-husna/67"
+  },
+  {
+    "id": 68,
+    "name": "Аль-Вали",
+    "arabic": "الوَلِيُّ",
+    "translation": "Покровитель",
+    "transliteration_en": "Al-Waliyy",
+    "english_meaning": "The Protector",
+    "image": {
+      "svg_card_path": "images/68_al-waliyy.svg",
+      "calligraphy_svg_url": null,
+      "calligraphy_png_url": null
+    },
+    "meaning": "Аль-Вали (Покровитель, Близкий) — это Тот, Кто заботится о Своих творениях, обеспечивает их пропитанием и управляет их делами, Кто близок к Своим верующим рабам и любит их, ведёт их прямым путём и помогает им против их врагов. Всевышний сказал: 429«Неужели они взяли себе покровителей вместо Него? Аллах — Покровитель. Он оживляет мёртвых, и Он всемогущ» ().",
+    "related_names": [
+      {
+        "id": 69,
+        "arabic": "المَولَى",
+        "transliteration": "Аль-Мауля",
+        "translation": "Покровитель, Властелин"
+      },
+      {
+        "id": 22,
+        "arabic": "المُهَيْمِنُ",
+        "transliteration": "Аль-Мухаймин",
+        "translation": "Хранитель"
+      },
+      {
+        "id": 70,
+        "arabic": "النّصِيرُ",
+        "transliteration": "Ан-Насыр",
+        "translation": "Помощник, Защитник"
+      },
+      {
+        "id": 77,
+        "arabic": "الحَفِيظُ",
+        "transliteration": "Аль-Хафиз",
+        "translation": "Хранитель"
+      },
+      {
+        "id": 78,
+        "arabic": "الوَكِيلُ",
+        "transliteration": "Аль-Вакиль",
+        "translation": "Попечитель, Поручитель"
+      }
+    ],
+    "quran": {
+      "mentions_count": 14,
+      "references": [
+        "2:257",
+        "3:68",
+        "4:45",
+        "6:51",
+        "7:155",
+        "12:101",
+        "42:9",
+        "42:28",
+        "45:19"
+      ],
+      "inline_references": [
+        "42:9"
+      ],
+      "quotes": [
+        {
+          "surah": 42,
+          "ayah": 9,
+          "text": "«Неужели они взяли себе покровителей вместо Него? Аллах — Покровитель. Он оживляет мёртвых, и Он всемогущ»"
+        }
+      ]
+    },
+    "hadith_references": [],
+    "source_url": "https://koran.center/asmaul-husna/68"
+  },
+  {
+    "id": 69,
+    "name": "Аль-Мауля",
+    "arabic": "المَولَى",
+    "translation": "Покровитель, Властелин",
+    "transliteration_en": "Al-Mawla",
+    "english_meaning": "The Guardian",
+    "image": {
+      "svg_card_path": "images/69_al-mawla.svg",
+      "calligraphy_svg_url": null,
+      "calligraphy_png_url": null
+    },
+    "meaning": "Аль-Мауля (Покровитель, Властелин) — это Тот, Кто принимает решения и управляет делами творений, Кто опекает верующих и помогает им против их врагов. Это имя близко по смыслу к имени Аль-Вали. Разница в употреблении этих слов в том, что слово вали используется и в отношении рабов, приближённых к Аллаху, а слово мауля не употребляется в словосочетаниях «раб Аллаха» или «приближённый Аллаха».",
+    "related_names": [
+      {
+        "id": 68,
+        "arabic": "الوَلِيُّ",
+        "transliteration": "Аль-Вали",
+        "translation": "Покровитель"
+      },
+      {
+        "id": 22,
+        "arabic": "المُهَيْمِنُ",
+        "transliteration": "Аль-Мухаймин",
+        "translation": "Хранитель"
+      },
+      {
+        "id": 70,
+        "arabic": "النّصِيرُ",
+        "transliteration": "Ан-Насыр",
+        "translation": "Помощник, Защитник"
+      },
+      {
+        "id": 77,
+        "arabic": "الحَفِيظُ",
+        "transliteration": "Аль-Хафиз",
+        "translation": "Хранитель"
+      }
+    ],
+    "quran": {
+      "mentions_count": 11,
+      "references": [
+        "2:286",
+        "3:150",
+        "4:45",
+        "8:40",
+        "9:51",
+        "10:30",
+        "22:78",
+        "47:11",
+        "66:2"
+      ],
+      "inline_references": [],
+      "quotes": []
+    },
+    "hadith_references": [],
+    "source_url": "https://koran.center/asmaul-husna/69"
+  },
+  {
+    "id": 70,
+    "name": "Ан-Насыр",
+    "arabic": "النّصِيرُ",
+    "translation": "Помощник, Защитник",
+    "transliteration_en": "An-Naseer",
+    "english_meaning": "The Helper",
+    "image": {
+      "svg_card_path": "images/70_an-naseer.svg",
+      "calligraphy_svg_url": null,
+      "calligraphy_png_url": null
+    },
+    "meaning": "Ан-Насыр (Помощник, Защитник) — это Тот, Кто помогает Своим рабам и облегчает им путь к успеху, Кто вселяет страх в сердца Своих врагов и делает их беспомощными.",
+    "related_names": [
+      {
+        "id": 68,
+        "arabic": "الوَلِيُّ",
+        "transliteration": "Аль-Вали",
+        "translation": "Покровитель"
+      },
+      {
+        "id": 69,
+        "arabic": "المَولَى",
+        "transliteration": "Аль-Мауля",
+        "translation": "Покровитель, Властелин"
+      },
+      {
+        "id": 78,
+        "arabic": "الوَكِيلُ",
+        "transliteration": "Аль-Вакиль",
+        "translation": "Попечитель, Поручитель"
+      },
+      {
+        "id": 71,
+        "arabic": "الهَادِي",
+        "transliteration": "Аль-Хади",
+        "translation": "Наставляющий, Направляющий"
+      }
+    ],
+    "quran": {
+      "mentions_count": 8,
+      "references": [
+        "2:107",
+        "3:150",
+        "4:45",
+        "8:40",
+        "9:51",
+        "22:78",
+        "25:31",
+        "47:11"
+      ],
+      "inline_references": [],
+      "quotes": []
+    },
+    "hadith_references": [],
+    "source_url": "https://koran.center/asmaul-husna/70"
+  },
+  {
+    "id": 71,
+    "name": "Аль-Хади",
+    "arabic": "الهَادِي",
+    "translation": "Наставляющий, Направляющий",
+    "transliteration_en": "Al-Haadee",
+    "english_meaning": "The Guide",
+    "image": {
+      "svg_card_path": "images/71_al-haadee.svg",
+      "calligraphy_svg_url": null,
+      "calligraphy_png_url": null
+    },
+    "meaning": "Аль-Хади (Наставляющий, Направляющий) — это Тот, Кто указывает всему сущему путь к существованию, разъясняет Своим рабам путь к Его довольству и ведёт этим путём тех, которые уверовали. Аз-Заджжадж пишет: «Аль-Хади — это Тот, Кто указывает Своим творениям путь к познанию Его и Его господства, Кто наставляет Своих рабов на прямой путь».",
+    "related_names": [
+      {
+        "id": 70,
+        "arabic": "النّصِيرُ",
+        "transliteration": "Ан-Насыр",
+        "translation": "Помощник, Защитник"
+      },
+      {
+        "id": 40,
+        "arabic": "المُبِينُ",
+        "transliteration": "Аль-Мубин",
+        "translation": "Явный, Разъясняющий"
+      },
+      {
+        "id": 42,
+        "arabic": "الحَكِيمُ",
+        "transliteration": "Аль-Хаким",
+        "translation": "Мудрый"
+      },
+      {
+        "id": 41,
+        "arabic": "الفَتَّاحُ",
+        "transliteration": "Аль-Фаттах",
+        "translation": "Раскрывающий, Рассуживающий"
+      }
+    ],
+    "quran": {
+      "mentions_count": 2,
+      "references": [
+        "22:54",
+        "25:31"
+      ],
+      "inline_references": [],
+      "quotes": []
+    },
+    "hadith_references": [],
+    "source_url": "https://koran.center/asmaul-husna/71"
+  },
+  {
+    "id": 72,
+    "name": "Аль-Кяфи",
+    "arabic": "الكَافِي",
+    "translation": "Довлеющий, Избавитель",
+    "transliteration_en": "Al-Kaafee",
+    "english_meaning": "The Sufficient",
+    "image": {
+      "svg_card_path": "images/72_al-kaafee.svg",
+      "calligraphy_svg_url": null,
+      "calligraphy_png_url": null
+    },
+    "meaning": "Аль-Кяфи (Довлеющий, Избавитель) — это Тот, Кто собирает в Себе все качества совершенства, не имеет Себе равных и не нуждается в помощниках, Кто защищает от бед и избавляет от нужды тех, кто уповает на Него. Аль-Хаттаби пишет: «Аль-Кяфи — это Тот, Кто избавляет Своих рабов от тревог и защищает их от бедствий, Чьей помощи достаточно, чтобы не нуждаться ни в ком другом».",
+    "related_names": [
+      {
+        "id": 78,
+        "arabic": "الوَكِيلُ",
+        "transliteration": "Аль-Вакиль",
+        "translation": "Попечитель, Поручитель"
+      },
+      {
+        "id": 9,
+        "arabic": "القَيُّومُ",
+        "transliteration": "Аль-Кайюм",
+        "translation": "Вседержитель"
+      },
+      {
+        "id": 7,
+        "arabic": "الصَّمَدُ",
+        "transliteration": "Ас-Самад",
+        "translation": "Самодостаточный"
+      },
+      {
+        "id": 77,
+        "arabic": "الحَفِيظُ",
+        "transliteration": "Аль-Хафиз",
+        "translation": "Хранитель"
+      }
+    ],
+    "quran": {
+      "mentions_count": 4,
+      "references": [
+        "2:137",
+        "4:45",
+        "8:62",
+        "9:129",
+        "39:36"
+      ],
+      "inline_references": [],
+      "quotes": []
+    },
+    "hadith_references": [],
+    "source_url": "https://koran.center/asmaul-husna/72"
+  },
+  {
+    "id": 73,
+    "name": "Аш-Шахид",
+    "arabic": "الشَّهِيدُ",
+    "translation": "Свидетель, Наблюдающий",
+    "transliteration_en": "Ash-Shaheed",
+    "english_meaning": "The Witness",
+    "image": {
+      "svg_card_path": "images/73_ash-shaheed.svg",
+      "calligraphy_svg_url": null,
+      "calligraphy_png_url": null
+    },
+    "meaning": "Аш-Шахид (Свидетель, Наблюдающий) — это Тот, Кто наблюдает за Своими творениями и их деяниями и ничего не выпускает из виду, Кто делает Своё существование и величие очевидным для Его рабов, Кто наблюдает за всеми спорами и тяжбами и подтверждает правоту правых, если у них нет свидетелей.",
+    "related_names": [
+      {
+        "id": 74,
+        "arabic": "الرَّقِيبُ",
+        "transliteration": "Ар-Ракиб",
+        "translation": "Наблюдающий"
+      },
+      {
+        "id": 75,
+        "arabic": "الحَسِيبُ",
+        "transliteration": "Аль-Хасиб",
+        "translation": "Рассчитывающий, Довлеющий, Славный"
+      },
+      {
+        "id": 45,
+        "arabic": "البَصِيرُ",
+        "transliteration": "Аль-Басыр",
+        "translation": "Всевидящий"
+      },
+      {
+        "id": 44,
+        "arabic": "السَّمِيعُ",
+        "transliteration": "Ас-Сами‘",
+        "translation": "Слышащий"
+      },
+      {
+        "id": 21,
+        "arabic": "المُؤْمِنُ",
+        "transliteration": "Аль-Му‘мин",
+        "translation": "Оберегающий, Дарующий безопасность"
+      }
+    ],
+    "quran": {
+      "mentions_count": 18,
+      "references": [
+        "3:98",
+        "4:33",
+        "4:79",
+        "4:166",
+        "5:117",
+        "10:46",
+        "22:17",
+        "33:55",
+        "34:47",
+        "41:53",
+        "46:8",
+        "48:28",
+        "58:6",
+        "85:9"
+      ],
+      "inline_references": [],
+      "quotes": []
+    },
+    "hadith_references": [],
+    "source_url": "https://koran.center/asmaul-husna/73"
+  },
+  {
+    "id": 74,
+    "name": "Ар-Ракиб",
+    "arabic": "الرَّقِيبُ",
+    "translation": "Наблюдающий",
+    "transliteration_en": "Ar-Raqeeb",
+    "english_meaning": "The Ever Watchful",
+    "image": {
+      "svg_card_path": "images/74_ar-raqeeb.svg",
+      "calligraphy_svg_url": "https://raw.githubusercontent.com/Suleeyman/api-esmaul-husna/main/assets/static/images/raqib/raqib.svg",
+      "calligraphy_png_url": "https://raw.githubusercontent.com/Suleeyman/api-esmaul-husna/main/assets/static/images/raqib/raqib-256x256.png",
+      "local_calligraphy_png": "images/calligraphy_png/74_raqib-256x256.png"
+    },
+    "meaning": "Ар-Ракиб (Наблюдающий) — это Тот, Кто видит Своих рабов и наблюдает за их деяниями, Кто сохраняет и подсчитывает их слова и поступки, Кто требует от Своих рабов покорности и предостерегает их от ослушания. Аль-Хаттаби пишет: «Это — Хранитель, Который ничего не выпускает из виду».",
+    "related_names": [
+      {
+        "id": 73,
+        "arabic": "الشَّهِيدُ",
+        "transliteration": "Аш-Шахид",
+        "translation": "Свидетель, Наблюдающий"
+      },
+      {
+        "id": 45,
+        "arabic": "البَصِيرُ",
+        "transliteration": "Аль-Басыр",
+        "translation": "Всевидящий"
+      },
+      {
+        "id": 30,
+        "arabic": "العَلِيمُ",
+        "transliteration": "Аль-‘Алим",
+        "translation": "Всезнающий"
+      },
+      {
+        "id": 22,
+        "arabic": "المُهَيْمِنُ",
+        "transliteration": "Аль-Мухаймин",
+        "translation": "Хранитель"
+      }
+    ],
+    "quran": {
+      "mentions_count": 2,
+      "references": [
+        "4:1",
+        "5:117"
+      ],
+      "inline_references": [],
+      "quotes": []
+    },
+    "hadith_references": [],
+    "source_url": "https://koran.center/asmaul-husna/74"
+  },
+  {
+    "id": 75,
+    "name": "Аль-Хасиб",
+    "arabic": "الحَسِيبُ",
+    "translation": "Рассчитывающий, Довлеющий, Славный",
+    "transliteration_en": "Al-Haseeb",
+    "english_meaning": "The Reckoner",
+    "image": {
+      "svg_card_path": "images/75_al-haseeb.svg",
+      "calligraphy_svg_url": "https://raw.githubusercontent.com/Suleeyman/api-esmaul-husna/main/assets/static/images/hasib/hasib.svg",
+      "calligraphy_png_url": "https://raw.githubusercontent.com/Suleeyman/api-esmaul-husna/main/assets/static/images/hasib/hasib-256x256.png",
+      "local_calligraphy_png": "images/calligraphy_png/75_hasib-256x256.png"
+    },
+    "meaning": "Аль-Хасиб (Рассчитывающий, Довлеющий, Славный) — это Тот, Кто обеспечивает Своих рабов всем необходимым для существования, Кто призывает их к ответу и воздаёт им по заслугам, Кто обладает самыми славными и совершенными качествами. Ас-Са‘ди пишет: «Аль-Хасиб — это Тот, Кто знает всё о Своих рабах, Кто обеспечивает уповающих на Него, Кто вознаграждает и наказывает Своих рабов, руководствуясь Своей мудростью и тем, что Он знает об их больших и малых деяниях».",
+    "related_names": [
+      {
+        "id": 43,
+        "arabic": "الحَكَمُ",
+        "transliteration": "Аль-Хакам",
+        "translation": "Праведный Судия"
+      },
+      {
+        "id": 73,
+        "arabic": "الشَّهِيدُ",
+        "transliteration": "Аш-Шахид",
+        "translation": "Свидетель, Наблюдающий"
+      },
+      {
+        "id": 92,
+        "arabic": "الدَّيَّانُ",
+        "transliteration": "Ад-Дайян",
+        "translation": "Судия, Всевластный"
+      },
+      {
+        "id": 45,
+        "arabic": "البَصِيرُ",
+        "transliteration": "Аль-Басыр",
+        "translation": "Всевидящий"
+      }
+    ],
+    "quran": {
+      "mentions_count": 3,
+      "references": [
+        "4:6",
+        "4:86",
+        "33:39"
+      ],
+      "inline_references": [],
+      "quotes": []
+    },
+    "hadith_references": [],
+    "source_url": "https://koran.center/asmaul-husna/75"
+  },
+  {
+    "id": 76,
+    "name": "Аль-Мухит",
+    "arabic": "المُحِيطُ",
+    "translation": "Всеобъемлющий",
+    "transliteration_en": "Al-Muheet",
+    "english_meaning": "The All Encompassing",
+    "image": {
+      "svg_card_path": "images/76_al-muheet.svg",
+      "calligraphy_svg_url": null,
+      "calligraphy_png_url": null
+    },
+    "meaning": "Аль-Мухит (Всеобъемлющий) — это Тот, Кто охватывает все творения знанием, могуществом, силой, милостью и другими атрибутами совершенства. Аль-Халими пишет: «Аль-Мухит — это Тот, от Кого нельзя сбежать, и этим качеством не обладает никто, кроме Аллаха. Оно указывает на совершенство Его знания и могущества и отрицает такие характеристики, как незнание и бессилие».",
+    "related_names": [
+      {
+        "id": 54,
+        "arabic": "الوَاسِعُ",
+        "transliteration": "Аль-Васи‘",
+        "translation": "Всеобъемлющий"
+      },
+      {
+        "id": 9,
+        "arabic": "القَيُّومُ",
+        "transliteration": "Аль-Кайюм",
+        "translation": "Вседержитель"
+      },
+      {
+        "id": 30,
+        "arabic": "العَلِيمُ",
+        "transliteration": "Аль-‘Алим",
+        "translation": "Всезнающий"
+      },
+      {
+        "id": 77,
+        "arabic": "الحَفِيظُ",
+        "transliteration": "Аль-Хафиз",
+        "translation": "Хранитель"
+      }
+    ],
+    "quran": {
+      "mentions_count": 7,
+      "references": [
+        "2:19",
+        "2:255",
+        "3:120",
+        "4:108",
+        "8:47",
+        "9:49",
+        "11:92",
+        "17:60",
+        "41:54",
+        "85:20"
+      ],
+      "inline_references": [],
+      "quotes": []
+    },
+    "hadith_references": [],
+    "source_url": "https://koran.center/asmaul-husna/76"
+  },
+  {
+    "id": 77,
+    "name": "Аль-Хафиз",
+    "arabic": "الحَفِيظُ",
+    "translation": "Хранитель",
+    "transliteration_en": "Al-Hafeez",
+    "english_meaning": "The Guardian",
+    "image": {
+      "svg_card_path": "images/77_al-hafeez.svg",
+      "calligraphy_svg_url": "https://raw.githubusercontent.com/Suleeyman/api-esmaul-husna/main/assets/static/images/hafiz/hafiz.svg",
+      "calligraphy_png_url": "https://raw.githubusercontent.com/Suleeyman/api-esmaul-husna/main/assets/static/images/hafiz/hafiz-256x256.png",
+      "local_calligraphy_png": "images/calligraphy_png/77_hafiz-256x256.png"
+    },
+    "meaning": "Аль-Хафиз (Хранитель) — это Тот, Кто оберегает Своё творение и поддерживает в нём порядок, Кто оберегает Своих рабов от бед и неприятностей и оберегает верующих от того, что вредит их вере, Кто сохраняет хорошие и плохие деяния людей для того, чтобы вознаградить или наказать их. Ас-Са‘ди пишет: «Тот, Кто хранит Свои творения и объемлет знанием всё сущее, Кто оберегает Своих возлюбленных рабов от грехов и губительных поступков, Кто проявляет к ним милость, когда они находятся в движении и когда они отдыхают, Кто подсчитывает деяния рабов и то, что они заслужили».",
+    "related_names": [
+      {
+        "id": 22,
+        "arabic": "المُهَيْمِنُ",
+        "transliteration": "Аль-Мухаймин",
+        "translation": "Хранитель"
+      },
+      {
+        "id": 68,
+        "arabic": "الوَلِيُّ",
+        "transliteration": "Аль-Вали",
+        "translation": "Покровитель"
+      },
+      {
+        "id": 69,
+        "arabic": "المَولَى",
+        "transliteration": "Аль-Мауля",
+        "translation": "Покровитель, Властелин"
+      },
+      {
+        "id": 74,
+        "arabic": "الرَّقِيبُ",
+        "transliteration": "Ар-Ракиб",
+        "translation": "Наблюдающий"
+      },
+      {
+        "id": 76,
+        "arabic": "المُحِيطُ",
+        "transliteration": "Аль-Мухит",
+        "translation": "Всеобъемлющий"
+      }
+    ],
+    "quran": {
+      "mentions_count": 7,
+      "references": [
+        "11:57",
+        "12:55",
+        "34:21",
+        "41:54",
+        "42:6",
+        "85:20"
+      ],
+      "inline_references": [],
+      "quotes": []
+    },
+    "hadith_references": [],
+    "source_url": "https://koran.center/asmaul-husna/77"
+  },
+  {
+    "id": 78,
+    "name": "Аль-Вакиль",
+    "arabic": "الوَكِيلُ",
+    "translation": "Попечитель, Поручитель",
+    "transliteration_en": "Al-Wakeel",
+    "english_meaning": "The Trustee",
+    "image": {
+      "svg_card_path": "images/78_al-wakeel.svg",
+      "calligraphy_svg_url": null,
+      "calligraphy_png_url": null
+    },
+    "meaning": "Аль-Вакиль (Попечитель, Поручитель) — это Тот, Кто попечительствует о Своих творениях, заботится об их нуждах и интересах, Кто наблюдает за всем, что говорят и делают Его рабы, и заслуживает того, чтобы они доверяли Ему и полагались на Него. Ас-Са‘ди пишет: «Аль-Вакиль — это Тот, Кто управляет делами Своих творений благодаря Своему знанию, абсолютному могуществу и безграничной мудрости; Кто покровительствует Своим приближённым, облегчая им путь к легчайшему, отдаляя их от тягчайшего и устраивая их дела. И тому, кто делает Его своим Попечителем, достаточно Его».",
+    "related_names": [
+      {
+        "id": 79,
+        "arabic": "الكَفِيلُ",
+        "transliteration": "Аль-Кяфиль",
+        "translation": "Поручитель"
+      },
+      {
+        "id": 72,
+        "arabic": "الكَافِي",
+        "transliteration": "Аль-Кяфи",
+        "translation": "Довлеющий, Избавитель"
+      },
+      {
+        "id": 68,
+        "arabic": "الوَلِيُّ",
+        "transliteration": "Аль-Вали",
+        "translation": "Покровитель"
+      },
+      {
+        "id": 69,
+        "arabic": "المَولَى",
+        "transliteration": "Аль-Мауля",
+        "translation": "Покровитель, Властелин"
+      }
+    ],
+    "quran": {
+      "mentions_count": 14,
+      "references": [
+        "3:173",
+        "4:81",
+        "4:171",
+        "5:23",
+        "6:66",
+        "10:84",
+        "11:12",
+        "28:28",
+        "33:3",
+        "39:62"
+      ],
+      "inline_references": [],
+      "quotes": []
+    },
+    "hadith_references": [],
+    "source_url": "https://koran.center/asmaul-husna/78"
+  },
+  {
+    "id": 79,
+    "name": "Аль-Кяфиль",
+    "arabic": "الكَفِيلُ",
+    "translation": "Поручитель",
+    "transliteration_en": "Al-Kafeel",
+    "english_meaning": "The Surety, The Witness",
+    "image": {
+      "svg_card_path": "images/79_al-kafeel.svg",
+      "calligraphy_svg_url": null,
+      "calligraphy_png_url": null
+    },
+    "meaning": "Аль-Кяфиль (Поручитель) — это Тот, Кто ручается за Своих рабов и за обеспечение их пропитанием и средствами к существованию, Кто заботится об их интересах, устраивает их дела и удовлетворяет их нужды. Это прекраснейшее имя близко по значению с именем Аль-Вакиль. Аль-Исфахани пишет: «Иногда имя Аль-Вакиль толкуют как Аль-Кяфиль, но имя Аль-Вакиль имеет более широкий смысл, потому что каждый поручитель — это вакиль, но не каждый вакиль — это поручитель».",
+    "related_names": [
+      {
+        "id": 78,
+        "arabic": "الوَكِيلُ",
+        "transliteration": "Аль-Вакиль",
+        "translation": "Попечитель, Поручитель"
+      },
+      {
+        "id": 73,
+        "arabic": "الشَّهِيدُ",
+        "transliteration": "Аш-Шахид",
+        "translation": "Свидетель, Наблюдающий"
+      },
+      {
+        "id": 75,
+        "arabic": "الحَسِيبُ",
+        "transliteration": "Аль-Хасиб",
+        "translation": "Рассчитывающий, Довлеющий, Славный"
+      },
+      {
+        "id": 72,
+        "arabic": "الكَافِي",
+        "transliteration": "Аль-Кяфи",
+        "translation": "Довлеющий, Избавитель"
+      }
+    ],
+    "quran": {
+      "mentions_count": 1,
+      "references": [
+        "16:91"
+      ],
+      "inline_references": [],
+      "quotes": []
+    },
+    "hadith_references": [],
+    "source_url": "https://koran.center/asmaul-husna/79"
+  },
+  {
+    "id": 80,
+    "name": "Аль-Мукит",
+    "arabic": "المُقيِتُ",
+    "translation": "Наблюдающий, Дарующий пропитание",
+    "transliteration_en": "Al-Muqeet",
+    "english_meaning": "The Nourisher",
+    "image": {
+      "svg_card_path": "images/80_al-muqeet.svg",
+      "calligraphy_svg_url": "https://raw.githubusercontent.com/Suleeyman/api-esmaul-husna/main/assets/static/images/muqit/muqit.svg",
+      "calligraphy_png_url": "https://raw.githubusercontent.com/Suleeyman/api-esmaul-husna/main/assets/static/images/muqit/muqit-256x256.png",
+      "local_calligraphy_png": "images/calligraphy_png/80_muqit-256x256.png"
+    },
+    "meaning": "Аль-Мукит (Наблюдающий, Дарующий пропитание) — это Тот, Кто наблюдает за Своими рабами и властен над ними, Кто сберегает для них пропитание и посылает его частями так, чтобы жизнь поддерживалась в них до установленного срока. Аль-Куртуби, разъясняя смысл этого имени, пишет: «Оно означает, что Всевышний Аллах постоянно на протяжении какого-то времени даёт каждому человеку и животному средства к существованию, пока Он не пожелает прекратить это, и, когда Он лишает творение того, что необходимо для его существования, оно умирает».",
+    "related_names": [
+      {
+        "id": 32,
+        "arabic": "الرَّزَّاقُ",
+        "transliteration": "Ар-Раззак",
+        "translation": "Наделяющий щедро"
+      },
+      {
+        "id": 9,
+        "arabic": "القَيُّومُ",
+        "transliteration": "Аль-Кайюм",
+        "translation": "Вседержитель"
+      },
+      {
+        "id": 7,
+        "arabic": "الصَّمَدُ",
+        "transliteration": "Ас-Самад",
+        "translation": "Самодостаточный"
+      },
+      {
+        "id": 87,
+        "arabic": "المُعْطِي",
+        "transliteration": "Аль-Му‘ты ",
+        "translation": "Даритель"
+      }
+    ],
+    "quran": {
+      "mentions_count": 1,
+      "references": [
+        "4:85"
+      ],
+      "inline_references": [],
+      "quotes": []
+    },
+    "hadith_references": [],
+    "source_url": "https://koran.center/asmaul-husna/80"
+  },
+  {
+    "id": 81,
+    "name": "Аль-Варис",
+    "arabic": "الوَارِثُ",
+    "translation": "Наследующий",
+    "transliteration_en": "Al-Warith",
+    "english_meaning": "The Inheritor of All",
+    "image": {
+      "svg_card_path": "images/81_al-warith.svg",
+      "calligraphy_svg_url": "https://raw.githubusercontent.com/Suleeyman/api-esmaul-husna/main/assets/static/images/warith/warith.svg",
+      "calligraphy_png_url": "https://raw.githubusercontent.com/Suleeyman/api-esmaul-husna/main/assets/static/images/warith/warith-256x256.png",
+      "local_calligraphy_png": "images/calligraphy_png/81_warith-256x256.png"
+    },
+    "meaning": "Аль-Варис (Наследующий) — это Тот, Кто вечен и будет после того, как исчезнут творения, Кто владеет всем абсолютно и безраздельно, и когда Он передаёт одни творения во владение другим, то после их смерти они неизбежно возвращаются к Нему.",
+    "related_names": [
+      {
+        "id": 49,
+        "arabic": "الآخِرُ",
+        "transliteration": "Аль-Ахир",
+        "translation": "Последний"
+      },
+      {
+        "id": 18,
+        "arabic": "المَلِكُ",
+        "transliteration": "Аль-Малик",
+        "translation": "Царь, Владыка"
+      },
+      {
+        "id": 34,
+        "arabic": "المَلِيكُ",
+        "transliteration": "Аль-Малӣк",
+        "translation": "Властелин"
+      },
+      {
+        "id": 9,
+        "arabic": "القَيُّومُ",
+        "transliteration": "Аль-Кайюм",
+        "translation": "Вседержитель"
+      }
+    ],
+    "quran": {
+      "mentions_count": 3,
+      "references": [
+        "3:180",
+        "15:23",
+        "21:89"
+      ],
+      "inline_references": [],
+      "quotes": []
+    },
+    "hadith_references": [],
+    "source_url": "https://koran.center/asmaul-husna/81"
+  },
+  {
+    "id": 82,
+    "name": "Аль-Джамиль",
+    "arabic": "الجَمِيلُ",
+    "translation": "Прекрасный, Красивый",
+    "transliteration_en": "Al-Jameel",
+    "english_meaning": "The Beautiful",
+    "image": {
+      "svg_card_path": "images/82_al-jameel.svg",
+      "calligraphy_svg_url": null,
+      "calligraphy_png_url": null
+    },
+    "meaning": "Аль-Джамиль (Прекрасный, Красивый) — это Тот, Кто прекрасен Своей сущностью, качествами и деяниями, Кто красиво предопределяет и красиво осуществляет задуманное, Чьё творение совершенно, а повеления — исполнены мудрости. Аль-Хаттаби сказал, что Аль-Джамиль — это Тот, Кто делает всё красиво и наилучшим образом, Кто обладает светом и великолепием.",
+    "related_names": [
+      {
+        "id": 28,
+        "arabic": "المُصَوِّرُ",
+        "transliteration": "Аль-Мусаввир",
+        "translation": "Дарующий облик"
+      },
+      {
+        "id": 94,
+        "arabic": "السُّبُّوحُ",
+        "transliteration": "Ас-Суббух",
+        "translation": "Святой"
+      },
+      {
+        "id": 98,
+        "arabic": "الطَّيِّبُ",
+        "transliteration": "Ат-Таййиб",
+        "translation": "Благой"
+      },
+      {
+        "id": 19,
+        "arabic": "القُدُّوسُ",
+        "transliteration": "Аль-Куддус",
+        "translation": "Святой"
+      }
+    ],
+    "quran": {
+      "mentions_count": 0,
+      "references": [],
+      "inline_references": [],
+      "quotes": []
+    },
+    "hadith_references": [],
+    "source_url": "https://koran.center/asmaul-husna/82"
+  },
+  {
+    "id": 83,
+    "name": "Аль-Кāбид",
+    "arabic": "القَابِضُ",
+    "translation": "Удерживающий, Сжимающий",
+    "transliteration_en": "Al-Qaabid",
+    "english_meaning": "The Constrictor",
+    "image": {
+      "svg_card_path": "images/83_al-qaabid.svg",
+      "calligraphy_svg_url": "https://raw.githubusercontent.com/Suleeyman/api-esmaul-husna/main/assets/static/images/qabid/qabid.svg",
+      "calligraphy_png_url": "https://raw.githubusercontent.com/Suleeyman/api-esmaul-husna/main/assets/static/images/qabid/qabid-256x256.png",
+      "local_calligraphy_png": "images/calligraphy_png/83_qabid-256x256.png"
+    },
+    "meaning": "Аль-Кāбид (Удерживающий, Сжимающий) — это Тот, Кто удерживает и сжимает то, что пожелает, и ограничивает в средствах того, кого пожелает, Кто забирает души умирающих, когда истекает их срок, и сжимает сердца тех, кто отворачивается от Него. Это имя выражает полноту могущества Аллаха, Его знания, мудрости и заботы о Своих рабах.",
+    "related_names": [
+      {
+        "id": 84,
+        "arabic": "البَاسِطُ",
+        "transliteration": "Аль-Бāсит",
+        "translation": "Простирающий"
+      },
+      {
+        "id": 85,
+        "arabic": "المُقَدِّمُ",
+        "transliteration": "Аль-Мукаддим",
+        "translation": "Приближающий"
+      },
+      {
+        "id": 86,
+        "arabic": "الْمُؤَخِّرُ",
+        "transliteration": "Аль-Му’аххир",
+        "translation": "Отдаляющий, Задерживающий"
+      },
+      {
+        "id": 87,
+        "arabic": "المُعْطِي",
+        "transliteration": "Аль-Му‘ты ",
+        "translation": "Даритель"
+      }
+    ],
+    "quran": {
+      "mentions_count": 0,
+      "references": [
+        "2:245"
+      ],
+      "inline_references": [],
+      "quotes": []
+    },
+    "hadith_references": [],
+    "source_url": "https://koran.center/asmaul-husna/83"
+  },
+  {
+    "id": 84,
+    "name": "Аль-Бāсит",
+    "arabic": "البَاسِطُ",
+    "translation": "Простирающий",
+    "transliteration_en": "Al-Baasit",
+    "english_meaning": "The Reliever",
+    "image": {
+      "svg_card_path": "images/84_al-baasit.svg",
+      "calligraphy_svg_url": "https://raw.githubusercontent.com/Suleeyman/api-esmaul-husna/main/assets/static/images/basit/basit.svg",
+      "calligraphy_png_url": "https://raw.githubusercontent.com/Suleeyman/api-esmaul-husna/main/assets/static/images/basit/basit-256x256.png",
+      "local_calligraphy_png": "images/calligraphy_png/84_basit-256x256.png"
+    },
+    "meaning": "Аль-Бāсит (Простирающий, Распространяющий) — это Тот, Кто щедро одаряет тех, кого пожелает, и принимает покаяния кающихся, Кто увеличивает в Своём творении то, что пожелает, и расширяет сердца тех, кто верует в Него. Аль-Бāсит распространяет Свою милость на Своих рабов, одаряя их благами щедро и сверх того, в чём они нуждаются.",
+    "related_names": [
+      {
+        "id": 83,
+        "arabic": "القَابِضُ",
+        "transliteration": "Аль-Кāбид",
+        "translation": "Удерживающий, Сжимающий"
+      },
+      {
+        "id": 85,
+        "arabic": "المُقَدِّمُ",
+        "transliteration": "Аль-Мукаддим",
+        "translation": "Приближающий"
+      },
+      {
+        "id": 86,
+        "arabic": "الْمُؤَخِّرُ",
+        "transliteration": "Аль-Му’аххир",
+        "translation": "Отдаляющий, Задерживающий"
+      },
+      {
+        "id": 87,
+        "arabic": "المُعْطِي",
+        "transliteration": "Аль-Му‘ты ",
+        "translation": "Даритель"
+      }
+    ],
+    "quran": {
+      "mentions_count": 0,
+      "references": [
+        "2:245"
+      ],
+      "inline_references": [],
+      "quotes": []
+    },
+    "hadith_references": [],
+    "source_url": "https://koran.center/asmaul-husna/84"
+  },
+  {
+    "id": 85,
+    "name": "Аль-Мукаддим",
+    "arabic": "المُقَدِّمُ",
+    "translation": "Приближающий",
+    "transliteration_en": "Al-Muqaddim",
+    "english_meaning": "The Promoter (Expediter)",
+    "image": {
+      "svg_card_path": "images/85_al-muqaddim.svg",
+      "calligraphy_svg_url": null,
+      "calligraphy_png_url": null
+    },
+    "meaning": "Аль-Мукаддим (Приближающий, Ставящий вперёд) — это Тот, Кто устанавливает порядок вещей и событий, создаёт одни творения раньше других и помещает одни вещи перед другими, руководствуясь Своим знанием и мудростью, Кто возвышает одни творения над другими и отдаёт одним предпочтение перед другими. Он определил меру всему, возвысил Своих приближённых над другими Своими рабами и поставил одних выше других по степеням.",
+    "related_names": [
+      {
+        "id": 86,
+        "arabic": "الْمُؤَخِّرُ",
+        "transliteration": "Аль-Му’аххир",
+        "translation": "Отдаляющий, Задерживающий"
+      },
+      {
+        "id": 26,
+        "arabic": "الخَالِقُ",
+        "transliteration": "Аль-Халик",
+        "translation": "Творец"
+      },
+      {
+        "id": 27,
+        "arabic": "البَارِئُ",
+        "transliteration": "Аль-Бари",
+        "translation": "Создатель"
+      },
+      {
+        "id": 29,
+        "arabic": "الخَلّاقُ",
+        "transliteration": "Аль-Халляк",
+        "translation": "Созидатель"
+      }
+    ],
+    "quran": {
+      "mentions_count": 0,
+      "references": [],
+      "inline_references": [],
+      "quotes": []
+    },
+    "hadith_references": [],
+    "source_url": "https://koran.center/asmaul-husna/85"
+  },
+  {
+    "id": 86,
+    "name": "Аль-Му’аххир",
+    "arabic": "الْمُؤَخِّرُ",
+    "translation": "Отдаляющий, Задерживающий",
+    "transliteration_en": "Al-Muakhir",
+    "english_meaning": "The Delayer",
+    "image": {
+      "svg_card_path": "images/86_al-muakhir.svg",
+      "calligraphy_svg_url": null,
+      "calligraphy_png_url": null
+    },
+    "meaning": "Аль-Му’аххир (Отдаляющий, Задерживающий) — это Тот, Кто создаёт одни творения позже других и помещает одни вещи позади других, руководствуясь Своим знанием и мудростью, Кто откладывает награду праведников и наказание грешников до назначенного срока. В Его власти задержать или отсрочить что-то даже тогда, когда это кажется невозможным.",
+    "related_names": [
+      {
+        "id": 85,
+        "arabic": "المُقَدِّمُ",
+        "transliteration": "Аль-Мукаддим",
+        "translation": "Приближающий"
+      },
+      {
+        "id": 83,
+        "arabic": "القَابِضُ",
+        "transliteration": "Аль-Кāбид",
+        "translation": "Удерживающий, Сжимающий"
+      },
+      {
+        "id": 84,
+        "arabic": "البَاسِطُ",
+        "transliteration": "Аль-Бāсит",
+        "translation": "Простирающий"
+      },
+      {
+        "id": 92,
+        "arabic": "الدَّيَّانُ",
+        "transliteration": "Ад-Дайян",
+        "translation": "Судия, Всевластный"
+      }
+    ],
+    "quran": {
+      "mentions_count": 0,
+      "references": [
+        "71:4"
+      ],
+      "inline_references": [],
+      "quotes": []
+    },
+    "hadith_references": [],
+    "source_url": "https://koran.center/asmaul-husna/86"
+  },
+  {
+    "id": 87,
+    "name": "Аль-Му‘ты ",
+    "arabic": "المُعْطِي",
+    "translation": "Даритель",
+    "transliteration_en": "Al-Muty",
+    "english_meaning": "The Giver",
+    "image": {
+      "svg_card_path": "images/87_al-muty.svg",
+      "calligraphy_svg_url": null,
+      "calligraphy_png_url": null
+    },
+    "meaning": "Аль-Му‘ты‌ (Даятель, Даритель) — это Тот, Кто одаряет Своих рабов, верующих и неверующих. Это относится абсолютно ко всему, чем обладает и что приобретает человек, даже если он пользуется для этого недозволенными средствами. Он Единственный, Кто одаряет в истинном смысле. Никто не может лишить того, чем Он одарил, и никто не может одарить тем, чего Он лишил.",
+    "related_names": [
+      {
+        "id": 60,
+        "arabic": "الوَهَّابُ",
+        "transliteration": "Аль-Ваххаб",
+        "translation": "Дарующий"
+      },
+      {
+        "id": 61,
+        "arabic": "الكَرِيمُ",
+        "transliteration": "Аль-Карим",
+        "translation": "Щедрый"
+      },
+      {
+        "id": 80,
+        "arabic": "المُقيِتُ",
+        "transliteration": "Аль-Мукит",
+        "translation": "Наблюдающий, Дарующий пропитание"
+      },
+      {
+        "id": 32,
+        "arabic": "الرَّزَّاقُ",
+        "transliteration": "Ар-Раззак",
+        "translation": "Наделяющий щедро"
+      },
+      {
+        "id": 88,
+        "arabic": "المَنَّانُ",
+        "transliteration": "Аль-Маннан",
+        "translation": "Милостивый, Щедрый"
+      }
+    ],
+    "quran": {
+      "mentions_count": 1,
+      "references": [
+        "108:1"
+      ],
+      "inline_references": [],
+      "quotes": []
+    },
+    "hadith_references": [],
+    "source_url": "https://koran.center/asmaul-husna/87"
+  },
+  {
+    "id": 88,
+    "name": "Аль-Маннан",
+    "arabic": "المَنَّانُ",
+    "translation": "Милостивый, Щедрый",
+    "transliteration_en": "Al-Mannaan",
+    "english_meaning": "The Generous Bestower",
+    "image": {
+      "svg_card_path": "images/88_al-mannaan.svg",
+      "calligraphy_svg_url": null,
+      "calligraphy_png_url": null
+    },
+    "meaning": "Аль-Маннан (Милостивый, Щедрый) — это Тот, Кто щедро одаряет до того, как Его просят об этом, и не в качестве награды за какое-то благодеяние.",
+    "related_names": [
+      {
+        "id": 60,
+        "arabic": "الوَهَّابُ",
+        "transliteration": "Аль-Ваххаб",
+        "translation": "Дарующий"
+      },
+      {
+        "id": 61,
+        "arabic": "الكَرِيمُ",
+        "transliteration": "Аль-Карим",
+        "translation": "Щедрый"
+      },
+      {
+        "id": 62,
+        "arabic": "الأَكْرَمُ",
+        "transliteration": "Аль-Акрам",
+        "translation": "Наищедрейший"
+      },
+      {
+        "id": 87,
+        "arabic": "المُعْطِي",
+        "transliteration": "Аль-Му‘ты ",
+        "translation": "Даритель"
+      }
+    ],
+    "quran": {
+      "mentions_count": 0,
+      "references": [
+        "3:164"
+      ],
+      "inline_references": [],
+      "quotes": []
+    },
+    "hadith_references": [],
+    "source_url": "https://koran.center/asmaul-husna/88"
+  },
+  {
+    "id": 89,
+    "name": "Аль-Витр",
+    "arabic": "الوِتْرُ",
+    "translation": "Один, Единственный",
+    "transliteration_en": "Al-Witr",
+    "english_meaning": "The One and Unique",
+    "image": {
+      "svg_card_path": "images/89_al-witr.svg",
+      "calligraphy_svg_url": null,
+      "calligraphy_png_url": null
+    },
+    "meaning": "Аль-Витр (Один, Единственный) — это Единственный в Своей сущности, владычестве, божественности и обладании совершенными атрибутами, Единственный, Чья сущность бесподобна и неделима. Это имя означает, что если Аллаха описывают качеством, которым может быть описан кто-либо иной, то применительно к Нему оно имеет особый, отличный смысл.",
+    "related_names": [
+      {
+        "id": 6,
+        "arabic": "الأَحَدُ",
+        "transliteration": "Аль-Ахад",
+        "translation": "Единственный"
+      },
+      {
+        "id": 37,
+        "arabic": "الوَاحِدُ",
+        "transliteration": "Аль-Вахид",
+        "translation": "Единственный"
+      },
+      {
+        "id": 5,
+        "arabic": "الإِلهُ",
+        "transliteration": "Аль-Илях",
+        "translation": "Бог"
+      }
+    ],
+    "quran": {
+      "mentions_count": 0,
+      "references": [],
+      "inline_references": [],
+      "quotes": []
+    },
+    "hadith_references": [],
+    "source_url": "https://koran.center/asmaul-husna/89"
+  },
+  {
+    "id": 90,
+    "name": "Аль-Джаввад",
+    "arabic": "الجَوَّادُ",
+    "translation": "Щедрый",
+    "transliteration_en": "Al-Jawwaad",
+    "english_meaning": "The Magnanimous",
+    "image": {
+      "svg_card_path": "images/90_al-jawwaad.svg",
+      "calligraphy_svg_url": null,
+      "calligraphy_png_url": null
+    },
+    "meaning": "Аль-Джавад (Щедрый) — это Тот, Кто обладает абсолютным бытием, совершенными качествами и наилучшими именами, Кто охватывает Своей щедростью все творения, одаряя их зримыми и незримыми благами с избытком, проливая на них Свою милость в изобилии, Чьи благодеяния не прекращаются, Чьи сокровищницы не иссякают, Чьи щедроты на всех делах и велениях Его.",
+    "related_names": [
+      {
+        "id": 61,
+        "arabic": "الكَرِيمُ",
+        "transliteration": "Аль-Карим",
+        "translation": "Щедрый"
+      },
+      {
+        "id": 62,
+        "arabic": "الأَكْرَمُ",
+        "transliteration": "Аль-Акрам",
+        "translation": "Наищедрейший"
+      },
+      {
+        "id": 60,
+        "arabic": "الوَهَّابُ",
+        "transliteration": "Аль-Ваххаб",
+        "translation": "Дарующий"
+      },
+      {
+        "id": 88,
+        "arabic": "المَنَّانُ",
+        "transliteration": "Аль-Маннан",
+        "translation": "Милостивый, Щедрый"
+      }
+    ],
+    "quran": {
+      "mentions_count": 0,
+      "references": [],
+      "inline_references": [],
+      "quotes": []
+    },
+    "hadith_references": [],
+    "source_url": "https://koran.center/asmaul-husna/90"
+  },
+  {
+    "id": 91,
+    "name": "Аль-Хайи",
+    "arabic": "الحَيِيُّ",
+    "translation": "Стыдливый",
+    "transliteration_en": "Al-Hayyu",
+    "english_meaning": "The Shy",
+    "image": {
+      "svg_card_path": "images/91_al-hayyu.svg",
+      "calligraphy_svg_url": null,
+      "calligraphy_png_url": null
+    },
+    "meaning": "Аль-Хайи (Стыдливый) — это Тот, Кто стыдится отказать Своему рабу, когда тот призывает Его и протягивает к Нему свои руки, или наказать его, когда тот надеется на Его милость и прощение, или опозорить его, когда тот кается и прибегает к Его защите. Абу аль-Хасан аль-Мубаракфури сказал: «Это — Тот, Кто сильно стыдится позорить Своих рабов и разоблачать их непристойные поступки».",
+    "related_names": [
+      {
+        "id": 64,
+        "arabic": "الرَّؤُوفُ",
+        "transliteration": "Ар-Рауф",
+        "translation": "Добрый, Сострадательный"
+      },
+      {
+        "id": 93,
+        "arabic": "الرَّفِيقُ",
+        "transliteration": "Ар-Рафик",
+        "translation": "Добрый, Неспешащий"
+      },
+      {
+        "id": 2,
+        "arabic": "الرَّحْمَٰنُ",
+        "transliteration": "Ар-Рахман",
+        "translation": "Милостивый"
+      },
+      {
+        "id": 3,
+        "arabic": "الرَّحِيمُ",
+        "transliteration": "Ар-Рахим",
+        "translation": "Милующий"
+      }
+    ],
+    "quran": {
+      "mentions_count": 0,
+      "references": [],
+      "inline_references": [],
+      "quotes": []
+    },
+    "hadith_references": [],
+    "source_url": "https://koran.center/asmaul-husna/91"
+  },
+  {
+    "id": 92,
+    "name": "Ад-Дайян",
+    "arabic": "الدَّيَّانُ",
+    "translation": "Судия, Всевластный",
+    "transliteration_en": "Ad-Dayyan",
+    "english_meaning": "The One Who Recompenses",
+    "image": {
+      "svg_card_path": "images/92_ad-dayyan.svg",
+      "calligraphy_svg_url": null,
+      "calligraphy_png_url": null
+    },
+    "meaning": "Ад-Дайян (Судия, Всевластный) — это Тот, Кто обладает абсолютной властью над Своими рабами и выносит решения о них, вознаграждая за благие дела и наказывая за злодеяния. Аль-Халими пишет, что Ад-Дайян — это Тот, Кто требует отчёт и воздаёт за деяния, ничего не упуская из виду, воздавая добром за добро и злом за зло.",
+    "related_names": [
+      {
+        "id": 43,
+        "arabic": "الحَكَمُ",
+        "transliteration": "Аль-Хакам",
+        "translation": "Праведный Судия"
+      },
+      {
+        "id": 75,
+        "arabic": "الحَسِيبُ",
+        "transliteration": "Аль-Хасиб",
+        "translation": "Рассчитывающий, Довлеющий, Славный"
+      },
+      {
+        "id": 92,
+        "arabic": "الدَّيَّانُ",
+        "transliteration": "Ад-Дайян",
+        "translation": "Судия, Всевластный"
+      },
+      {
+        "id": 39,
+        "arabic": "الحَقُّ",
+        "transliteration": "Аль-Хакк",
+        "translation": "Истинный"
+      }
+    ],
+    "quran": {
+      "mentions_count": 0,
+      "references": [],
+      "inline_references": [],
+      "quotes": []
+    },
+    "hadith_references": [],
+    "source_url": "https://koran.center/asmaul-husna/92"
+  },
+  {
+    "id": 93,
+    "name": "Ар-Рафик",
+    "arabic": "الرَّفِيقُ",
+    "translation": "Добрый, Неспешащий",
+    "transliteration_en": "Ar-Rafeeq",
+    "english_meaning": "The Kind",
+    "image": {
+      "svg_card_path": "images/93_ar-rafeeq.svg",
+      "calligraphy_svg_url": null,
+      "calligraphy_png_url": null
+    },
+    "meaning": "Ар-Рафик (Добрый, Неспешащий) — это Тот, Кто добр к Своим рабам и облегчает их положение, Кто осуществляет Свою волю постепенно и неспешно, Кто не торопится наказать тех, кто противится Ему, и предоставляет им отсрочку. Ар-Ридвани пишет: «Ар-Рафик — это Тот, Кто добр к Своим рабам и близок к ним. Он прощает им грехи и принимает их покаяния. Он заботится о них безвозмездно и без всякой нужды в них, облегчая им пути достижение желаемого. Он предопределил для них земной удел и указал им на то, что принесёт им пользу. Его милость к ним обширна, и мудрый замысел Его о них совершенен».",
+    "related_names": [
+      {
+        "id": 64,
+        "arabic": "الرَّؤُوفُ",
+        "transliteration": "Ар-Рауф",
+        "translation": "Добрый, Сострадательный"
+      },
+      {
+        "id": 59,
+        "arabic": "الوَدُودُ",
+        "transliteration": "Аль-Вадуд",
+        "translation": "Любящий, Любимый"
+      },
+      {
+        "id": 2,
+        "arabic": "الرَّحْمَٰنُ",
+        "transliteration": "Ар-Рахман",
+        "translation": "Милостивый"
+      },
+      {
+        "id": 46,
+        "arabic": "اللَّطِيفُ",
+        "transliteration": "Аль-Лятыф",
+        "translation": "Проникновенный, Добрый"
+      }
+    ],
+    "quran": {
+      "mentions_count": 0,
+      "references": [],
+      "inline_references": [],
+      "quotes": []
+    },
+    "hadith_references": [],
+    "source_url": "https://koran.center/asmaul-husna/93"
+  },
+  {
+    "id": 94,
+    "name": "Ас-Суббух",
+    "arabic": "السُّبُّوحُ",
+    "translation": "Святой",
+    "transliteration_en": "As-Subbuh",
+    "english_meaning": "The All-Perfect",
+    "image": {
+      "svg_card_path": "images/94_as-subbuh.svg",
+      "calligraphy_svg_url": null,
+      "calligraphy_png_url": null
+    },
+    "meaning": "Ас-Суббух (Святой) — это Тот, Кто далёк от несовершенства и превыше любых недостатков, Кто не имеет Себе подобных и равных, не имеет детей и сотоварищей, не похож на Свои творения и не нуждается в них. Это имя близко по значению с именем Аль-Куддус.",
+    "related_names": [
+      {
+        "id": 19,
+        "arabic": "القُدُّوسُ",
+        "transliteration": "Аль-Куддус",
+        "translation": "Святой"
+      },
+      {
+        "id": 20,
+        "arabic": "السَّلاَمُ",
+        "transliteration": "Ас-Салям",
+        "translation": "Пречистый"
+      },
+      {
+        "id": 98,
+        "arabic": "الطَّيِّبُ",
+        "transliteration": "Ат-Таййиб",
+        "translation": "Благой"
+      },
+      {
+        "id": 82,
+        "arabic": "الجَمِيلُ",
+        "transliteration": "Аль-Джамиль",
+        "translation": "Прекрасный, Красивый"
+      }
+    ],
+    "quran": {
+      "mentions_count": 0,
+      "references": [],
+      "inline_references": [],
+      "quotes": []
+    },
+    "hadith_references": [],
+    "source_url": "https://koran.center/asmaul-husna/94"
+  },
+  {
+    "id": 95,
+    "name": "Ас-Ситтир",
+    "arabic": "السِّتِّيرُ",
+    "translation": "Покрывающий, Оберегающий",
+    "transliteration_en": "As-Sittir",
+    "english_meaning": "The Concealer",
+    "image": {
+      "svg_card_path": "images/95_as-sittir.svg",
+      "calligraphy_svg_url": null,
+      "calligraphy_png_url": null
+    },
+    "meaning": "Ас-Ситтир (Покрывающий, Оберегающий) — это Тот, Кто покрывает грехи и недостатки Своих рабов и стыдится позорить их, Кто любит, когда Его рабы скрывают свои грехи и не выискивают недостатки друг у друга. Аль-Байхаки пишет: «Ас-Ситтир означает, что Он покрывает многие грехи Своих рабов и не позорит их на людях, и Он любит, когда Его рабы скрывают свои недостатки и избегают того, что может очернить их».",
+    "related_names": [
+      {
+        "id": 55,
+        "arabic": "الغَفُورُ",
+        "transliteration": "Аль-Гафур",
+        "translation": "Прощающий"
+      },
+      {
+        "id": 56,
+        "arabic": "الغَفَّارُ",
+        "transliteration": "Аль-Гаффар",
+        "translation": "Всепрощающий"
+      },
+      {
+        "id": 57,
+        "arabic": "العَفُوُّ",
+        "transliteration": "Аль-‘Афувв",
+        "translation": "Отпускающий вину, Прощающий"
+      },
+      {
+        "id": 82,
+        "arabic": "الجَمِيلُ",
+        "transliteration": "Аль-Джамиль",
+        "translation": "Прекрасный, Красивый"
+      }
+    ],
+    "quran": {
+      "mentions_count": 0,
+      "references": [],
+      "inline_references": [],
+      "quotes": []
+    },
+    "hadith_references": [],
+    "source_url": "https://koran.center/asmaul-husna/95"
+  },
+  {
+    "id": 96,
+    "name": "Ас-Саййид",
+    "arabic": "السَّيِّدُ",
+    "translation": "Господин",
+    "transliteration_en": "As-Sayyid",
+    "english_meaning": "The Sovereign",
+    "image": {
+      "svg_card_path": "images/96_as-sayyid.svg",
+      "calligraphy_svg_url": null,
+      "calligraphy_png_url": null
+    },
+    "meaning": "Ас-Саййид (Господин) — это Тот, Кто владеет и правит всем сущим, Кто обладает самыми превосходными качествами и заботится о Своём творении, Кто превыше всего остального настолько, что Его величие недостижимо для Его рабов",
+    "related_names": [
+      {
+        "id": 18,
+        "arabic": "المَلِكُ",
+        "transliteration": "Аль-Малик",
+        "translation": "Царь, Владыка"
+      },
+      {
+        "id": 34,
+        "arabic": "المَلِيكُ",
+        "transliteration": "Аль-Малӣк",
+        "translation": "Властелин"
+      },
+      {
+        "id": 4,
+        "arabic": "الرَّبُّ",
+        "transliteration": "Ар-Рабб",
+        "translation": "Господь"
+      },
+      {
+        "id": 38,
+        "arabic": "القَهَّارُ",
+        "transliteration": "Аль-Каххар",
+        "translation": "Всевластный"
+      }
+    ],
+    "quran": {
+      "mentions_count": 0,
+      "references": [],
+      "inline_references": [],
+      "quotes": []
+    },
+    "hadith_references": [],
+    "source_url": "https://koran.center/asmaul-husna/96"
+  },
+  {
+    "id": 97,
+    "name": "Аш-Шāфӣ",
+    "arabic": "الشَّافِي",
+    "translation": "Целитель",
+    "transliteration_en": "Ash-Shaafee",
+    "english_meaning": "The Healer",
+    "image": {
+      "svg_card_path": "images/97_ash-shaafee.svg",
+      "calligraphy_svg_url": null,
+      "calligraphy_png_url": null
+    },
+    "meaning": "Аш-Шāфӣ (Целитель, Исцеляющий) — это Единственный, Кто исцеляет сердца и тела, забирает немощи и заживляет раны. Он избавляет от любых болезней, слабостей и изнеможения, удаляет печали и залечивает раны, вызванные обидами, потерями и разочарованием, исцеляет сердца от многобожия и неверия, сомнений и беспокойства, гордыни и самолюбования, зависти и злобы, жадности и привязанности к этому миру. И нет никого, кто может излечить от болезней и страданий, кроме Него.",
+    "related_names": [
+      {
+        "id": 99,
+        "arabic": "المُحْسِنُ",
+        "transliteration": "Аль-Мухсин",
+        "translation": "Добродетельный"
+      },
+      {
+        "id": 2,
+        "arabic": "الرَّحْمَٰنُ",
+        "transliteration": "Ар-Рахман",
+        "translation": "Милостивый"
+      },
+      {
+        "id": 3,
+        "arabic": "الرَّحِيمُ",
+        "transliteration": "Ар-Рахим",
+        "translation": "Милующий"
+      },
+      {
+        "id": 64,
+        "arabic": "الرَّؤُوفُ",
+        "transliteration": "Ар-Рауф",
+        "translation": "Добрый, Сострадательный"
+      }
+    ],
+    "quran": {
+      "mentions_count": 0,
+      "references": [
+        "10:57",
+        "17:82",
+        "26:80"
+      ],
+      "inline_references": [],
+      "quotes": []
+    },
+    "hadith_references": [],
+    "source_url": "https://koran.center/asmaul-husna/97"
+  },
+  {
+    "id": 98,
+    "name": "Ат-Таййиб",
+    "arabic": "الطَّيِّبُ",
+    "translation": "Благой",
+    "transliteration_en": "At-Tayyib",
+    "english_meaning": "The Good",
+    "image": {
+      "svg_card_path": "images/98_at-tayyib.svg",
+      "calligraphy_svg_url": null,
+      "calligraphy_png_url": null
+    },
+    "meaning": "Ат-Таййиб (Благой) — это Тот, Кто не имеет недостатков, совершает только благое и является источником всего благого, чистого и прекрасного. Ибн аль-‘Араби пишет, что Ат-Таййиб превыше любых недостатков. Ибн аль-Каййим пишет: «У Аллаха самые благие имена, и Ат-Таййиб — одно из Его имён. От Него исходит только благое, и восходит к Нему только благое, и приближаются к Нему только благие. Всё, что связано с Ним, исполнено блага»",
+    "related_names": [
+      {
+        "id": 19,
+        "arabic": "القُدُّوسُ",
+        "transliteration": "Аль-Куддус",
+        "translation": "Святой"
+      },
+      {
+        "id": 63,
+        "arabic": "البَرُّ",
+        "transliteration": "Аль-Барр",
+        "translation": "Добродетельный, Добрый"
+      },
+      {
+        "id": 99,
+        "arabic": "المُحْسِنُ",
+        "transliteration": "Аль-Мухсин",
+        "translation": "Добродетельный"
+      },
+      {
+        "id": 94,
+        "arabic": "السُّبُّوحُ",
+        "transliteration": "Ас-Суббух",
+        "translation": "Святой"
+      }
+    ],
+    "quran": {
+      "mentions_count": 0,
+      "references": [],
+      "inline_references": [],
+      "quotes": []
+    },
+    "hadith_references": [],
+    "source_url": "https://koran.center/asmaul-husna/98"
+  },
+  {
+    "id": 99,
+    "name": "Аль-Мухсин",
+    "arabic": "المُحْسِنُ",
+    "translation": "Добродетельный",
+    "transliteration_en": "Al-Muhsin",
+    "english_meaning": "The Good Doer",
+    "image": {
+      "svg_card_path": "images/99_al-muhsin.svg",
+      "calligraphy_svg_url": null,
+      "calligraphy_png_url": null
+    },
+    "meaning": "Аль-Мухсин (Добродетельный) — это Тот, Кто всё задумал и создал превосходно, Кто щедро делает добро Своим творениям и любит делающих добро. Это имя не упоминается в Коране, но встречается в надёжных хадисах. Ат-Табарани передал со слов Анаса ибн Малика, что Пророк, мир ему и благословение Аллаха, сказал: «Поистине, Аллах - Аль-Мухсин и любит, когда делают добро. Поэтому, когда вы выносите решение, будьте справедливы, а когда вы забиваете животное, делайте это хорошо» [Аль-Муджам аль-аусат 5735, Ас-Сильсиля ас-сахиха 469].",
+    "related_names": [
+      {
+        "id": 63,
+        "arabic": "البَرُّ",
+        "transliteration": "Аль-Барр",
+        "translation": "Добродетельный, Добрый"
+      },
+      {
+        "id": 98,
+        "arabic": "الطَّيِّبُ",
+        "transliteration": "Ат-Таййиб",
+        "translation": "Благой"
+      },
+      {
+        "id": 2,
+        "arabic": "الرَّحْمَٰنُ",
+        "transliteration": "Ар-Рахман",
+        "translation": "Милостивый"
+      },
+      {
+        "id": 3,
+        "arabic": "الرَّحِيمُ",
+        "transliteration": "Ар-Рахим",
+        "translation": "Милующий"
+      }
+    ],
+    "quran": {
+      "mentions_count": 0,
+      "references": [],
+      "inline_references": [],
+      "quotes": []
+    },
+    "hadith_references": [
+      "Аль-Муджам аль-аусат 5735, Ас-Сильсиля ас-сахиха 469"
+    ],
+    "source_url": "https://koran.center/asmaul-husna/99"
+  },
+  {
+    "id": 100,
+    "name": "Аль-Муса‘ир",
+    "arabic": "المُسَعِّر",
+    "translation": "Устанавливающий цены",
+    "transliteration_en": "Al-Musair",
+    "english_meaning": "The Fixer of Prices",
+    "image": {
+      "svg_card_path": "images/100_al-musair.svg",
+      "calligraphy_svg_url": null,
+      "calligraphy_png_url": null
+    },
+    "meaning": "Аль-Муса‘ир (Устанавливающий цены) — это Тот, Кто определяет меру всему и определяет каждой вещи место среди творений, Кто регулирует цены, повышая или понижая ценность вещей, Кто распределяет блага среди Своих рабов, увеличивая или уменьшая их нужду. Ибн аль-Асир пишет: «Аль-Муса‘ир — это Тот, Кто делает вещи дешёвыми или дорогими, и никто не вправе противиться этому». Это прекраснейшее имя указывает на то, как Аллах распределяет между людьми средства и способности, делая их зависимыми друг от друга, и направляет их к справедливому и устойчивому общественному порядку.",
+    "related_names": [
+      {
+        "id": 32,
+        "arabic": "الرَّزَّاقُ",
+        "transliteration": "Ар-Раззак",
+        "translation": "Наделяющий щедро"
+      },
+      {
+        "id": 80,
+        "arabic": "المُقيِتُ",
+        "transliteration": "Аль-Мукит",
+        "translation": "Наблюдающий, Дарующий пропитание"
+      },
+      {
+        "id": 4,
+        "arabic": "الرَّبُّ",
+        "transliteration": "Ар-Рабб",
+        "translation": "Господь"
+      },
+      {
+        "id": 9,
+        "arabic": "القَيُّومُ",
+        "transliteration": "Аль-Кайюм",
+        "translation": "Вседержитель"
+      }
+    ],
+    "quran": {
+      "mentions_count": 0,
+      "references": [],
+      "inline_references": [],
+      "quotes": []
+    },
+    "hadith_references": [],
+    "source_url": "https://koran.center/asmaul-husna/100"
+  }
+]
