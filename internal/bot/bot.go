@@ -927,8 +927,9 @@ func (b *Bot) handleCallback(cb *tgbotapi.CallbackQuery) {
 		b.handleSettings(chatID, messageID)
 	}
 
-	if strings.HasPrefix(data, "asma_det:") {
-		idStr := strings.TrimPrefix(data, "asma_det:")
+	if strings.HasPrefix(data, "asma_rel:") || strings.HasPrefix(data, "asma_det:") {
+		idStr := strings.TrimPrefix(data, "asma_rel:")
+		idStr = strings.TrimPrefix(idStr, "asma_det:")
 		if id, err := strconv.Atoi(idStr); err == nil {
 			if item, err := storage.GetAsmaName(id); err == nil {
 				b.handleAsmaDetails(cb, item, true)
@@ -1331,35 +1332,95 @@ func (b *Bot) handleAsmaCommand(chatID int64, parts []string) {
 	b.SendDailyAsma(chatID, item)
 }
 
+// renderAsmaText формирует полный текст имени Аллаха (толкование, аяты, хадисы), а при showRelated добавляет блок связанных имён
+func renderAsmaText(item *storage.AsmaName, showRelated bool) string {
+	if item == nil {
+		return ""
+	}
+
+	var quotesText string
+	if len(item.Quran.Quotes) > 0 {
+		quotesText = "\n\n📖 *Цитата из Корана:*\n"
+		for _, q := range item.Quran.Quotes {
+			quotesText += fmt.Sprintf("«%s» _(Сура %d:%d)_\n", escapeMarkdown(q.Text), q.Surah, q.Ayah)
+		}
+	}
+
+	var hadithsText string
+	if len(item.HadithReferences) > 0 {
+		hadithsText = fmt.Sprintf("\n\n📚 *Хадисы:* %s", escapeMarkdown(strings.Join(item.HadithReferences, "; ")))
+	}
+
+	baseText := fmt.Sprintf(
+		"✨ *Прекрасные имена Аллаха (Имя дня)*\n\n"+
+			"*%d. %s* (%s) — *%s*\n\n"+
+			"%s%s%s",
+		item.ID,
+		escapeMarkdown(item.Name),
+		item.Arabic,
+		escapeMarkdown(item.Translation),
+		escapeMarkdown(item.Meaning),
+		quotesText,
+		hadithsText,
+	)
+
+	if !showRelated || len(item.RelatedNames) == 0 {
+		return baseText
+	}
+
+	relatedText := "\n\n🔗 *Связанные имена:*\n"
+	var rNames []string
+	for _, r := range item.RelatedNames {
+		rNames = append(rNames, fmt.Sprintf("• *%s* (%s — %s)", escapeMarkdown(r.Transliteration), r.Arabic, escapeMarkdown(r.Translation)))
+	}
+	withRelated := baseText + relatedText + strings.Join(rNames, "\n")
+	if len([]rune(withRelated)) <= 1024 {
+		return withRelated
+	}
+
+	// Компактный формат без арабского, если превышает лимит подписи фото (1024 символа)
+	rNames = nil
+	for _, r := range item.RelatedNames {
+		rNames = append(rNames, fmt.Sprintf("• *%s* — %s", escapeMarkdown(r.Transliteration), escapeMarkdown(r.Translation)))
+	}
+	withRelatedCompact := baseText + relatedText + strings.Join(rNames, "\n")
+	if len([]rune(withRelatedCompact)) <= 1024 {
+		return withRelatedCompact
+	}
+
+	rNames = nil
+	for _, r := range item.RelatedNames {
+		rNames = append(rNames, fmt.Sprintf("• *%s*", escapeMarkdown(r.Transliteration)))
+	}
+	return baseText + relatedText + strings.Join(rNames, "\n")
+}
+
+func asmaKeyboard(itemID int, showRelated bool, hasRelated bool) tgbotapi.InlineKeyboardMarkup {
+	if !hasRelated {
+		return tgbotapi.InlineKeyboardMarkup{}
+	}
+	if showRelated {
+		return tgbotapi.NewInlineKeyboardMarkup(
+			tgbotapi.NewInlineKeyboardRow(
+				tgbotapi.NewInlineKeyboardButtonData("◀️ Скрыть связанные имена", fmt.Sprintf("asma_min:%d", itemID)),
+			),
+		)
+	}
+	return tgbotapi.NewInlineKeyboardMarkup(
+		tgbotapi.NewInlineKeyboardRow(
+			tgbotapi.NewInlineKeyboardButtonData("🔗 Связанные имена", fmt.Sprintf("asma_rel:%d", itemID)),
+		),
+	)
+}
+
 // SendDailyAsma отправляет ежедневное имя Аллаха с фото каллиграфии или текстом
 func (b *Bot) SendDailyAsma(chatID int64, item *storage.AsmaName) {
 	if item == nil {
 		return
 	}
 
-	shortMeaning := item.Meaning
-	if len([]rune(shortMeaning)) > 250 {
-		shortMeaning = string([]rune(shortMeaning)[:250]) + "..."
-	}
-
-	text := fmt.Sprintf(
-		"✨ *Прекрасные имена Аллаха (Имя дня)*\n\n"+
-			"*%d. %s* (%s) — *%s*\n\n"+
-			"«%s»\n\n"+
-			"📖 *Упоминаний в Коране:* %d",
-		item.ID,
-		escapeMarkdown(item.Name),
-		item.Arabic,
-		escapeMarkdown(item.Translation),
-		escapeMarkdown(shortMeaning),
-		item.Quran.MentionsCount,
-	)
-
-	keyboard := tgbotapi.NewInlineKeyboardMarkup(
-		tgbotapi.NewInlineKeyboardRow(
-			tgbotapi.NewInlineKeyboardButtonData("📖 Полное толкование", fmt.Sprintf("asma_det:%d", item.ID)),
-		),
-	)
+	text := renderAsmaText(item, false)
+	keyboard := asmaKeyboard(item.ID, false, len(item.RelatedNames) > 0)
 
 	var photoPath string
 	if item.Image.LocalCalligraphyPNG != "" {
@@ -1373,7 +1434,9 @@ func (b *Bot) SendDailyAsma(chatID int64, item *storage.AsmaName) {
 		photoMsg := tgbotapi.NewPhoto(chatID, tgbotapi.FilePath(photoPath))
 		photoMsg.Caption = text
 		photoMsg.ParseMode = "Markdown"
-		photoMsg.ReplyMarkup = keyboard
+		if len(keyboard.InlineKeyboard) > 0 {
+			photoMsg.ReplyMarkup = keyboard
+		}
 		if _, err := b.api.Send(photoMsg); err == nil {
 			return
 		}
@@ -1381,7 +1444,9 @@ func (b *Bot) SendDailyAsma(chatID int64, item *storage.AsmaName) {
 		photoMsg := tgbotapi.NewPhoto(chatID, tgbotapi.FileURL(*item.Image.CalligraphyPNGURL))
 		photoMsg.Caption = text
 		photoMsg.ParseMode = "Markdown"
-		photoMsg.ReplyMarkup = keyboard
+		if len(keyboard.InlineKeyboard) > 0 {
+			photoMsg.ReplyMarkup = keyboard
+		}
 		if _, err := b.api.Send(photoMsg); err == nil {
 			return
 		}
@@ -1390,11 +1455,13 @@ func (b *Bot) SendDailyAsma(chatID int64, item *storage.AsmaName) {
 	msg := tgbotapi.NewMessage(chatID, text)
 	msg.ParseMode = "Markdown"
 	msg.DisableWebPagePreview = true
-	msg.ReplyMarkup = keyboard
+	if len(keyboard.InlineKeyboard) > 0 {
+		msg.ReplyMarkup = keyboard
+	}
 	_, _ = b.api.Send(msg)
 }
 
-func (b *Bot) handleAsmaDetails(cb *tgbotapi.CallbackQuery, item *storage.AsmaName, expand bool) {
+func (b *Bot) handleAsmaDetails(cb *tgbotapi.CallbackQuery, item *storage.AsmaName, showRelated bool) {
 	if cb == nil || cb.Message == nil || item == nil {
 		return
 	}
@@ -1402,80 +1469,15 @@ func (b *Bot) handleAsmaDetails(cb *tgbotapi.CallbackQuery, item *storage.AsmaNa
 	chatID := cb.Message.Chat.ID
 	messageID := cb.Message.MessageID
 
-	var text string
-	var keyboard tgbotapi.InlineKeyboardMarkup
-
-	if expand {
-		var quotesText string
-		if len(item.Quran.Quotes) > 0 {
-			quotesText = "\n\n📖 *Цитата из Корана:*\n"
-			for _, q := range item.Quran.Quotes {
-				quotesText += fmt.Sprintf("«%s» _(Сура %d:%d)_\n", escapeMarkdown(q.Text), q.Surah, q.Ayah)
-			}
-		}
-
-		var hadithsText string
-		if len(item.HadithReferences) > 0 {
-			hadithsText = fmt.Sprintf("\n\n📚 *Хадисы:* %s", escapeMarkdown(strings.Join(item.HadithReferences, "; ")))
-		}
-
-		var relatedText string
-		if len(item.RelatedNames) > 0 {
-			relatedText = "\n\n🔗 *Связанные имена:*\n"
-			var rNames []string
-			for _, r := range item.RelatedNames {
-				rNames = append(rNames, fmt.Sprintf("• *%s* (%s — %s)", escapeMarkdown(r.Transliteration), r.Arabic, escapeMarkdown(r.Translation)))
-			}
-			relatedText += strings.Join(rNames, "\n")
-		}
-
-		text = fmt.Sprintf(
-			"✨ *%d. %s* (%s) — *%s*\n\n"+
-				"%s%s%s%s",
-			item.ID,
-			escapeMarkdown(item.Name),
-			item.Arabic,
-			escapeMarkdown(item.Translation),
-			escapeMarkdown(item.Meaning),
-			quotesText,
-			hadithsText,
-			relatedText,
-		)
-
-		keyboard = tgbotapi.NewInlineKeyboardMarkup(
-			tgbotapi.NewInlineKeyboardRow(
-				tgbotapi.NewInlineKeyboardButtonData("◀️ Свернуть", fmt.Sprintf("asma_min:%d", item.ID)),
-			),
-		)
-	} else {
-		shortMeaning := item.Meaning
-		if len([]rune(shortMeaning)) > 250 {
-			shortMeaning = string([]rune(shortMeaning)[:250]) + "..."
-		}
-		text = fmt.Sprintf(
-			"✨ *Прекрасные имена Аллаха (Имя дня)*\n\n"+
-				"*%d. %s* (%s) — *%s*\n\n"+
-				"«%s»\n\n"+
-				"📖 *Упоминаний в Коране:* %d",
-			item.ID,
-			escapeMarkdown(item.Name),
-			item.Arabic,
-			escapeMarkdown(item.Translation),
-			escapeMarkdown(shortMeaning),
-			item.Quran.MentionsCount,
-		)
-
-		keyboard = tgbotapi.NewInlineKeyboardMarkup(
-			tgbotapi.NewInlineKeyboardRow(
-				tgbotapi.NewInlineKeyboardButtonData("📖 Полное толкование", fmt.Sprintf("asma_det:%d", item.ID)),
-			),
-		)
-	}
+	text := renderAsmaText(item, showRelated)
+	keyboard := asmaKeyboard(item.ID, showRelated, len(item.RelatedNames) > 0)
 
 	if len(cb.Message.Photo) > 0 {
 		editCaption := tgbotapi.NewEditMessageCaption(chatID, messageID, text)
 		editCaption.ParseMode = "Markdown"
-		editCaption.ReplyMarkup = &keyboard
+		if len(keyboard.InlineKeyboard) > 0 {
+			editCaption.ReplyMarkup = &keyboard
+		}
 		if _, err := b.api.Request(editCaption); err != nil && !strings.Contains(err.Error(), "message is not modified") {
 			log.Printf("Ошибка редактирования подписи фото asma: %v", err)
 		}
@@ -1483,7 +1485,9 @@ func (b *Bot) handleAsmaDetails(cb *tgbotapi.CallbackQuery, item *storage.AsmaNa
 		editMsg := tgbotapi.NewEditMessageText(chatID, messageID, text)
 		editMsg.ParseMode = "Markdown"
 		editMsg.DisableWebPagePreview = true
-		editMsg.ReplyMarkup = &keyboard
+		if len(keyboard.InlineKeyboard) > 0 {
+			editMsg.ReplyMarkup = &keyboard
+		}
 		if _, err := b.api.Request(editMsg); err != nil && !strings.Contains(err.Error(), "message is not modified") {
 			log.Printf("Ошибка редактирования текста asma: %v", err)
 		}
